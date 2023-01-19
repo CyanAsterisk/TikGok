@@ -37,9 +37,9 @@ func InitDB() {
 		Logger: newLogger,
 	})
 	if err != nil {
-		klog.Fatalf("init gorm failed: %s", err.Error())
+		klog.Fatalf("init gorm failed: %s", err)
 	}
 	if err := global.DB.Use(tracing.NewPlugin()); err != nil {
-		klog.Fatalf("use tracing plugin failed: %s", err.Error())
+		klog.Fatalf("use tracing plugin failed: %s", err)
 	}
 }

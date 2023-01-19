@@ -23,10 +23,10 @@ func InitNacos(Port int) (registry.Registry, *registry.Info) {
 	v := viper.New()
 	v.SetConfigFile(consts.UserConfigPath)
 	if err := v.ReadInConfig(); err != nil {
-		klog.Fatalf("read viper config failed: %s", err.Error())
+		klog.Fatalf("read viper config failed: %s", err)
 	}
 	if err := v.Unmarshal(&global.NacosConfig); err != nil {
-		klog.Fatalf("unmarshal err failed: %s", err.Error())
+		klog.Fatalf("unmarshal err failed: %s", err)
 	}
 	klog.Infof("Config Info: %v", global.NacosConfig)
 
@@ -52,7 +52,7 @@ func InitNacos(Port int) (registry.Registry, *registry.Info) {
 		"clientConfig":  cc,
 	})
 	if err != nil {
-		klog.Fatalf("create config client failed: %s", err.Error())
+		klog.Fatalf("create config client failed: %s", err)
 	}
 
 	content, err := configClient.GetConfig(vo.ConfigParam{
@@ -65,7 +65,7 @@ func InitNacos(Port int) (registry.Registry, *registry.Info) {
 
 	err = sonic.Unmarshal([]byte(content), &global.ServerConfig)
 	if err != nil {
-		klog.Fatalf("nacos config failed: %s", err.Error())
+		klog.Fatalf("nacos config failed: %s", err)
 	}
 
 	registryClient, err := clients.NewNamingClient(
@@ -77,9 +77,9 @@ func InitNacos(Port int) (registry.Registry, *registry.Info) {
 
 	r := nacos.NewNacosRegistry(registryClient, nacos.WithGroup(consts.UserGroup))
 
-	sf, err := snowflake.NewNode(2)
+	sf, err := snowflake.NewNode(consts.NacosSnowflakeNode)
 	if err != nil {
-		klog.Fatalf("generate service name failed: %s", err.Error())
+		klog.Fatalf("generate service name failed: %s", err)
 	}
 	info := &registry.Info{
 		ServiceName: global.ServerConfig.Name,
