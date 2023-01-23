@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"log"
 	"os"
 	"time"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/model"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/tools"
+	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

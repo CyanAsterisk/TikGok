@@ -3,7 +3,7 @@ module github.com/CyanAsterisk/TikGok
 go 1.18
 
 require (
-	github.com/apache/thrift v0.17.0
+	github.com/apache/thrift v0.13.0
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/bytedance/sonic v1.7.0
 	github.com/cloudwego/kitex v0.4.4
