@@ -1,5 +1,13 @@
 namespace go user
 
+struct User {
+    1: i64 id // User id
+    2: string name // Username
+    3: i64 follow_count // Total number of followings
+    4: i64 follower_count // Total number of followers
+    5: bool is_follow // true-followed, false-not followed
+}
+
 struct douyin_user_register_request {
     1: string username // Username, up to 32 characters
     2: string password // Password, up to 32 characters
@@ -33,14 +41,6 @@ struct douyin_user_response {
     1: i32 status_code // Status code, 0-success, other values-failure
     2: string status_msg // Return status description
     3: User user // User Information
-}
-
-struct User {
-    1: i64 id // User id
-    2: string name // Username
-    3: i64 follow_count // Total number of followings
-    4: i64 follower_count // Total number of followers
-    5: bool is_follow // true-followed, false-not followed
 }
 
 service UserService {

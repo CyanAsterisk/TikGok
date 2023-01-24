@@ -1,17 +1,5 @@
 namespace go video
 
-struct douyin_feed_request {
-    1: i64 latest_time // Optional parameter, limit the latest submission timestamp of the returned video, accurate to seconds, and leave it blank to indicate the current time
-    2: string token // Optional parameter, login user settings
-}
-
-struct douyin_feed_response {
-    1: i32 status_code // Status code, 0-success, other values-failure
-    2: string status_msg // Return status description
-    3: Video video_list // Video list
-    4: i64 next_time // In the video returned this time, publish the earliest time as the latest_time in the next request
-}
-
 struct Video {
     1: i64 id // Video unique identifier
     2: User author // Video author information
@@ -29,6 +17,18 @@ struct User {
     3: i64 follow_count // Total number of followings
     4: i64 follower_count // Total number of followers
     5: bool is_follow // true-followed, false-not followed
+}
+
+struct douyin_feed_request {
+    1: i64 latest_time // Optional parameter, limit the latest submission timestamp of the returned video, accurate to seconds, and leave it blank to indicate the current time
+    2: string token // Optional parameter, login user settings
+}
+
+struct douyin_feed_response {
+    1: i32 status_code // Status code, 0-success, other values-failure
+    2: string status_msg // Return status description
+    3: Video video_list // Video list
+    4: i64 next_time // In the video returned this time, publish the earliest time as the latest_time in the next request
 }
 
 struct douyin_publish_action_request {
