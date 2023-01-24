@@ -105,3 +105,131 @@ func VideoList(ctx context.Context, c *app.RequestContext) {
 
 	c.JSON(consts.StatusOK, resp)
 }
+
+// Favorite .
+// @router /douyin/favorite/action [POST]
+func Favorite(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.DouyinFavoriteActionRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(api.DouyinFavoriteActionResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// FavoriteList .
+// @router /douyin/favorite/list [GET]
+func FavoriteList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.DouyinFavoriteListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(api.DouyinFavoriteListResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// Comment .
+// @router /douyin/comment/action [POST]
+func Comment(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.DouyinCommentActionRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(api.DouyinCommentActionResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// CommentList .
+// @router /douyin/comment/list [GET]
+func CommentList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.DouyinCommentListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(api.DouyinCommentListResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// Action .
+// @router /douyin/relation/action [POST]
+func Action(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.DouyinRelationActionRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(api.DouyinRelationActionResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// FollowingList .
+// @router /douyin/relation/follow/list [GET]
+func FollowingList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.DouyinRelationFollowListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(api.DouyinRelationFollowListResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// FollowerList .
+// @router /douyin/relation/follower/list [GET]
+func FollowerList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.DouyinRelationFollowerListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(api.DouyinRelationFollowerListResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// FriendList .
+// @router /douyin/relation/friend/list [GET]
+func FriendList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.DouyinRelationFriendListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(api.DouyinRelationFriendListResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}

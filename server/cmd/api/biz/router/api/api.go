@@ -22,9 +22,35 @@ func Register(r *server.Hertz) {
 		_douyin.GET("/feed", append(_feedMw(), api.Feed)...)
 		_douyin.GET("/user", append(_getuserinfoMw(), api.GetUserInfo)...)
 		{
+			_comment := _douyin.Group("/comment", _commentMw()...)
+			_comment.POST("/action", append(_comment0Mw(), api.Comment)...)
+			_comment.GET("/list", append(_commentlistMw(), api.CommentList)...)
+		}
+		{
+			_favorite := _douyin.Group("/favorite", _favoriteMw()...)
+			_favorite.POST("/action", append(_favorite0Mw(), api.Favorite)...)
+			_favorite.GET("/list", append(_favoritelistMw(), api.FavoriteList)...)
+		}
+		{
 			_publish := _douyin.Group("/publish", _publishMw()...)
 			_publish.POST("/action", append(_publishvideoMw(), api.PublishVideo)...)
 			_publish.GET("/list", append(_videolistMw(), api.VideoList)...)
+		}
+		{
+			_relation := _douyin.Group("/relation", _relationMw()...)
+			_relation.POST("/action", append(__ctionMw(), api.Action)...)
+			{
+				_follow := _relation.Group("/follow", _followMw()...)
+				_follow.GET("/list", append(_followinglistMw(), api.FollowingList)...)
+			}
+			{
+				_follower := _relation.Group("/follower", _followerMw()...)
+				_follower.GET("/list", append(_followerlistMw(), api.FollowerList)...)
+			}
+			{
+				_friend := _relation.Group("/friend", _friendMw()...)
+				_friend.GET("/list", append(_friendlistMw(), api.FriendList)...)
+			}
 		}
 		{
 			_user := _douyin.Group("/user", _userMw()...)
