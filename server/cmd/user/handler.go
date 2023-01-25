@@ -24,19 +24,19 @@ type UserServiceImpl struct {
 
 // Register implements the UserServiceImpl interface.
 func (s *UserServiceImpl) Register(_ context.Context, req *user.DouyinUserRegisterRequest) (*user.DouyinUserRegisterResponse, error) {
-	var _user model.User
-	result := global.DB.Where(&model.User{Username: req.Username}).First(&_user)
+	var usr model.User
+	result := global.DB.Where(&model.User{Username: req.Username}).First(&usr)
 	if result.RowsAffected != 0 {
 		return nil, status.Errorf(codes.AlreadyExists, "Account already exists")
 	}
-	_user.Username = req.Username
-	_user.Password = tools.Md5Crypt(req.Password, global.ServerConfig.MysqlInfo.Salt) // Encrypt password with md5.
-	result = global.DB.Create(&_user)
+	usr.Username = req.Username
+	usr.Password = tools.Md5Crypt(req.Password, global.ServerConfig.MysqlInfo.Salt) // Encrypt password with md5.
+	result = global.DB.Create(&usr)
 	if result.Error != nil {
 		return nil, status.Errorf(codes.Internal, result.Error.Error())
 	}
 	token, err := s.jwt.CreateToken(models.CustomClaims{
-		ID: _user.ID,
+		ID: usr.ID,
 		StandardClaims: jwt.StandardClaims{
 			NotBefore: time.Now().Unix(),
 			ExpiresAt: time.Now().Unix() + consts.ThirtyDays,
@@ -48,24 +48,24 @@ func (s *UserServiceImpl) Register(_ context.Context, req *user.DouyinUserRegist
 	}
 	return &user.DouyinUserRegisterResponse{
 		StatusCode: int32(errno.Err_Success),
-		UserId:     _user.ID,
+		UserId:     usr.ID,
 		Token:      token,
 	}, nil
 }
 
 // Login implements the UserServiceImpl interface.
 func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequest) (*user.DouyinUserLoginResponse, error) {
-	var _user model.User
-	result := global.DB.Where(&model.User{Username: req.Username}).First(&_user)
+	var usr model.User
+	result := global.DB.Where(&model.User{Username: req.Username}).First(&usr)
 	if result.RowsAffected == 0 {
 		return nil, status.Errorf(codes.NotFound, "no such user")
 	}
 
-	if _user.Password != tools.Md5Crypt(req.Password, global.ServerConfig.MysqlInfo.Salt) {
+	if usr.Password != tools.Md5Crypt(req.Password, global.ServerConfig.MysqlInfo.Salt) {
 		return nil, status.Errorf(codes.PermissionDenied, "wrong password")
 	}
 	token, err := s.jwt.CreateToken(models.CustomClaims{
-		ID: _user.ID,
+		ID: usr.ID,
 		StandardClaims: jwt.StandardClaims{
 			NotBefore: time.Now().Unix(),
 			ExpiresAt: time.Now().Unix() + consts.ThirtyDays,
@@ -77,7 +77,7 @@ func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequ
 	}
 	return &user.DouyinUserLoginResponse{
 		StatusCode: int32(errno.Err_Success),
-		UserId:     _user.ID,
+		UserId:     usr.ID,
 		Token:      token,
 	}, nil
 }
@@ -90,8 +90,8 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserR
 			return nil, status.Errorf(codes.PermissionDenied, err.Error())
 		}
 	}
-	var _user model.User
-	result := global.DB.Where(&model.User{ID: req.UserId}).First(&_user)
+	var usr model.User
+	result := global.DB.Where(&model.User{ID: req.UserId}).First(&usr)
 	if result.RowsAffected == 0 {
 		return nil, status.Errorf(codes.NotFound, result.Error.Error())
 	}
@@ -99,8 +99,8 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserR
 		StatusCode: int32(errno.Err_Success),
 		StatusMsg:  "",
 		User: &user.User{
-			Id:   _user.ID,
-			Name: _user.Username,
+			Id:   usr.ID,
+			Name: usr.Username,
 		},
 	}, nil
 }
