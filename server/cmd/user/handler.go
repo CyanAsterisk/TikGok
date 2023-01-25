@@ -9,7 +9,7 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/model"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/tools"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
-	"github.com/CyanAsterisk/TikGok/server/shared/errno/kitex_gen/errno"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/user"
 	"github.com/CyanAsterisk/TikGok/server/shared/middleware"
 	"github.com/cloudwego/kitex/pkg/remote/trans/nphttp2/codes"
