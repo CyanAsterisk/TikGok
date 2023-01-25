@@ -2,8 +2,9 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/dao"
+	"net"
+	"strconv"
+
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/initialize"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
@@ -15,8 +16,6 @@ import (
 	"github.com/cloudwego/kitex/server"
 	"github.com/kitex-contrib/obs-opentelemetry/provider"
 	"github.com/kitex-contrib/obs-opentelemetry/tracing"
-	"net"
-	"strconv"
 )
 
 func main() {
@@ -31,9 +30,6 @@ func main() {
 		provider.WithInsecure(),
 	)
 	defer p.Shutdown(context.Background())
-
-	n, _ := dao.GetCommentListByVideoId(1616071000544256001)
-	fmt.Println(n)
 
 	impl := new(InteractionServerImpl)
 	// Create new server.
