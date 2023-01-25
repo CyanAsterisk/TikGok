@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/CyanAsterisk/TikGok/server/cmd/api/biz/errno"
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
+	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/golang-jwt/jwt"
 )
