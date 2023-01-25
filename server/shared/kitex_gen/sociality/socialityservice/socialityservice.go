@@ -4,7 +4,7 @@ package socialityservice
 
 import (
 	"context"
-	siciality "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/siciality"
+	sociality "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
 	client "github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
 )
@@ -17,7 +17,7 @@ var socialityServiceServiceInfo = NewServiceInfo()
 
 func NewServiceInfo() *kitex.ServiceInfo {
 	serviceName := "SocialityService"
-	handlerType := (*siciality.SocialityService)(nil)
+	handlerType := (*sociality.SocialityService)(nil)
 	methods := map[string]kitex.MethodInfo{
 		"Action":        kitex.NewMethodInfo(actionHandler, newSocialityServiceActionArgs, newSocialityServiceActionResult, false),
 		"FollowingList": kitex.NewMethodInfo(followingListHandler, newSocialityServiceFollowingListArgs, newSocialityServiceFollowingListResult, false),
@@ -25,7 +25,7 @@ func NewServiceInfo() *kitex.ServiceInfo {
 		"FriendList":    kitex.NewMethodInfo(friendListHandler, newSocialityServiceFriendListArgs, newSocialityServiceFriendListResult, false),
 	}
 	extra := map[string]interface{}{
-		"PackageName": "siciality",
+		"PackageName": "sociality",
 	}
 	svcInfo := &kitex.ServiceInfo{
 		ServiceName:     serviceName,
@@ -39,9 +39,9 @@ func NewServiceInfo() *kitex.ServiceInfo {
 }
 
 func actionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*siciality.SocialityServiceActionArgs)
-	realResult := result.(*siciality.SocialityServiceActionResult)
-	success, err := handler.(siciality.SocialityService).Action(ctx, realArg.Req)
+	realArg := arg.(*sociality.SocialityServiceActionArgs)
+	realResult := result.(*sociality.SocialityServiceActionResult)
+	success, err := handler.(sociality.SocialityService).Action(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
@@ -49,17 +49,17 @@ func actionHandler(ctx context.Context, handler interface{}, arg, result interfa
 	return nil
 }
 func newSocialityServiceActionArgs() interface{} {
-	return siciality.NewSocialityServiceActionArgs()
+	return sociality.NewSocialityServiceActionArgs()
 }
 
 func newSocialityServiceActionResult() interface{} {
-	return siciality.NewSocialityServiceActionResult()
+	return sociality.NewSocialityServiceActionResult()
 }
 
 func followingListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*siciality.SocialityServiceFollowingListArgs)
-	realResult := result.(*siciality.SocialityServiceFollowingListResult)
-	success, err := handler.(siciality.SocialityService).FollowingList(ctx, realArg.Req)
+	realArg := arg.(*sociality.SocialityServiceFollowingListArgs)
+	realResult := result.(*sociality.SocialityServiceFollowingListResult)
+	success, err := handler.(sociality.SocialityService).FollowingList(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
@@ -67,17 +67,17 @@ func followingListHandler(ctx context.Context, handler interface{}, arg, result 
 	return nil
 }
 func newSocialityServiceFollowingListArgs() interface{} {
-	return siciality.NewSocialityServiceFollowingListArgs()
+	return sociality.NewSocialityServiceFollowingListArgs()
 }
 
 func newSocialityServiceFollowingListResult() interface{} {
-	return siciality.NewSocialityServiceFollowingListResult()
+	return sociality.NewSocialityServiceFollowingListResult()
 }
 
 func followerListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*siciality.SocialityServiceFollowerListArgs)
-	realResult := result.(*siciality.SocialityServiceFollowerListResult)
-	success, err := handler.(siciality.SocialityService).FollowerList(ctx, realArg.Req)
+	realArg := arg.(*sociality.SocialityServiceFollowerListArgs)
+	realResult := result.(*sociality.SocialityServiceFollowerListResult)
+	success, err := handler.(sociality.SocialityService).FollowerList(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
@@ -85,17 +85,17 @@ func followerListHandler(ctx context.Context, handler interface{}, arg, result i
 	return nil
 }
 func newSocialityServiceFollowerListArgs() interface{} {
-	return siciality.NewSocialityServiceFollowerListArgs()
+	return sociality.NewSocialityServiceFollowerListArgs()
 }
 
 func newSocialityServiceFollowerListResult() interface{} {
-	return siciality.NewSocialityServiceFollowerListResult()
+	return sociality.NewSocialityServiceFollowerListResult()
 }
 
 func friendListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*siciality.SocialityServiceFriendListArgs)
-	realResult := result.(*siciality.SocialityServiceFriendListResult)
-	success, err := handler.(siciality.SocialityService).FriendList(ctx, realArg.Req)
+	realArg := arg.(*sociality.SocialityServiceFriendListArgs)
+	realResult := result.(*sociality.SocialityServiceFriendListResult)
+	success, err := handler.(sociality.SocialityService).FriendList(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
@@ -103,11 +103,11 @@ func friendListHandler(ctx context.Context, handler interface{}, arg, result int
 	return nil
 }
 func newSocialityServiceFriendListArgs() interface{} {
-	return siciality.NewSocialityServiceFriendListArgs()
+	return sociality.NewSocialityServiceFriendListArgs()
 }
 
 func newSocialityServiceFriendListResult() interface{} {
-	return siciality.NewSocialityServiceFriendListResult()
+	return sociality.NewSocialityServiceFriendListResult()
 }
 
 type kClient struct {
@@ -120,40 +120,40 @@ func newServiceClient(c client.Client) *kClient {
 	}
 }
 
-func (p *kClient) Action(ctx context.Context, req *siciality.DouyinRelationActionRequest) (r *siciality.DouyinRelationActionResponse, err error) {
-	var _args siciality.SocialityServiceActionArgs
+func (p *kClient) Action(ctx context.Context, req *sociality.DouyinRelationActionRequest) (r *sociality.DouyinRelationActionResponse, err error) {
+	var _args sociality.SocialityServiceActionArgs
 	_args.Req = req
-	var _result siciality.SocialityServiceActionResult
+	var _result sociality.SocialityServiceActionResult
 	if err = p.c.Call(ctx, "Action", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) FollowingList(ctx context.Context, req *siciality.DouyinRelationFollowListRequest) (r *siciality.DouyinRelationFollowListResponse, err error) {
-	var _args siciality.SocialityServiceFollowingListArgs
+func (p *kClient) FollowingList(ctx context.Context, req *sociality.DouyinRelationFollowListRequest) (r *sociality.DouyinRelationFollowListResponse, err error) {
+	var _args sociality.SocialityServiceFollowingListArgs
 	_args.Req = req
-	var _result siciality.SocialityServiceFollowingListResult
+	var _result sociality.SocialityServiceFollowingListResult
 	if err = p.c.Call(ctx, "FollowingList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) FollowerList(ctx context.Context, req *siciality.DouyinRelationFollowerListRequest) (r *siciality.DouyinRelationFollowerListResponse, err error) {
-	var _args siciality.SocialityServiceFollowerListArgs
+func (p *kClient) FollowerList(ctx context.Context, req *sociality.DouyinRelationFollowerListRequest) (r *sociality.DouyinRelationFollowerListResponse, err error) {
+	var _args sociality.SocialityServiceFollowerListArgs
 	_args.Req = req
-	var _result siciality.SocialityServiceFollowerListResult
+	var _result sociality.SocialityServiceFollowerListResult
 	if err = p.c.Call(ctx, "FollowerList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) FriendList(ctx context.Context, req *siciality.DouyinRelationFriendListRequest) (r *siciality.DouyinRelationFriendListResponse, err error) {
-	var _args siciality.SocialityServiceFriendListArgs
+func (p *kClient) FriendList(ctx context.Context, req *sociality.DouyinRelationFriendListRequest) (r *sociality.DouyinRelationFriendListResponse, err error) {
+	var _args sociality.SocialityServiceFriendListArgs
 	_args.Req = req
-	var _result siciality.SocialityServiceFriendListResult
+	var _result sociality.SocialityServiceFriendListResult
 	if err = p.c.Call(ctx, "FriendList", &_args, &_result); err != nil {
 		return
 	}

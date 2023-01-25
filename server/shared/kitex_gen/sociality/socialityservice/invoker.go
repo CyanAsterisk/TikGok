@@ -3,12 +3,12 @@
 package socialityservice
 
 import (
-	siciality "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/siciality"
+	sociality "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
 	server "github.com/cloudwego/kitex/server"
 )
 
 // NewInvoker creates a server.Invoker with the given handler and options.
-func NewInvoker(handler siciality.SocialityService, opts ...server.Option) server.Invoker {
+func NewInvoker(handler sociality.SocialityService, opts ...server.Option) server.Invoker {
 	var options []server.Option
 
 	options = append(options, opts...)

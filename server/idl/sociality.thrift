@@ -1,4 +1,4 @@
-namespace go siciality
+namespace go sociality
 
 struct User {
     1: i64 id // User id

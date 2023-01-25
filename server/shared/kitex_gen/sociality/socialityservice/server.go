@@ -2,12 +2,12 @@
 package socialityservice
 
 import (
-	siciality "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/siciality"
+	sociality "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
 	server "github.com/cloudwego/kitex/server"
 )
 
 // NewServer creates a server.Server with the given handler and options.
-func NewServer(handler siciality.SocialityService, opts ...server.Option) server.Server {
+func NewServer(handler sociality.SocialityService, opts ...server.Option) server.Server {
 	var options []server.Option
 
 	options = append(options, opts...)
