@@ -2,7 +2,7 @@ namespace go errno
 
 enum Err
 {
-    Success               = 10000,
+    Success               = 0,
     BadRequest            = 10001,
 	GenerateTokenFail     = 10002,
 	RequestServerFail     = 10003,
