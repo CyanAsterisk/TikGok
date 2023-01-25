@@ -51,7 +51,6 @@ func (s *UserServiceImpl) Register(_ context.Context, req *user.DouyinUserRegist
 		UserId:     _user.ID,
 		Token:      token,
 	}, nil
-
 }
 
 // Login implements the UserServiceImpl interface.
