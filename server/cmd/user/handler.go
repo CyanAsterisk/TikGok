@@ -22,7 +22,7 @@ type UserServiceImpl struct {
 }
 
 // Register implements the UserServiceImpl interface.
-func (s *UserServiceImpl) Register(ctx context.Context, req *user.DouyinUserRegisterRequest) (*user.DouyinUserRegisterResponse, error) {
+func (s *UserServiceImpl) Register(_ context.Context, req *user.DouyinUserRegisterRequest) (*user.DouyinUserRegisterResponse, error) {
 	var _user model.User
 	result := global.DB.Where(&model.User{Username: req.Username}).First(&_user)
 	if result.RowsAffected != 0 {
@@ -53,9 +53,31 @@ func (s *UserServiceImpl) Register(ctx context.Context, req *user.DouyinUserRegi
 }
 
 // Login implements the UserServiceImpl interface.
-func (s *UserServiceImpl) Login(ctx context.Context, req *user.DouyinUserLoginRequest) (resp *user.DouyinUserLoginResponse, err error) {
-	// TODO: Your code here...
-	return
+func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequest) (resp *user.DouyinUserLoginResponse, err error) {
+	var _user model.User
+	result := global.DB.Where(&model.User{Username: req.Username}).First(&_user)
+	if result.RowsAffected == 0 {
+		return nil, status.Errorf(codes.NotFound, "no such user")
+	}
+
+	if _user.Password != tools.Md5Crypt(req.Password, global.ServerConfig.MysqlInfo.Salt) {
+		return nil, status.Errorf(codes.PermissionDenied, "wrong password")
+	}
+	token, err := s.jwt.CreateToken(models.CustomClaims{
+		ID: _user.ID,
+		StandardClaims: jwt.StandardClaims{
+			NotBefore: time.Now().Unix(),
+			ExpiresAt: time.Now().Unix() + consts.ThirtyDays,
+			Issuer:    consts.JWTIssuer,
+		},
+	})
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "create token error: %s", err.Error())
+	}
+	return &user.DouyinUserLoginResponse{
+		UserId: _user.ID,
+		Token:  token,
+	}, nil
 }
 
 // GetUserInfo implements the UserServiceImpl interface.
