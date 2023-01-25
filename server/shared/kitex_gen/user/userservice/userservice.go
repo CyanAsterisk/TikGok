@@ -121,7 +121,7 @@ func (p *kClient) Login(ctx context.Context, req *user.DouyinUserLoginRequest) (
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetUserInfo(ctx context.Context, req *user.DouyinUserRequest) (r *user.DouyinUserRequest, err error) {
+func (p *kClient) GetUserInfo(ctx context.Context, req *user.DouyinUserRequest) (r *user.DouyinUserResponse, err error) {
 	var _args user.UserServiceGetUserInfoArgs
 	_args.Req = req
 	var _result user.UserServiceGetUserInfoResult
