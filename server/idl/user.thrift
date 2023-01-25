@@ -46,5 +46,5 @@ struct douyin_user_response {
 service UserService {
     douyin_user_register_response Register(1: douyin_user_register_request req)
     douyin_user_login_response Login(1: douyin_user_login_request req)
-    douyin_user_request GetUserInfo(1: douyin_user_request req)
+    douyin_user_response GetUserInfo(1: douyin_user_request req)
 }

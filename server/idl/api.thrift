@@ -189,7 +189,7 @@ struct douyin_relation_friend_list_response {
 service ApiService {
     douyin_user_register_response Register(1: douyin_user_register_request req)(api.post="/douyin/user/register");
     douyin_user_login_response Login(1: douyin_user_login_request req)(api.post="/douyin/user/login");
-    douyin_user_request GetUserInfo(1: douyin_user_request req)(api.get="/douyin/user");
+    douyin_user_response GetUserInfo(1: douyin_user_request req)(api.get="/douyin/user");
 
     douyin_feed_response Feed (1: douyin_feed_request req)(api.get="/douyin/feed");
     douyin_publish_action_response PublishVideo (1: douyin_publish_action_request req)(api.post="/douyin/publish/action");
