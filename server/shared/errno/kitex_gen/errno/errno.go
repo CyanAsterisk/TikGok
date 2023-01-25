@@ -11,7 +11,7 @@ import (
 type Err int64
 
 const (
-	Err_Success             Err = 10000
+	Err_Success             Err = 0
 	Err_BadRequest          Err = 10001
 	Err_GenerateTokenFail   Err = 10002
 	Err_RequestServerFail   Err = 10003
