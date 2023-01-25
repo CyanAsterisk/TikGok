@@ -9,6 +9,7 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/model"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/tools"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
+	"github.com/CyanAsterisk/TikGok/server/shared/errno/kitex_gen/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/user"
 	"github.com/CyanAsterisk/TikGok/server/shared/middleware"
 	"github.com/cloudwego/kitex/pkg/remote/trans/nphttp2/codes"
@@ -46,14 +47,15 @@ func (s *UserServiceImpl) Register(_ context.Context, req *user.DouyinUserRegist
 		return nil, status.Errorf(codes.Internal, "create token error: %s", err.Error())
 	}
 	return &user.DouyinUserRegisterResponse{
-		UserId: _user.ID,
-		Token:  token,
+		StatusCode: int32(errno.Err_Success),
+		UserId:     _user.ID,
+		Token:      token,
 	}, nil
 
 }
 
 // Login implements the UserServiceImpl interface.
-func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequest) (resp *user.DouyinUserLoginResponse, err error) {
+func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequest) (*user.DouyinUserLoginResponse, error) {
 	var _user model.User
 	result := global.DB.Where(&model.User{Username: req.Username}).First(&_user)
 	if result.RowsAffected == 0 {
@@ -75,13 +77,31 @@ func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequ
 		return nil, status.Errorf(codes.Internal, "create token error: %s", err.Error())
 	}
 	return &user.DouyinUserLoginResponse{
-		UserId: _user.ID,
-		Token:  token,
+		StatusCode: int32(errno.Err_Success),
+		UserId:     _user.ID,
+		Token:      token,
 	}, nil
 }
 
 // GetUserInfo implements the UserServiceImpl interface.
-func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserRequest) (resp *user.DouyinUserRequest, err error) {
-	// TODO: Your code here...
-	return
+func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserRequest) (*user.DouyinUserResponse, error) {
+	_, err := s.jwt.ParseToken(req.Token)
+	if err != nil {
+		if err == middleware.TokenExpired {
+			return nil, status.Errorf(codes.PermissionDenied, err.Error())
+		}
+	}
+	var _user model.User
+	result := global.DB.Where(&model.User{ID: req.UserId}).First(&_user)
+	if result.RowsAffected == 0 {
+		return nil, status.Errorf(codes.NotFound, result.Error.Error())
+	}
+	return &user.DouyinUserResponse{
+		StatusCode: int32(errno.Err_Success),
+		StatusMsg:  "",
+		User: &user.User{
+			Id:   _user.ID,
+			Name: _user.Username,
+		},
+	}, nil
 }
