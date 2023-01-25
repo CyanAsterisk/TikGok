@@ -3,6 +3,7 @@ package consts
 import "time"
 
 const (
+	TikGok         = "TikGok"
 	MySqlDSN       = "%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local"
 	UserMigrateDSN = "root:123456@tcp(localhost:3306)/TikGok?charset=utf8mb4&parseTime=True&loc=Local"
 
@@ -19,9 +20,10 @@ const (
 	SocialityConfigPath   = "./server/cmd/sociality/config.yaml"
 	VideoConfigPath       = "./server/cmd/video/config.yaml"
 
-	NacosSnowflakeNode = 1
-	UserSnowflakeNode  = 2
-	VideoSnowflakeNode = 3
+	NacosSnowflakeNode       = 1
+	UserSnowflakeNode        = 2
+	VideoSnowflakeNode       = 3
+	InteractionSnowflakeNode = 4
 
 	ApiGroup         = "API_GROUP"
 	UserGroup        = "AUTH_GROUP"
@@ -46,4 +48,13 @@ const (
 	TCP = "tcp"
 
 	FreePortAddress = "localhost:0"
+
+	InvalidComment = 0
+	ValidComment   = 1
+
+	MySQLImage         = "mysql:latest"
+	MySQLContainerPort = "3306/tcp"
+	MySQLContainerIP   = "127.0.0.1"
+	MySQLPort          = "0"
+	MySQLAdmin         = "root"
 )

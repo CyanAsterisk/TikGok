@@ -4,7 +4,7 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/CyanAsterisk/TikGok/server/cmd/video/global"
+	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/global"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/bwmarrin/snowflake"
 	"github.com/bytedance/sonic"
@@ -21,7 +21,7 @@ import (
 // InitNacos to init nacos
 func InitNacos(Port int) (registry.Registry, *registry.Info) {
 	v := viper.New()
-	v.SetConfigFile(consts.VideoConfigPath)
+	v.SetConfigFile(consts.InteractionConfigPath)
 	if err := v.ReadInConfig(); err != nil {
 		klog.Fatalf("read viper config failed: %s", err)
 	}
@@ -75,7 +75,7 @@ func InitNacos(Port int) (registry.Registry, *registry.Info) {
 		},
 	)
 
-	r := nacos.NewNacosRegistry(registryClient, nacos.WithGroup(consts.UserGroup))
+	r := nacos.NewNacosRegistry(registryClient, nacos.WithGroup(consts.InteractionGroup))
 
 	sf, err := snowflake.NewNode(consts.NacosSnowflakeNode)
 	if err != nil {

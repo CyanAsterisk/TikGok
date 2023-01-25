@@ -1,7 +1,7 @@
 # Configure according to Nacos configuration.
 host: '127.0.0.1'
 port: 8848
-namespace: '6e815bb4-25d0-4155-a1e0-6ec17a7ee600'
+namespace: 'c7328964-7877-4392-bc66-9cea3522391b'
 user: 'nacos'
 password: 'nacos'
 dataid: 'api'
