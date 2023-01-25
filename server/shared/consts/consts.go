@@ -21,6 +21,7 @@ const (
 
 	NacosSnowflakeNode = 1
 	UserSnowflakeNode  = 2
+	VideoSnowflakeNode = 3
 
 	ApiGroup         = "API_GROUP"
 	UserGroup        = "AUTH_GROUP"
