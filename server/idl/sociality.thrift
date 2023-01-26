@@ -8,6 +8,11 @@ struct User {
     5: bool is_follow // true-followed, false-not followed
 }
 
+struct douyin_base_response{
+     1: i32 status_code // Status code, 0-success, other values-failure
+     2: string status_msg // Return status description
+}
+
 struct douyin_relation_action_request {
     1: string token // User authentication token
     2: i64 to_user_id // The other party's user id
@@ -15,8 +20,7 @@ struct douyin_relation_action_request {
 }
 
 struct douyin_relation_action_response {
-    1: i32 status_code // Status code, 0-success, other values-failure
-    2: string status_msg // Return status description
+   1: douyin_base_response base_resp
 }
 
 struct douyin_relation_follow_list_request {
@@ -25,9 +29,8 @@ struct douyin_relation_follow_list_request {
 }
 
 struct douyin_relation_follow_list_response {
-    1: i32 status_code // Status code, 0-success, other values-failure
-    2: string status_msg // Return status description
-    3: list<User> user_list // List of user information
+    1: douyin_base_response base_resp
+    2: list<User> user_list // List of user information
 }
 
 struct douyin_relation_follower_list_request {
@@ -36,9 +39,8 @@ struct douyin_relation_follower_list_request {
 }
 
 struct douyin_relation_follower_list_response {
-    1: i32 status_code // Status code, 0-success, other values-failure
-    2: string status_msg // Return status description
-    3: list<User> user_list // List of user information
+    1: douyin_base_response base_resp
+    2: list<User> user_list // List of user information
 }
 
 struct douyin_relation_friend_list_request {
@@ -47,9 +49,8 @@ struct douyin_relation_friend_list_request {
 }
 
 struct douyin_relation_friend_list_response {
-    1: i32 status_code // Status code, 0-success, other values-failure
-    2: string status_msg // Return status description
-    3: list<User> user_list // List of user information
+    1: douyin_base_response base_resp
+    2: list<User> user_list // List of user information
 }
 
 service SocialityService {

@@ -111,8 +111,8 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserR
 		resp.BaseResp = pack.BuildBaseResp(err)
 		return resp, nil
 	}
-	if res.StatusCode != int32(errno.Success.ErrCode) {
-		resp.BaseResp = pack.BuildBaseResp(errors.New(res.StatusMsg))
+	if res.BaseResp.StatusCode != int32(errno.Success.ErrCode) {
+		resp.BaseResp = pack.BuildBaseResp(errors.New(res.BaseResp.StatusMsg))
 		return resp, nil
 	}
 	resp.User.FollowerCount = int64(len(res.UserList))
@@ -131,8 +131,8 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserR
 		resp.BaseResp = pack.BuildBaseResp(err)
 		return resp, nil
 	}
-	if response.StatusCode != int32(errno.Success.ErrCode) {
-		resp.BaseResp = pack.BuildBaseResp(errors.New(response.StatusMsg))
+	if response.BaseResp.StatusCode != int32(errno.Success.ErrCode) {
+		resp.BaseResp = pack.BuildBaseResp(errors.New(response.BaseResp.StatusMsg))
 		return resp, nil
 	}
 	resp.User.FollowCount = int64(len(response.UserList))

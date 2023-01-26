@@ -26,6 +26,11 @@ struct Video {
     8: string title // Video title
 }
 
+struct douyin_base_response{
+     1: i32 status_code // Status code, 0-success, other values-failure
+     2: string status_msg // Return status description
+}
+
 struct douyin_favorite_action_request {
     1: string token // User authentication token
     2: i64 video_id // Video Id
@@ -33,8 +38,7 @@ struct douyin_favorite_action_request {
 }
 
 struct douyin_favorite_action_response {
-    1: i32 status_code // Status code, 0-success, other values-failure
-    2: string status_msg // Return status description
+   1: douyin_base_response base_resp
 }
 
 struct douyin_favorite_list_request {
@@ -43,9 +47,8 @@ struct douyin_favorite_list_request {
 }
 
 struct douyin_favorite_list_response {
-    1: i32 status_code // Status code, 0-success, other values-failure
-    2: string status_msg // Return status description
-    3: list<Video> video_list // List of videos posted by the user
+    1: douyin_base_response base_resp
+    2: list<Video> video_list // List of videos posted by the user
 }
 
 struct douyin_comment_action_request {
@@ -57,9 +60,8 @@ struct douyin_comment_action_request {
 }
 
 struct douyin_comment_action_response {
-    1: i32 status_code // Status code, 0-success, other values-failure
-    2: string status_msg // Return status description
-    3: Comment comment // The comment successfully returns the comment content, no need to re-pull the entire list
+    1: douyin_base_response base_resp
+    2: Comment comment // The comment successfully returns the comment content, no need to re-pull the entire list
 }
 
 struct douyin_comment_list_request {
@@ -68,9 +70,8 @@ struct douyin_comment_list_request {
 }
 
 struct douyin_comment_list_response {
-    1: i32 status_code // Status code, 0-success, other values-failure
-    2: string status_msg // Return status description
-    3: list<Comment> comment_list // List of comments
+    1: douyin_base_response base_resp
+    2: list<Comment> comment_list // List of comments
 }
 
 service InteractionServer {
