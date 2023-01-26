@@ -30,11 +30,11 @@ func CommentIdListByVideoId(videoId int64) ([]string, error) {
 }
 
 // CreateComment creates a comment.
-func CreateComment(comment model.Comment) (model.Comment, error) {
+func CreateComment(comment *model.Comment) (*model.Comment, error) {
 	err := global.DB.Model(model.Comment{}).
 		Create(&comment).Error
 	if err != nil {
-		return model.Comment{}, err
+		return nil, err
 	}
 	return comment, nil
 }
@@ -56,8 +56,8 @@ func DeleteComment(id int64) error {
 }
 
 // GetCommentListByVideoId gets comment list by videoId.
-func GetCommentListByVideoId(videoId int64) ([]model.Comment, error) {
-	var commentList []model.Comment
+func GetCommentListByVideoId(videoId int64) ([]*model.Comment, error) {
+	var commentList []*model.Comment
 	err := global.DB.Model(model.Comment{}).
 		Where(&model.Comment{VideoId: videoId, ActionType: consts.ValidComment}).Order("create_date desc").Find(&commentList).Error
 	if err == gorm.ErrRecordNotFound {

@@ -105,7 +105,6 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserR
 
 	res, err := global.SocialClient.FollowerList(ctx, &sociality.DouyinRelationFollowerListRequest{
 		UserId: req.UserId,
-		Token:  req.Token,
 	})
 	if err != nil {
 		resp.BaseResp = pack.BuildBaseResp(err)
@@ -125,7 +124,6 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserR
 
 	response, err := global.SocialClient.FollowingList(ctx, (*sociality.DouyinRelationFollowListRequest)(&sociality.DouyinRelationFollowerListRequest{
 		UserId: req.UserId,
-		Token:  req.Token,
 	}))
 	if err != nil {
 		resp.BaseResp = pack.BuildBaseResp(err)
