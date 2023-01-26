@@ -35,7 +35,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	createComment(db)
+	createFavorite(db)
+}
 
+func createComment(db *gorm.DB) {
 	_ = db.AutoMigrate(&model.Comment{})
 
 	for i := 0; i < 10; i++ {
@@ -45,6 +49,19 @@ func main() {
 			ActionType:  1,
 			CommentText: fmt.Sprintf("It's comment%d", i),
 			CreateDate:  time.Now(),
+		}
+		db.Save(&c)
+	}
+}
+
+func createFavorite(db *gorm.DB) {
+	_ = db.AutoMigrate(&model.Favorite{})
+
+	for i := 0; i < 10; i++ {
+		c := model.Favorite{
+			UserId:     1616071000544256000,
+			VideoId:    1616071000544256001,
+			ActionType: 1,
 		}
 		db.Save(&c)
 	}

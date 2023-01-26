@@ -1,7 +1,7 @@
 package comment
 
 import (
-	"fmt"
+	"errors"
 	"time"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/dao"
@@ -34,6 +34,6 @@ func (m *Manager) GetResp(req *interaction.DouyinCommentActionRequest) (comment 
 		}
 		return nil, nil
 	default:
-		return nil, fmt.Errorf("invalid action type")
+		return nil, errors.New("invalid action type")
 	}
 }

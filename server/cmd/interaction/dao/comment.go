@@ -64,7 +64,7 @@ func GetCommentListByVideoId(videoId int64) ([]*model.Comment, error) {
 		return nil, nil
 	}
 	if err != nil {
-		return commentList, err
+		return nil, err
 	}
 	return commentList, nil
 }

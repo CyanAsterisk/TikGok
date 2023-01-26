@@ -20,7 +20,7 @@ type Comment struct {
 
 // BeforeCreate uses snowflake to generate an ID.
 func (c *Comment) BeforeCreate(_ *gorm.DB) (err error) {
-	sf, err := snowflake.NewNode(consts.InteractionSnowflakeNode)
+	sf, err := snowflake.NewNode(consts.CommentSnowflakeNode)
 	if err != nil {
 		klog.Errorf("generate id failed: %s", err.Error())
 		return err

@@ -20,10 +20,11 @@ const (
 	SocialityConfigPath   = "./server/cmd/sociality/config.yaml"
 	VideoConfigPath       = "./server/cmd/video/config.yaml"
 
-	NacosSnowflakeNode       = 1
-	UserSnowflakeNode        = 2
-	VideoSnowflakeNode       = 3
-	InteractionSnowflakeNode = 4
+	NacosSnowflakeNode    = 1
+	UserSnowflakeNode     = 2
+	VideoSnowflakeNode    = 3
+	CommentSnowflakeNode  = 4
+	FavoriteSnowflakeNode = 5
 
 	ApiGroup         = "API_GROUP"
 	UserGroup        = "AUTH_GROUP"
@@ -51,6 +52,9 @@ const (
 
 	InvalidComment = 0
 	ValidComment   = 1
+
+	IsNotLike = 0
+	IsLike    = 1
 
 	MySQLImage         = "mysql:latest"
 	MySQLContainerPort = "3306/tcp"
