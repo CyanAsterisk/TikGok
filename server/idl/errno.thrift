@@ -9,4 +9,5 @@ enum Err
 	BindAndValidateFail   = 10004,
 	ParamErr              = 10005,
 	AuthorizeFail         = 10006,
+	UserAlreadyExistErr   = 10007,
 }

@@ -44,6 +44,7 @@ var (
 	BindAndValidateFail = NewErrNo(int64(errno.Err_BindAndValidateFail), "Bind and validate failed")
 	ParamErr            = NewErrNo(int64(errno.Err_ParamErr), "Param error")
 	AuthorizeFail       = NewErrNo(int64(errno.Err_AuthorizeFail), "Authorize failed")
+	UserAlreadyExist    = NewErrNo(int64(errno.Err_UserAlreadyExistErr), "Authorize failed")
 )
 
 // SendResponse pack response
