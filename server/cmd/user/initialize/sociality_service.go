@@ -3,7 +3,7 @@ package initialize
 import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/global"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
-	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/siciality/socialityservice"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality/socialityservice"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/klog"
