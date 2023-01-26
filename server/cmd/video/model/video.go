@@ -10,7 +10,7 @@ import (
 type Video struct {
 	ID       int64  `gorm:"primarykey"`
 	Uid      int64  `gorm:"column:user_id; not null"`
-	PlayUrl  string `jgorm:"not null; type: varchar(255)"`
+	PlayUrl  string `gorm:"not null; type: varchar(255)"`
 	CoverUrl string `gorm:"not null; type: varchar(255)"`
 	Title    string `gorm:"not null; type: varchar(255)"`
 }

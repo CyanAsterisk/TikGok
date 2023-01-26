@@ -635,7 +635,7 @@ func (p *DouyinBaseResponse) Field2DeepEqual(src string) bool {
 type DouyinRelationActionRequest struct {
 	UserId     int64 `thrift:"user_id,1" frugal:"1,default,i64" json:"user_id"`
 	ToUserId   int64 `thrift:"to_user_id,2" frugal:"2,default,i64" json:"to_user_id"`
-	ActionType int32 `thrift:"action_type,3" frugal:"3,default,i32" json:"action_type"`
+	ActionType int8  `thrift:"action_type,3" frugal:"3,default,i8" json:"action_type"`
 }
 
 func NewDouyinRelationActionRequest() *DouyinRelationActionRequest {
@@ -654,7 +654,7 @@ func (p *DouyinRelationActionRequest) GetToUserId() (v int64) {
 	return p.ToUserId
 }
 
-func (p *DouyinRelationActionRequest) GetActionType() (v int32) {
+func (p *DouyinRelationActionRequest) GetActionType() (v int8) {
 	return p.ActionType
 }
 func (p *DouyinRelationActionRequest) SetUserId(val int64) {
@@ -663,7 +663,7 @@ func (p *DouyinRelationActionRequest) SetUserId(val int64) {
 func (p *DouyinRelationActionRequest) SetToUserId(val int64) {
 	p.ToUserId = val
 }
-func (p *DouyinRelationActionRequest) SetActionType(val int32) {
+func (p *DouyinRelationActionRequest) SetActionType(val int8) {
 	p.ActionType = val
 }
 
@@ -713,7 +713,7 @@ func (p *DouyinRelationActionRequest) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 3:
-			if fieldTypeId == thrift.I32 {
+			if fieldTypeId == thrift.BYTE {
 				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -771,7 +771,7 @@ func (p *DouyinRelationActionRequest) ReadField2(iprot thrift.TProtocol) error {
 }
 
 func (p *DouyinRelationActionRequest) ReadField3(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadI32(); err != nil {
+	if v, err := iprot.ReadByte(); err != nil {
 		return err
 	} else {
 		p.ActionType = v
@@ -851,10 +851,10 @@ WriteFieldEndError:
 }
 
 func (p *DouyinRelationActionRequest) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("action_type", thrift.I32, 3); err != nil {
+	if err = oprot.WriteFieldBegin("action_type", thrift.BYTE, 3); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI32(p.ActionType); err != nil {
+	if err := oprot.WriteByte(p.ActionType); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -906,7 +906,7 @@ func (p *DouyinRelationActionRequest) Field2DeepEqual(src int64) bool {
 	}
 	return true
 }
-func (p *DouyinRelationActionRequest) Field3DeepEqual(src int32) bool {
+func (p *DouyinRelationActionRequest) Field3DeepEqual(src int8) bool {
 
 	if p.ActionType != src {
 		return false

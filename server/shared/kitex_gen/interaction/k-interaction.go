@@ -1308,7 +1308,7 @@ func (p *DouyinFavoriteActionRequest) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 3:
-			if fieldTypeId == thrift.I32 {
+			if fieldTypeId == thrift.BYTE {
 				l, err = p.FastReadField3(buf[offset:])
 				offset += l
 				if err != nil {
@@ -1387,7 +1387,7 @@ func (p *DouyinFavoriteActionRequest) FastReadField2(buf []byte) (int, error) {
 func (p *DouyinFavoriteActionRequest) FastReadField3(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadI32(buf[offset:]); err != nil {
+	if v, l, err := bthrift.Binary.ReadByte(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
@@ -1449,8 +1449,8 @@ func (p *DouyinFavoriteActionRequest) fastWriteField2(buf []byte, binaryWriter b
 
 func (p *DouyinFavoriteActionRequest) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "action_type", thrift.I32, 3)
-	offset += bthrift.Binary.WriteI32(buf[offset:], p.ActionType)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "action_type", thrift.BYTE, 3)
+	offset += bthrift.Binary.WriteByte(buf[offset:], p.ActionType)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -1476,8 +1476,8 @@ func (p *DouyinFavoriteActionRequest) field2Length() int {
 
 func (p *DouyinFavoriteActionRequest) field3Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("action_type", thrift.I32, 3)
-	l += bthrift.Binary.I32Length(p.ActionType)
+	l += bthrift.Binary.FieldBeginLength("action_type", thrift.BYTE, 3)
+	l += bthrift.Binary.ByteLength(p.ActionType)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -1989,7 +1989,7 @@ func (p *DouyinCommentActionRequest) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 3:
-			if fieldTypeId == thrift.I32 {
+			if fieldTypeId == thrift.BYTE {
 				l, err = p.FastReadField3(buf[offset:])
 				offset += l
 				if err != nil {
@@ -2096,7 +2096,7 @@ func (p *DouyinCommentActionRequest) FastReadField2(buf []byte) (int, error) {
 func (p *DouyinCommentActionRequest) FastReadField3(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadI32(buf[offset:]); err != nil {
+	if v, l, err := bthrift.Binary.ReadByte(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
@@ -2190,8 +2190,8 @@ func (p *DouyinCommentActionRequest) fastWriteField2(buf []byte, binaryWriter bt
 
 func (p *DouyinCommentActionRequest) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "action_type", thrift.I32, 3)
-	offset += bthrift.Binary.WriteI32(buf[offset:], p.ActionType)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "action_type", thrift.BYTE, 3)
+	offset += bthrift.Binary.WriteByte(buf[offset:], p.ActionType)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -2235,8 +2235,8 @@ func (p *DouyinCommentActionRequest) field2Length() int {
 
 func (p *DouyinCommentActionRequest) field3Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("action_type", thrift.I32, 3)
-	l += bthrift.Binary.I32Length(p.ActionType)
+	l += bthrift.Binary.FieldBeginLength("action_type", thrift.BYTE, 3)
+	l += bthrift.Binary.ByteLength(p.ActionType)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l

@@ -34,7 +34,7 @@ struct douyin_base_response{
 struct douyin_favorite_action_request {
     1: i64 user_id // User Id
     2: i64 video_id // Video Id
-    3: i32 action_type // 1-like, 2-unlike
+    3: i8 action_type // 1-like, 2-unlike
 }
 
 struct douyin_favorite_action_response {
@@ -53,7 +53,7 @@ struct douyin_favorite_list_response {
 struct douyin_comment_action_request {
     1: i64 user_id // User Id
     2: i64 video_id // Video Id
-    3: i32 action_type // 1-like, 2-unlike
+    3: i8 action_type // 1-like, 2-unlike
     4: string comment_text // The content of the comment filled by the user, used when action_type=1
     5: i64 comment_id // The comment id to be deleted is used when action_type=2
 }

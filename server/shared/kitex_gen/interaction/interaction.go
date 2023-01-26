@@ -1569,7 +1569,7 @@ func (p *DouyinBaseResponse) Field2DeepEqual(src string) bool {
 type DouyinFavoriteActionRequest struct {
 	UserId     int64 `thrift:"user_id,1" frugal:"1,default,i64" json:"user_id"`
 	VideoId    int64 `thrift:"video_id,2" frugal:"2,default,i64" json:"video_id"`
-	ActionType int32 `thrift:"action_type,3" frugal:"3,default,i32" json:"action_type"`
+	ActionType int8  `thrift:"action_type,3" frugal:"3,default,i8" json:"action_type"`
 }
 
 func NewDouyinFavoriteActionRequest() *DouyinFavoriteActionRequest {
@@ -1588,7 +1588,7 @@ func (p *DouyinFavoriteActionRequest) GetVideoId() (v int64) {
 	return p.VideoId
 }
 
-func (p *DouyinFavoriteActionRequest) GetActionType() (v int32) {
+func (p *DouyinFavoriteActionRequest) GetActionType() (v int8) {
 	return p.ActionType
 }
 func (p *DouyinFavoriteActionRequest) SetUserId(val int64) {
@@ -1597,7 +1597,7 @@ func (p *DouyinFavoriteActionRequest) SetUserId(val int64) {
 func (p *DouyinFavoriteActionRequest) SetVideoId(val int64) {
 	p.VideoId = val
 }
-func (p *DouyinFavoriteActionRequest) SetActionType(val int32) {
+func (p *DouyinFavoriteActionRequest) SetActionType(val int8) {
 	p.ActionType = val
 }
 
@@ -1647,7 +1647,7 @@ func (p *DouyinFavoriteActionRequest) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 3:
-			if fieldTypeId == thrift.I32 {
+			if fieldTypeId == thrift.BYTE {
 				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -1705,7 +1705,7 @@ func (p *DouyinFavoriteActionRequest) ReadField2(iprot thrift.TProtocol) error {
 }
 
 func (p *DouyinFavoriteActionRequest) ReadField3(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadI32(); err != nil {
+	if v, err := iprot.ReadByte(); err != nil {
 		return err
 	} else {
 		p.ActionType = v
@@ -1785,10 +1785,10 @@ WriteFieldEndError:
 }
 
 func (p *DouyinFavoriteActionRequest) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("action_type", thrift.I32, 3); err != nil {
+	if err = oprot.WriteFieldBegin("action_type", thrift.BYTE, 3); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI32(p.ActionType); err != nil {
+	if err := oprot.WriteByte(p.ActionType); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1840,7 +1840,7 @@ func (p *DouyinFavoriteActionRequest) Field2DeepEqual(src int64) bool {
 	}
 	return true
 }
-func (p *DouyinFavoriteActionRequest) Field3DeepEqual(src int32) bool {
+func (p *DouyinFavoriteActionRequest) Field3DeepEqual(src int8) bool {
 
 	if p.ActionType != src {
 		return false
@@ -2443,7 +2443,7 @@ func (p *DouyinFavoriteListResponse) Field2DeepEqual(src []*Video) bool {
 type DouyinCommentActionRequest struct {
 	UserId      int64  `thrift:"user_id,1" frugal:"1,default,i64" json:"user_id"`
 	VideoId     int64  `thrift:"video_id,2" frugal:"2,default,i64" json:"video_id"`
-	ActionType  int32  `thrift:"action_type,3" frugal:"3,default,i32" json:"action_type"`
+	ActionType  int8   `thrift:"action_type,3" frugal:"3,default,i8" json:"action_type"`
 	CommentText string `thrift:"comment_text,4" frugal:"4,default,string" json:"comment_text"`
 	CommentId   int64  `thrift:"comment_id,5" frugal:"5,default,i64" json:"comment_id"`
 }
@@ -2464,7 +2464,7 @@ func (p *DouyinCommentActionRequest) GetVideoId() (v int64) {
 	return p.VideoId
 }
 
-func (p *DouyinCommentActionRequest) GetActionType() (v int32) {
+func (p *DouyinCommentActionRequest) GetActionType() (v int8) {
 	return p.ActionType
 }
 
@@ -2481,7 +2481,7 @@ func (p *DouyinCommentActionRequest) SetUserId(val int64) {
 func (p *DouyinCommentActionRequest) SetVideoId(val int64) {
 	p.VideoId = val
 }
-func (p *DouyinCommentActionRequest) SetActionType(val int32) {
+func (p *DouyinCommentActionRequest) SetActionType(val int8) {
 	p.ActionType = val
 }
 func (p *DouyinCommentActionRequest) SetCommentText(val string) {
@@ -2539,7 +2539,7 @@ func (p *DouyinCommentActionRequest) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 3:
-			if fieldTypeId == thrift.I32 {
+			if fieldTypeId == thrift.BYTE {
 				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -2617,7 +2617,7 @@ func (p *DouyinCommentActionRequest) ReadField2(iprot thrift.TProtocol) error {
 }
 
 func (p *DouyinCommentActionRequest) ReadField3(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadI32(); err != nil {
+	if v, err := iprot.ReadByte(); err != nil {
 		return err
 	} else {
 		p.ActionType = v
@@ -2723,10 +2723,10 @@ WriteFieldEndError:
 }
 
 func (p *DouyinCommentActionRequest) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("action_type", thrift.I32, 3); err != nil {
+	if err = oprot.WriteFieldBegin("action_type", thrift.BYTE, 3); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI32(p.ActionType); err != nil {
+	if err := oprot.WriteByte(p.ActionType); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2818,7 +2818,7 @@ func (p *DouyinCommentActionRequest) Field2DeepEqual(src int64) bool {
 	}
 	return true
 }
-func (p *DouyinCommentActionRequest) Field3DeepEqual(src int32) bool {
+func (p *DouyinCommentActionRequest) Field3DeepEqual(src int8) bool {
 
 	if p.ActionType != src {
 		return false

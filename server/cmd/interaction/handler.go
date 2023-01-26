@@ -15,23 +15,51 @@ import (
 // InteractionServerImpl implements the last service interface defined in the IDL.
 type InteractionServerImpl struct {
 	CommentManager
+	VideoManager
 }
 
-// CommentManager manager comment status.
+// CommentManager manage comment status.
 type CommentManager interface {
 	GetResp(req *interaction.DouyinCommentActionRequest) (comment *model.Comment, err error)
 }
 
+// VideoManager defines the Anti Corruption Layer
+// for get video logic.
+type VideoManager interface {
+	GetVideos([]int64) ([]*interaction.Video, error)
+}
+
 // Favorite implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) Favorite(ctx context.Context, req *interaction.DouyinFavoriteActionRequest) (resp *interaction.DouyinFavoriteActionResponse, err error) {
-	// TODO: Your code here...
-	return
+	resp = new(interaction.DouyinFavoriteActionResponse)
+	err = dao.UpdateFavorite(req.UserId, req.VideoId, req.ActionType)
+	if err != nil {
+		klog.Error("favorite error", err)
+		resp.BaseResp = pack.BuildBaseResp(status.Err(codes.Internal, "favorite error"))
+		return resp, nil
+	}
+	resp.BaseResp = pack.BuildBaseResp(nil)
+	return resp, nil
 }
 
 // FavoriteList implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) FavoriteList(ctx context.Context, req *interaction.DouyinFavoriteListRequest) (resp *interaction.DouyinFavoriteListResponse, err error) {
-	// TODO: Your code here...
-	return
+	resp = new(interaction.DouyinFavoriteListResponse)
+	list, err := dao.GetFavoriteVideoIdListByUserId(req.UserId)
+	if err != nil {
+		klog.Error("get user favorite video list error", err)
+		resp.BaseResp = pack.BuildBaseResp(status.Err(codes.Internal, "get user favorite video list error"))
+		return resp, nil
+	}
+	videos, err := s.VideoManager.GetVideos(list)
+	if err != nil {
+		klog.Error("get videos by video manager error", err)
+		resp.BaseResp = pack.BuildBaseResp(status.Err(codes.Internal, "get user favorite video list error"))
+		return resp, nil
+	}
+	resp.VideoList = videos
+	resp.BaseResp = pack.BuildBaseResp(nil)
+	return resp, nil
 }
 
 // Comment implements the InteractionServerImpl interface.

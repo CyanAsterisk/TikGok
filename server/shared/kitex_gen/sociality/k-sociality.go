@@ -574,7 +574,7 @@ func (p *DouyinRelationActionRequest) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 3:
-			if fieldTypeId == thrift.I32 {
+			if fieldTypeId == thrift.BYTE {
 				l, err = p.FastReadField3(buf[offset:])
 				offset += l
 				if err != nil {
@@ -653,7 +653,7 @@ func (p *DouyinRelationActionRequest) FastReadField2(buf []byte) (int, error) {
 func (p *DouyinRelationActionRequest) FastReadField3(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadI32(buf[offset:]); err != nil {
+	if v, l, err := bthrift.Binary.ReadByte(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
@@ -715,8 +715,8 @@ func (p *DouyinRelationActionRequest) fastWriteField2(buf []byte, binaryWriter b
 
 func (p *DouyinRelationActionRequest) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "action_type", thrift.I32, 3)
-	offset += bthrift.Binary.WriteI32(buf[offset:], p.ActionType)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "action_type", thrift.BYTE, 3)
+	offset += bthrift.Binary.WriteByte(buf[offset:], p.ActionType)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -742,8 +742,8 @@ func (p *DouyinRelationActionRequest) field2Length() int {
 
 func (p *DouyinRelationActionRequest) field3Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("action_type", thrift.I32, 3)
-	l += bthrift.Binary.I32Length(p.ActionType)
+	l += bthrift.Binary.FieldBeginLength("action_type", thrift.BYTE, 3)
+	l += bthrift.Binary.ByteLength(p.ActionType)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
