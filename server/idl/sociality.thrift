@@ -14,7 +14,7 @@ struct douyin_base_response{
 }
 
 struct douyin_relation_action_request {
-    1: string token // User authentication token
+    1: i64 user_id // User Id
     2: i64 to_user_id // The other party's user id
     3: i32 action_type // 1-Follow, 2-Unfollow
 }
@@ -25,7 +25,6 @@ struct douyin_relation_action_response {
 
 struct douyin_relation_follow_list_request {
     1: i64 user_id // User id
-    2: string token // User authentication token
 }
 
 struct douyin_relation_follow_list_response {
@@ -35,7 +34,6 @@ struct douyin_relation_follow_list_response {
 
 struct douyin_relation_follower_list_request {
     1: i64 user_id // User id
-    2: string token // User authentication token
 }
 
 struct douyin_relation_follower_list_response {
@@ -45,7 +43,6 @@ struct douyin_relation_follower_list_response {
 
 struct douyin_relation_friend_list_request {
     1: i64 user_id // User id
-    2: string token // User authentication token
 }
 
 struct douyin_relation_friend_list_response {

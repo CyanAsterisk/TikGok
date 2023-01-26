@@ -32,7 +32,7 @@ struct douyin_base_response{
 }
 
 struct douyin_favorite_action_request {
-    1: string token // User authentication token
+    1: i64 user_id // User Id
     2: i64 video_id // Video Id
     3: i32 action_type // 1-like, 2-unlike
 }
@@ -43,7 +43,6 @@ struct douyin_favorite_action_response {
 
 struct douyin_favorite_list_request {
     1: i64 user_id // User id
-    2: string token // User authentication token
 }
 
 struct douyin_favorite_list_response {
@@ -52,7 +51,7 @@ struct douyin_favorite_list_response {
 }
 
 struct douyin_comment_action_request {
-    1: string token // User authentication token
+    1: i64 user_id // User Id
     2: i64 video_id // Video Id
     3: i32 action_type // 1-like, 2-unlike
     4: string comment_text // The content of the comment filled by the user, used when action_type=1
@@ -65,8 +64,7 @@ struct douyin_comment_action_response {
 }
 
 struct douyin_comment_list_request {
-    1: string token // User authentication token
-    2: i64 video_id // Video Id
+    1: i64 video_id // Video Id
 }
 
 struct douyin_comment_list_response {

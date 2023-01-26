@@ -26,7 +26,7 @@ struct User {
 
 struct douyin_feed_request {
     1: i64 latest_time // Optional parameter, limit the latest submission timestamp of the returned video, accurate to seconds, and leave it blank to indicate the current time
-    2: string token // Optional parameter, login user settings
+    2: i64 user_id // User Id
 }
 
 struct douyin_feed_response {
@@ -36,7 +36,7 @@ struct douyin_feed_response {
 }
 
 struct douyin_publish_action_request {
-    1: string token // User authentication token
+    1: i64 user_id // User Id
     2: byte data // Video data
     3: string title // Video title
 }
@@ -47,7 +47,6 @@ struct douyin_publish_action_response {
 
 struct douyin_publish_list_request {
     1: i64 user_id // User id
-    2: string token // User authentication token
 }
 
 struct douyin_publish_list_response {
