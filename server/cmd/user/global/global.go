@@ -2,7 +2,7 @@ package global
 
 import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/config"
-	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/siciality/socialityservice"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality/socialityservice"
 	"gorm.io/gorm"
 )
 
