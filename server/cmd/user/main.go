@@ -9,6 +9,7 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/initialize"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	user "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/user/userservice"
+	"github.com/CyanAsterisk/TikGok/server/shared/middleware"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/limit"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
@@ -31,7 +32,9 @@ func main() {
 	)
 	defer p.Shutdown(context.Background())
 
-	impl := new(UserServiceImpl)
+	impl := &UserServiceImpl{
+		jwt: middleware.NewJWT(),
+	}
 	// Create new server.
 	srv := user.NewServer(impl,
 		server.WithServiceAddr(utils.NewNetAddr(consts.TCP, net.JoinHostPort(IP, strconv.Itoa(Port)))),
