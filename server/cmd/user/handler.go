@@ -2,18 +2,20 @@ package main
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	models "github.com/CyanAsterisk/TikGok/server/cmd/api/model"
+	"github.com/CyanAsterisk/TikGok/server/cmd/user/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/model"
+	"github.com/CyanAsterisk/TikGok/server/cmd/user/pack"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/tools"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
-	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/errno"
+	"github.com/CyanAsterisk/TikGok/server/shared/errno"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/user"
 	"github.com/CyanAsterisk/TikGok/server/shared/middleware"
-	"github.com/cloudwego/kitex/pkg/remote/trans/nphttp2/codes"
-	"github.com/cloudwego/kitex/pkg/remote/trans/nphttp2/status"
 	"github.com/golang-jwt/jwt"
 )
 
@@ -23,19 +25,20 @@ type UserServiceImpl struct {
 }
 
 // Register implements the UserServiceImpl interface.
-func (s *UserServiceImpl) Register(_ context.Context, req *user.DouyinUserRegisterRequest) (*user.DouyinUserRegisterResponse, error) {
+func (s *UserServiceImpl) Register(_ context.Context, req *user.DouyinUserRegisterRequest) (resp *user.DouyinUserRegisterResponse, err error) {
+	resp = new(user.DouyinUserRegisterResponse)
+
 	var usr model.User
-	result := global.DB.Where(&model.User{Username: req.Username}).First(&usr)
-	if result.RowsAffected != 0 {
-		return nil, status.Errorf(codes.AlreadyExists, "Account already exists")
-	}
 	usr.Username = req.Username
 	usr.Password = tools.Md5Crypt(req.Password, global.ServerConfig.MysqlInfo.Salt) // Encrypt password with md5.
-	result = global.DB.Create(&usr)
-	if result.Error != nil {
-		return nil, status.Errorf(codes.Internal, result.Error.Error())
+
+	if err = dao.CreateUser(&usr); err != nil {
+		resp.BaseResp = pack.BuildBaseResp(err)
+		return resp, nil
 	}
-	token, err := s.jwt.CreateToken(models.CustomClaims{
+
+	resp.UserId = usr.ID
+	resp.Token, err = s.jwt.CreateToken(models.CustomClaims{
 		ID: usr.ID,
 		StandardClaims: jwt.StandardClaims{
 			NotBefore: time.Now().Unix(),
@@ -44,27 +47,30 @@ func (s *UserServiceImpl) Register(_ context.Context, req *user.DouyinUserRegist
 		},
 	})
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "create token error: %s", err.Error())
+		resp.BaseResp = pack.BuildBaseResp(err)
+		return resp, nil
 	}
-	return &user.DouyinUserRegisterResponse{
-		StatusCode: int32(errno.Err_Success),
-		UserId:     usr.ID,
-		Token:      token,
-	}, nil
+
+	resp.BaseResp = pack.BuildBaseResp(nil)
+	return resp, err
 }
 
 // Login implements the UserServiceImpl interface.
-func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequest) (*user.DouyinUserLoginResponse, error) {
-	var usr model.User
-	result := global.DB.Where(&model.User{Username: req.Username}).First(&usr)
-	if result.RowsAffected == 0 {
-		return nil, status.Errorf(codes.NotFound, "no such user")
+func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequest) (resp *user.DouyinUserLoginResponse, err error) {
+	resp = new(user.DouyinUserLoginResponse)
+
+	usr, err := dao.GetUserByUsername(req.Username)
+	if err != nil {
+		resp.BaseResp = pack.BuildBaseResp(err)
+		return resp, nil
 	}
 
 	if usr.Password != tools.Md5Crypt(req.Password, global.ServerConfig.MysqlInfo.Salt) {
-		return nil, status.Errorf(codes.PermissionDenied, "wrong password")
+		resp.BaseResp = pack.BuildBaseResp(errno.AuthorizeFail)
 	}
-	token, err := s.jwt.CreateToken(models.CustomClaims{
+
+	resp.UserId = usr.ID
+	resp.Token, err = s.jwt.CreateToken(models.CustomClaims{
 		ID: usr.ID,
 		StandardClaims: jwt.StandardClaims{
 			NotBefore: time.Now().Unix(),
@@ -73,34 +79,64 @@ func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequ
 		},
 	})
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "create token error: %s", err.Error())
+		resp.BaseResp = pack.BuildBaseResp(err)
 	}
-	return &user.DouyinUserLoginResponse{
-		StatusCode: int32(errno.Err_Success),
-		UserId:     usr.ID,
-		Token:      token,
-	}, nil
+
+	resp.BaseResp = pack.BuildBaseResp(nil)
+	return resp, nil
 }
 
 // GetUserInfo implements the UserServiceImpl interface.
-func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserRequest) (*user.DouyinUserResponse, error) {
-	_, err := s.jwt.ParseToken(req.Token)
+func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserRequest) (resp *user.DouyinUserResponse, err error) {
+	resp = new(user.DouyinUserResponse)
+
+	cliams, err := s.jwt.ParseToken(req.Token)
 	if err != nil {
-		if err == middleware.TokenExpired {
-			return nil, status.Errorf(codes.PermissionDenied, err.Error())
+		resp.BaseResp = pack.BuildBaseResp(err)
+		return resp, nil
+	}
+
+	usr, err := dao.GetUserById(req.UserId)
+	if err != nil {
+		resp.BaseResp = pack.BuildBaseResp(err)
+		return resp, nil
+	}
+	resp.User = pack.User(usr)
+
+	res, err := global.SocialClient.FollowerList(ctx, &sociality.DouyinRelationFollowerListRequest{
+		UserId: req.UserId,
+		Token:  req.Token,
+	})
+	if err != nil {
+		resp.BaseResp = pack.BuildBaseResp(err)
+		return resp, nil
+	}
+	if res.StatusCode != int32(errno.Success.ErrCode) {
+		resp.BaseResp = pack.BuildBaseResp(errors.New(res.StatusMsg))
+		return resp, nil
+	}
+	resp.User.FollowerCount = int64(len(res.UserList))
+
+	for _, u := range res.UserList {
+		if u.Id == cliams.ID {
+			resp.User.IsFollow = true
 		}
 	}
-	var usr model.User
-	result := global.DB.Where(&model.User{ID: req.UserId}).First(&usr)
-	if result.RowsAffected == 0 {
-		return nil, status.Errorf(codes.NotFound, result.Error.Error())
+
+	response, err := global.SocialClient.FollowingList(ctx, (*sociality.DouyinRelationFollowListRequest)(&sociality.DouyinRelationFollowerListRequest{
+		UserId: req.UserId,
+		Token:  req.Token,
+	}))
+	if err != nil {
+		resp.BaseResp = pack.BuildBaseResp(err)
+		return resp, nil
 	}
-	return &user.DouyinUserResponse{
-		StatusCode: int32(errno.Err_Success),
-		StatusMsg:  "",
-		User: &user.User{
-			Id:   usr.ID,
-			Name: usr.Username,
-		},
-	}, nil
+	if response.StatusCode != int32(errno.Success.ErrCode) {
+		resp.BaseResp = pack.BuildBaseResp(errors.New(response.StatusMsg))
+		return resp, nil
+	}
+	resp.User.FollowCount = int64(len(response.UserList))
+
+	resp.BaseResp = pack.BuildBaseResp(nil)
+	return resp, nil
 }
