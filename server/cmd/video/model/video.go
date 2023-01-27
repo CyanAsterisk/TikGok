@@ -8,7 +8,7 @@ import (
 )
 
 type Video struct {
-	ID       int64  `gorm:"primarykey"`
+	gorm.Model
 	Uid      int64  `gorm:"column:user_id; not null"`
 	PlayUrl  string `gorm:"not null; type: varchar(255)"`
 	CoverUrl string `gorm:"not null; type: varchar(255)"`
@@ -22,6 +22,6 @@ func (v *Video) BeforeCreate(_ *gorm.DB) (err error) {
 		klog.Errorf("generate id failed: %s", err.Error())
 		return err
 	}
-	v.ID = sf.Generate().Int64()
+	v.ID = uint(sf.Generate().Int64())
 	return nil
 }
