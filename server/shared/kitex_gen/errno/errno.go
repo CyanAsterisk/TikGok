@@ -11,34 +11,49 @@ import (
 type Err int64
 
 const (
-	Err_Success             Err = 0
-	Err_BadRequest          Err = 10001
-	Err_GenerateTokenFail   Err = 10002
-	Err_RequestServerFail   Err = 10003
-	Err_BindAndValidateFail Err = 10004
-	Err_ParamErr            Err = 10005
-	Err_AuthorizeFail       Err = 10006
-	Err_UserAlreadyExistErr Err = 10007
+	Err_Success              Err = 0
+	Err_ParamsErr            Err = 1
+	Err_RPCInteractionErr    Err = 10000
+	Err_InteractionServerErr Err = 10001
+	Err_RPCSocialityErr      Err = 20000
+	Err_SocialityServerErr   Err = 20001
+	Err_RPCUserErr           Err = 30000
+	Err_UserServerErr        Err = 30001
+	Err_UserAlreadyExistErr  Err = 30002
+	Err_UserNotFoundErr      Err = 30003
+	Err_AuthorizeFailErr     Err = 30004
+	Err_RPCVideoErr          Err = 40000
+	Err_VideoServerErr       Err = 40001
 )
 
 func (p Err) String() string {
 	switch p {
 	case Err_Success:
 		return "Success"
-	case Err_BadRequest:
-		return "BadRequest"
-	case Err_GenerateTokenFail:
-		return "GenerateTokenFail"
-	case Err_RequestServerFail:
-		return "RequestServerFail"
-	case Err_BindAndValidateFail:
-		return "BindAndValidateFail"
-	case Err_ParamErr:
-		return "ParamErr"
-	case Err_AuthorizeFail:
-		return "AuthorizeFail"
+	case Err_ParamsErr:
+		return "ParamsErr"
+	case Err_RPCInteractionErr:
+		return "RPCInteractionErr"
+	case Err_InteractionServerErr:
+		return "InteractionServerErr"
+	case Err_RPCSocialityErr:
+		return "RPCSocialityErr"
+	case Err_SocialityServerErr:
+		return "SocialityServerErr"
+	case Err_RPCUserErr:
+		return "RPCUserErr"
+	case Err_UserServerErr:
+		return "UserServerErr"
 	case Err_UserAlreadyExistErr:
 		return "UserAlreadyExistErr"
+	case Err_UserNotFoundErr:
+		return "UserNotFoundErr"
+	case Err_AuthorizeFailErr:
+		return "AuthorizeFailErr"
+	case Err_RPCVideoErr:
+		return "RPCVideoErr"
+	case Err_VideoServerErr:
+		return "VideoServerErr"
 	}
 	return "<UNSET>"
 }
@@ -47,20 +62,30 @@ func ErrFromString(s string) (Err, error) {
 	switch s {
 	case "Success":
 		return Err_Success, nil
-	case "BadRequest":
-		return Err_BadRequest, nil
-	case "GenerateTokenFail":
-		return Err_GenerateTokenFail, nil
-	case "RequestServerFail":
-		return Err_RequestServerFail, nil
-	case "BindAndValidateFail":
-		return Err_BindAndValidateFail, nil
-	case "ParamErr":
-		return Err_ParamErr, nil
-	case "AuthorizeFail":
-		return Err_AuthorizeFail, nil
+	case "ParamsErr":
+		return Err_ParamsErr, nil
+	case "RPCInteractionErr":
+		return Err_RPCInteractionErr, nil
+	case "InteractionServerErr":
+		return Err_InteractionServerErr, nil
+	case "RPCSocialityErr":
+		return Err_RPCSocialityErr, nil
+	case "SocialityServerErr":
+		return Err_SocialityServerErr, nil
+	case "RPCUserErr":
+		return Err_RPCUserErr, nil
+	case "UserServerErr":
+		return Err_UserServerErr, nil
 	case "UserAlreadyExistErr":
 		return Err_UserAlreadyExistErr, nil
+	case "UserNotFoundErr":
+		return Err_UserNotFoundErr, nil
+	case "AuthorizeFailErr":
+		return Err_AuthorizeFailErr, nil
+	case "RPCVideoErr":
+		return Err_RPCVideoErr, nil
+	case "VideoServerErr":
+		return Err_VideoServerErr, nil
 	}
 	return Err(0), fmt.Errorf("not a valid Err string")
 }

@@ -19,13 +19,14 @@ var (
 	TokenNotValidYet = errors.New("token not active yet")
 	TokenMalformed   = errors.New("that's not even a token")
 	TokenInvalid     = errors.New("couldn't handle this token")
+	TokenNotFound    = errors.New("no token")
 )
 
 func JWTAuth() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
 		token := c.Request.Header.Get(consts.AuthorizationKey)
 		if token == "" {
-			errno.SendResponse(c, errno.AuthorizeFail, errors.New("no token"))
+			errno.SendResponse(c, errno.AuthorizeFailErr, TokenNotFound)
 			c.Abort()
 			return
 		}
@@ -34,7 +35,7 @@ func JWTAuth() app.HandlerFunc {
 		// Parse the information contained in the token
 		claims, err := j.ParseToken(token)
 		if err != nil {
-			errno.SendResponse(c, errno.AuthorizeFail, err)
+			errno.SendResponse(c, errno.AuthorizeFailErr, err)
 			c.Abort()
 			return
 		}

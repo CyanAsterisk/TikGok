@@ -37,14 +37,23 @@ func (e ErrNo) WithMessage(msg string) ErrNo {
 }
 
 var (
-	Success             = NewErrNo(int64(errno.Err_Success), "Success")
-	BadRequest          = NewErrNo(int64(errno.Err_BadRequest), "Request Failed")
-	GenerateTokenFail   = NewErrNo(int64(errno.Err_GenerateTokenFail), "Generate token failed")
-	RequestServerFail   = NewErrNo(int64(errno.Err_RequestServerFail), "Request server failed")
-	BindAndValidateFail = NewErrNo(int64(errno.Err_BindAndValidateFail), "Bind and validate failed")
-	ParamErr            = NewErrNo(int64(errno.Err_ParamErr), "Param error")
-	AuthorizeFail       = NewErrNo(int64(errno.Err_AuthorizeFail), "Authorize failed")
-	UserAlreadyExist    = NewErrNo(int64(errno.Err_UserAlreadyExistErr), "Authorize failed")
+	Success  = NewErrNo(int64(errno.Err_Success), "Success")
+	ParamsEr = NewErrNo(int64(errno.Err_ParamsErr), "Params err")
+
+	RPCInteractionErr    = NewErrNo(int64(errno.Err_InteractionServerErr), "rpc call interaction server error")
+	InteractionServerErr = NewErrNo(int64(errno.Err_ParamsErr), "interaction server error")
+
+	RPCSocialityErr    = NewErrNo(int64(errno.Err_ParamsErr), "rpc call sociality server error")
+	SocialityServerErr = NewErrNo(int64(errno.Err_ParamsErr), "sociality server error")
+
+	RPCUserErr          = NewErrNo(int64(errno.Err_ParamsErr), "rpc call user server error")
+	UserServerErr       = NewErrNo(int64(errno.Err_ParamsErr), "user server error")
+	UserAlreadyExistErr = NewErrNo(int64(errno.Err_ParamsErr), "user already exist")
+	UserNotFoundErr     = NewErrNo(int64(errno.Err_ParamsErr), "user not found")
+	AuthorizeFailErr    = NewErrNo(int64(errno.Err_ParamsErr), "authorize failed")
+
+	RPCVideoErr    = NewErrNo(int64(errno.Err_ParamsErr), "rpc call video server error")
+	VideoServerErr = NewErrNo(int64(errno.Err_ParamsErr), "video server error")
 )
 
 // SendResponse pack response
