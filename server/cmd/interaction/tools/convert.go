@@ -1,18 +1,18 @@
-package pack
+package tools
 
 import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
-	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 )
 
 // Comment model to idl
-func Comment(c *model.Comment) *interaction.Comment {
+func Comment(c *model.Comment) *base.Comment {
 	if c == nil {
 		return nil
 	}
-	return &interaction.Comment{
+	return &base.Comment{
 		Id: c.ID,
-		User: &interaction.User{
+		User: &base.User{
 			Id: c.ID,
 		},
 		Content:    c.CommentText,
@@ -21,11 +21,11 @@ func Comment(c *model.Comment) *interaction.Comment {
 }
 
 // Comments model to idl
-func Comments(c []*model.Comment) []*interaction.Comment {
+func Comments(c []*model.Comment) []*base.Comment {
 	if c == nil {
 		return nil
 	}
-	cl := make([]*interaction.Comment, 0)
+	cl := make([]*base.Comment, 0)
 	for _, cmt := range c {
 		cl = append(cl, Comment(cmt))
 	}

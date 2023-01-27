@@ -8,13 +8,13 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/model"
-	"github.com/CyanAsterisk/TikGok/server/cmd/user/pack"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/tools"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/user"
 	"github.com/CyanAsterisk/TikGok/server/shared/middleware"
+	"github.com/CyanAsterisk/TikGok/server/shared/pack"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/golang-jwt/jwt"
 	"gorm.io/gorm"
@@ -92,6 +92,7 @@ func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequ
 		},
 	})
 	if err != nil {
+		klog.Error("create token err", err)
 		resp.BaseResp = pack.BuildBaseResp(errno.UserServerErr)
 		return resp, nil
 	}
@@ -117,7 +118,7 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserR
 		resp.BaseResp = pack.BuildBaseResp(errno.UserServerErr)
 		return resp, nil
 	}
-	resp.User = pack.User(usr)
+	resp.User = tools.User(usr)
 
 	res, err := global.SocialClient.FollowerList(ctx, &sociality.DouyinRelationFollowerListRequest{
 		UserId: req.UserId,

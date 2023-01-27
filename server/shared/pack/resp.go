@@ -4,10 +4,10 @@ import (
 	"errors"
 
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
-	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 )
 
-func BuildBaseResp(err error) *interaction.DouyinBaseResponse {
+func BuildBaseResp(err error) *base.DouyinBaseResponse {
 	if err == nil {
 		return baseResp(errno.Success)
 	}
@@ -16,12 +16,12 @@ func BuildBaseResp(err error) *interaction.DouyinBaseResponse {
 	if errors.As(err, &e) {
 		return baseResp(e)
 	}
-	s := errno.RequestServerFail.WithMessage(err.Error())
+	s := errno.ServiceErr.WithMessage(err.Error())
 	return baseResp(s)
 }
 
-func baseResp(err errno.ErrNo) *interaction.DouyinBaseResponse {
-	return &interaction.DouyinBaseResponse{
+func baseResp(err errno.ErrNo) *base.DouyinBaseResponse {
+	return &base.DouyinBaseResponse{
 		StatusCode: int32(err.ErrCode),
 		StatusMsg:  err.ErrMsg,
 	}
