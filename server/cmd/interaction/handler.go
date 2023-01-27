@@ -5,9 +5,11 @@ import (
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
-	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/pack"
+	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/tools"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction"
+	"github.com/CyanAsterisk/TikGok/server/shared/pack"
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
@@ -25,7 +27,7 @@ type CommentManager interface {
 // VideoManager defines the Anti Corruption Layer
 // for get video logic.
 type VideoManager interface {
-	GetVideos([]int64) ([]*interaction.Video, error)
+	GetVideos([]int64) ([]*base.Video, error)
 }
 
 // Favorite implements the InteractionServerImpl interface.
@@ -70,7 +72,7 @@ func (s *InteractionServerImpl) Comment(_ context.Context, req *interaction.Douy
 		resp.BaseResp = pack.BuildBaseResp(errno.InteractionServerErr.WithMessage("comment error"))
 		return resp, nil
 	}
-	resp.Comment = pack.Comment(cmt)
+	resp.Comment = tools.Comment(cmt)
 	resp.BaseResp = pack.BuildBaseResp(nil)
 	return resp, nil
 }
@@ -84,7 +86,7 @@ func (s *InteractionServerImpl) CommentList(_ context.Context, req *interaction.
 		resp.BaseResp = pack.BuildBaseResp(errno.InteractionServerErr.WithMessage("get comment list error"))
 		return resp, nil
 	}
-	resp.CommentList = pack.Comments(list)
+	resp.CommentList = tools.Comments(list)
 	resp.BaseResp = pack.BuildBaseResp(nil)
 	return resp, nil
 }
