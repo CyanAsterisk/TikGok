@@ -123,13 +123,14 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserR
 		UserId: req.UserId,
 	})
 	if err != nil {
-		klog.Errorf("get followerList err", err)
+		klog.Error("get followerList err", err)
 		resp.BaseResp = pack.BuildBaseResp(errno.RPCSocialityErr)
 		return resp, nil
 	}
 	if res.BaseResp.StatusCode != int32(errno.Success.ErrCode) {
-		klog.Error("get followerList err", res.BaseResp.StatusMsg)
-		resp.BaseResp = pack.BuildBaseResp(errno.SocialityServerErr)
+		errMsg := res.BaseResp.StatusMsg
+		klog.Error("get followerList err", errMsg)
+		resp.BaseResp = pack.BuildBaseResp(errno.RPCSocialityErr.WithMessage(errMsg))
 		return resp, nil
 	}
 	resp.User.FollowerCount = int64(len(res.UserList))
@@ -144,13 +145,14 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserR
 		UserId: req.UserId,
 	}))
 	if err != nil {
-		klog.Errorf("get followerList err", err)
+		klog.Error("get followerList err", err)
 		resp.BaseResp = pack.BuildBaseResp(errno.RPCSocialityErr)
 		return resp, nil
 	}
 	if response.BaseResp.StatusCode != int32(errno.Success.ErrCode) {
-		klog.Errorf("get followerList err", response.BaseResp.StatusMsg)
-		resp.BaseResp = pack.BuildBaseResp(errno.SocialityServerErr)
+		errMsg := response.BaseResp.StatusMsg
+		klog.Error("get followerList err", errMsg)
+		resp.BaseResp = pack.BuildBaseResp(errno.RPCInteractionErr.WithMessage(errMsg))
 		return resp, nil
 	}
 	resp.User.FollowCount = int64(len(response.UserList))
