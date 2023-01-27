@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/tools"
 	"net"
 	"strconv"
 
@@ -31,7 +32,10 @@ func main() {
 	)
 	defer p.Shutdown(context.Background())
 
-	impl := new(InteractionServerImpl)
+	impl := &InteractionServerImpl{
+		CommentManager: &tools.Manager{},
+		VideoManager:   nil,
+	}
 	// Create new server.
 	srv := interaction.NewServer(impl,
 		server.WithServiceAddr(utils.NewNetAddr(consts.TCP, net.JoinHostPort(IP, strconv.Itoa(Port)))),

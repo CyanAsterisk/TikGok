@@ -7,7 +7,7 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/pack"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
-	interaction "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction"
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
