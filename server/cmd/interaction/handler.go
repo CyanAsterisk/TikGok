@@ -29,7 +29,7 @@ type VideoManager interface {
 }
 
 // Favorite implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) Favorite(ctx context.Context, req *interaction.DouyinFavoriteActionRequest) (resp *interaction.DouyinFavoriteActionResponse, err error) {
+func (s *InteractionServerImpl) Favorite(_ context.Context, req *interaction.DouyinFavoriteActionRequest) (resp *interaction.DouyinFavoriteActionResponse, err error) {
 	resp = new(interaction.DouyinFavoriteActionResponse)
 	err = dao.UpdateFavorite(req.UserId, req.VideoId, req.ActionType)
 	if err != nil {
@@ -42,7 +42,7 @@ func (s *InteractionServerImpl) Favorite(ctx context.Context, req *interaction.D
 }
 
 // FavoriteList implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) FavoriteList(ctx context.Context, req *interaction.DouyinFavoriteListRequest) (resp *interaction.DouyinFavoriteListResponse, err error) {
+func (s *InteractionServerImpl) FavoriteList(_ context.Context, req *interaction.DouyinFavoriteListRequest) (resp *interaction.DouyinFavoriteListResponse, err error) {
 	resp = new(interaction.DouyinFavoriteListResponse)
 	list, err := dao.GetFavoriteVideoIdListByUserId(req.UserId)
 	if err != nil {
@@ -62,7 +62,7 @@ func (s *InteractionServerImpl) FavoriteList(ctx context.Context, req *interacti
 }
 
 // Comment implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) Comment(ctx context.Context, req *interaction.DouyinCommentActionRequest) (resp *interaction.DouyinCommentActionResponse, err error) {
+func (s *InteractionServerImpl) Comment(_ context.Context, req *interaction.DouyinCommentActionRequest) (resp *interaction.DouyinCommentActionResponse, err error) {
 	resp = new(interaction.DouyinCommentActionResponse)
 	cmt, err := s.GetResp(req)
 	if err != nil {
@@ -76,7 +76,7 @@ func (s *InteractionServerImpl) Comment(ctx context.Context, req *interaction.Do
 }
 
 // CommentList implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) CommentList(ctx context.Context, req *interaction.DouyinCommentListRequest) (resp *interaction.DouyinCommentListResponse, err error) {
+func (s *InteractionServerImpl) CommentList(_ context.Context, req *interaction.DouyinCommentListRequest) (resp *interaction.DouyinCommentListResponse, err error) {
 	resp = new(interaction.DouyinCommentListResponse)
 	list, err := dao.GetCommentListByVideoId(req.VideoId)
 	if err != nil {
