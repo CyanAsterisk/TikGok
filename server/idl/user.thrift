@@ -1,17 +1,5 @@
 namespace go user
-
-struct User {
-    1: i64 id // User id
-    2: string name // Username
-    3: i64 follow_count // Total number of followings
-    4: i64 follower_count // Total number of followers
-    5: bool is_follow // true-followed, false-not followed
-}
-
-struct douyin_base_response {
-    1: i32 status_code // Status code, 0-success, other values-failure
-    2: string status_msg // Return status description
-}
+include "base.thrift"
 
 
 struct douyin_user_register_request {
@@ -20,7 +8,7 @@ struct douyin_user_register_request {
 }
 
 struct douyin_user_register_response {
-    1: douyin_base_response base_resp
+    1: base.douyin_base_response base_resp
     2: i64 user_id // User id
     3: string token // User authentication token
 }
@@ -31,7 +19,7 @@ struct douyin_user_login_request {
 }
 
 struct douyin_user_login_response {
-    1: douyin_base_response base_resp
+    1: base.douyin_base_response base_resp
     2: i64 user_id // User id
     3: string token // User authentication token
 }
@@ -42,8 +30,8 @@ struct douyin_user_request {
 }
 
 struct douyin_user_response {
-    1: douyin_base_response base_resp
-    2: User user // User Information
+    1: base.douyin_base_response base_resp
+    2: base.User user // User Information
 }
 
 service UserService {
