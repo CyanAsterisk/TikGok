@@ -21,6 +21,16 @@ func GetFavoriteUserList(videoId int64) ([]int64, error) {
 	return userList, nil
 }
 
+// CreateFavorite creates a favorite record.
+func CreateFavorite(fav *model.Favorite) error {
+	err := global.DB.Model(model.Favorite{}).
+		Create(&fav).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // UpdateFavorite updates favorite status.
 func UpdateFavorite(userId int64, videoId int64, actionType int8) error {
 	err := global.DB.Model(model.Favorite{}).

@@ -1,12 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"time"
 
-	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
+	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -35,34 +34,15 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	createComment(db)
-	createFavorite(db)
-}
 
-func createComment(db *gorm.DB) {
-	_ = db.AutoMigrate(&model.Comment{})
+	_ = db.AutoMigrate(&model.Follow{})
 
 	for i := 0; i < 10; i++ {
-		c := model.Comment{
-			UserId:      1616071000544256000,
-			VideoId:     1616071000544256001,
-			ActionType:  1,
-			CommentText: fmt.Sprintf("It's comment%d", i),
-			CreateDate:  time.Now(),
-		}
-		db.Save(&c)
-	}
-}
-
-func createFavorite(db *gorm.DB) {
-	_ = db.AutoMigrate(&model.Favorite{})
-
-	for i := 0; i < 10; i++ {
-		c := model.Favorite{
+		follow := model.Follow{
 			UserId:     1616071000544256000,
-			VideoId:    int64(161607100054425600 + i),
-			ActionType: 1,
+			FollowerId: 1616071000577810432,
+			ActionType: consts.IsFollow,
 		}
-		db.Save(&c)
+		db.Save(&follow)
 	}
 }

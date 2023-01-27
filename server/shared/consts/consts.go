@@ -25,6 +25,7 @@ const (
 	VideoSnowflakeNode    = 3
 	CommentSnowflakeNode  = 4
 	FavoriteSnowflakeNode = 5
+	FollowSnowflakeNode   = 6
 
 	ApiGroup         = "API_GROUP"
 	UserGroup        = "AUTH_GROUP"
@@ -55,6 +56,9 @@ const (
 
 	IsNotLike = 0
 	IsLike    = 1
+
+	IsNotFollow = 0
+	IsFollow    = 1
 
 	MySQLImage         = "mysql:latest"
 	MySQLContainerPort = "3306/tcp"

@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
+	"gorm.io/gorm"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/tools"
+	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction"
@@ -33,6 +35,26 @@ type VideoManager interface {
 // Favorite implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) Favorite(_ context.Context, req *interaction.DouyinFavoriteActionRequest) (resp *interaction.DouyinFavoriteActionResponse, err error) {
 	resp = new(interaction.DouyinFavoriteActionResponse)
+	_, err = dao.GetFavoriteInfo(req.UserId, req.VideoId)
+	if err == gorm.ErrRecordNotFound {
+		err = dao.CreateFavorite(&model.Favorite{
+			UserId:     req.UserId,
+			VideoId:    req.VideoId,
+			ActionType: consts.IsLike,
+		})
+		if err != nil {
+			klog.Error("favorite error", err)
+			resp.BaseResp = pack.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
+			return resp, nil
+		}
+		resp.BaseResp = pack.BuildBaseResp(nil)
+		return resp, nil
+	}
+	if err != nil {
+		klog.Error("favorite error", err)
+		resp.BaseResp = pack.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
+		return resp, nil
+	}
 	err = dao.UpdateFavorite(req.UserId, req.VideoId, req.ActionType)
 	if err != nil {
 		klog.Error("favorite error", err)
