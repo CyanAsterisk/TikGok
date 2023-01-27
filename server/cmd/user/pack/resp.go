@@ -2,12 +2,13 @@ package pack
 
 import (
 	"errors"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/user"
 )
 
-func BuildBaseResp(err error) *user.DouyinBaseResponse {
+func BuildBaseResp(err error) *base.DouyinBaseResponse {
 	if err == nil {
 		return baseResp(errno.Success)
 	}
@@ -16,7 +17,7 @@ func BuildBaseResp(err error) *user.DouyinBaseResponse {
 	if errors.As(err, &e) {
 		return baseResp(e)
 	}
-	s := errno.RequestServerFail.WithMessage(err.Error())
+	s := errno.UserServerErr.WithMessage(err.Error())
 	return baseResp(s)
 }
 

@@ -13,6 +13,7 @@ type Err int64
 const (
 	Err_Success              Err = 0
 	Err_ParamsErr            Err = 1
+	Err_ServiceErr           Err = 2
 	Err_RPCInteractionErr    Err = 10000
 	Err_InteractionServerErr Err = 10001
 	Err_RPCSocialityErr      Err = 20000
@@ -32,6 +33,8 @@ func (p Err) String() string {
 		return "Success"
 	case Err_ParamsErr:
 		return "ParamsErr"
+	case Err_ServiceErr:
+		return "ServiceErr"
 	case Err_RPCInteractionErr:
 		return "RPCInteractionErr"
 	case Err_InteractionServerErr:
@@ -64,6 +67,8 @@ func ErrFromString(s string) (Err, error) {
 		return Err_Success, nil
 	case "ParamsErr":
 		return Err_ParamsErr, nil
+	case "ServiceErr":
+		return Err_ServiceErr, nil
 	case "RPCInteractionErr":
 		return Err_RPCInteractionErr, nil
 	case "InteractionServerErr":

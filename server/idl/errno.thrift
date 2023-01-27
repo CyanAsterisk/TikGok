@@ -3,6 +3,7 @@ namespace go errno
 enum Err {
     Success              = 0,
     ParamsErr            = 1,
+    ServiceErr           = 2,
     RPCInteractionErr    = 10000,
     InteractionServerErr = 10001,
     RPCSocialityErr      = 20000,

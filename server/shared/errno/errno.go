@@ -37,8 +37,9 @@ func (e ErrNo) WithMessage(msg string) ErrNo {
 }
 
 var (
-	Success  = NewErrNo(int64(errno.Err_Success), "Success")
-	ParamsEr = NewErrNo(int64(errno.Err_ParamsErr), "Params err")
+	Success    = NewErrNo(int64(errno.Err_Success), "success")
+	ParamsEr   = NewErrNo(int64(errno.Err_ParamsErr), "params err")
+	ServiceErr = NewErrNo(int64(errno.Err_ServiceErr), "service err")
 
 	RPCInteractionErr    = NewErrNo(int64(errno.Err_InteractionServerErr), "rpc call interaction server error")
 	InteractionServerErr = NewErrNo(int64(errno.Err_ParamsErr), "interaction server error")
