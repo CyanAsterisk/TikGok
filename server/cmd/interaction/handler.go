@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"gorm.io/gorm"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
@@ -13,6 +12,7 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction"
 	"github.com/CyanAsterisk/TikGok/server/shared/pack"
 	"github.com/cloudwego/kitex/pkg/klog"
+	"gorm.io/gorm"
 )
 
 // InteractionServerImpl implements the last service interface defined in the IDL.

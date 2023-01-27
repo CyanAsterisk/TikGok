@@ -32,7 +32,7 @@ func CreateFavorite(fav *model.Favorite) error {
 }
 
 // UpdateFavorite updates favorite status.
-func UpdateFavorite(userId int64, videoId int64, actionType int8) error {
+func UpdateFavorite(userId, videoId int64, actionType int8) error {
 	err := global.DB.Model(model.Favorite{}).
 		Where(&model.Favorite{UserId: userId, VideoId: videoId}).Update("action_type", actionType).Error
 	if err != nil {
@@ -42,7 +42,7 @@ func UpdateFavorite(userId int64, videoId int64, actionType int8) error {
 }
 
 // GetFavoriteInfo get favorite info.
-func GetFavoriteInfo(userId int64, videoId int64) (*model.Favorite, error) {
+func GetFavoriteInfo(userId, videoId int64) (*model.Favorite, error) {
 	var fvInfo *model.Favorite
 	err := global.DB.Model(model.Favorite{}).
 		Where(&model.Favorite{UserId: userId, VideoId: videoId}).First(&fvInfo).Error

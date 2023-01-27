@@ -8,7 +8,7 @@ import (
 )
 
 // GetRelation gets relation by userId and followerId.
-func GetRelation(userId int64, followerId int64) (*model.Follow, error) {
+func GetRelation(userId, followerId int64) (*model.Follow, error) {
 	var follow *model.Follow
 	err := global.DB.Model(model.Follow{}).
 		Where(&model.Follow{UserId: userId, FollowerId: followerId, ActionType: consts.IsFollow}).Error
@@ -51,7 +51,7 @@ func CreateFollow(follow *model.Follow) error {
 }
 
 // UpdateFollow to update follow status.
-func UpdateFollow(userId int64, followId int64, actionType int8) error {
+func UpdateFollow(userId, followId int64, actionType int8) error {
 	err := global.DB.Model(model.Follow{}).
 		Where(&model.Follow{UserId: userId, FollowerId: followId}).Update("action_type", actionType).Error
 	if err != nil {
@@ -61,7 +61,7 @@ func UpdateFollow(userId int64, followId int64, actionType int8) error {
 }
 
 // FindRecord to find if there's a record between user and another user.
-func FindRecord(userId int64, followId int64) (*model.Follow, error) {
+func FindRecord(userId, followId int64) (*model.Follow, error) {
 	var follow *model.Follow
 	err := global.DB.Model(model.Follow{}).
 		Where(&model.Follow{UserId: userId, FollowerId: followId}).Error

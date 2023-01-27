@@ -85,5 +85,4 @@ func NewTestDB() *gorm.DB {
 }
 
 func SetupDatabase() {
-
 }

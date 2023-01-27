@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/tools"
 	"net"
 	"strconv"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/initialize"
+	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/tools"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	interaction "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction/interactionserver"
 	"github.com/cloudwego/kitex/pkg/klog"
