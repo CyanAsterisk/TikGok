@@ -3,7 +3,6 @@
 package video
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
@@ -12,8 +11,8 @@ import (
 )
 
 type DouyinFeedRequest struct {
-	LatestTime int64 `thrift:"latest_time,1" frugal:"1,default,i64" json:"latest_time"`
-	UserId     int64 `thrift:"user_id,2" frugal:"2,default,i64" json:"user_id"`
+	LatestTime int64 `thrift:"latest_time,1,required" frugal:"1,required,i64" json:"latest_time"`
+	UserId     int64 `thrift:"user_id,2,required" frugal:"2,required,i64" json:"user_id"`
 }
 
 func NewDouyinFeedRequest() *DouyinFeedRequest {
@@ -47,6 +46,8 @@ func (p *DouyinFeedRequest) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
+	var issetLatestTime bool = false
+	var issetUserId bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -67,6 +68,7 @@ func (p *DouyinFeedRequest) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
+				issetLatestTime = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -77,6 +79,7 @@ func (p *DouyinFeedRequest) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
+				issetUserId = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -96,6 +99,15 @@ func (p *DouyinFeedRequest) Read(iprot thrift.TProtocol) (err error) {
 		goto ReadStructEndError
 	}
 
+	if !issetLatestTime {
+		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetUserId {
+		fieldId = 2
+		goto RequiredFieldNotSetError
+	}
 	return nil
 ReadStructBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -110,6 +122,8 @@ ReadFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
 ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+RequiredFieldNotSetError:
+	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinFeedRequest[fieldId]))
 }
 
 func (p *DouyinFeedRequest) ReadField1(iprot thrift.TProtocol) error {
@@ -235,9 +249,9 @@ func (p *DouyinFeedRequest) Field2DeepEqual(src int64) bool {
 }
 
 type DouyinFeedResponse struct {
-	BaseResp  *base.DouyinBaseResponse `thrift:"base_resp,1" frugal:"1,default,base.DouyinBaseResponse" json:"base_resp"`
-	VideoList []*base.Video            `thrift:"video_list,2" frugal:"2,default,list<base.Video>" json:"video_list"`
-	NextTime  int64                    `thrift:"next_time,3" frugal:"3,default,i64" json:"next_time"`
+	BaseResp  *base.DouyinBaseResponse `thrift:"base_resp,1,required" frugal:"1,required,base.DouyinBaseResponse" json:"base_resp"`
+	VideoList []*base.Video            `thrift:"video_list,2,required" frugal:"2,required,list<base.Video>" json:"video_list"`
+	NextTime  int64                    `thrift:"next_time,3,required" frugal:"3,required,i64" json:"next_time"`
 }
 
 func NewDouyinFeedResponse() *DouyinFeedResponse {
@@ -288,6 +302,9 @@ func (p *DouyinFeedResponse) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
+	var issetBaseResp bool = false
+	var issetVideoList bool = false
+	var issetNextTime bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -308,6 +325,7 @@ func (p *DouyinFeedResponse) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
+				issetBaseResp = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -318,6 +336,7 @@ func (p *DouyinFeedResponse) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
+				issetVideoList = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -328,6 +347,7 @@ func (p *DouyinFeedResponse) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
+				issetNextTime = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -347,6 +367,20 @@ func (p *DouyinFeedResponse) Read(iprot thrift.TProtocol) (err error) {
 		goto ReadStructEndError
 	}
 
+	if !issetBaseResp {
+		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetVideoList {
+		fieldId = 2
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetNextTime {
+		fieldId = 3
+		goto RequiredFieldNotSetError
+	}
 	return nil
 ReadStructBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -361,6 +395,8 @@ ReadFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
 ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+RequiredFieldNotSetError:
+	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinFeedResponse[fieldId]))
 }
 
 func (p *DouyinFeedResponse) ReadField1(iprot thrift.TProtocol) error {
@@ -550,9 +586,10 @@ func (p *DouyinFeedResponse) Field3DeepEqual(src int64) bool {
 }
 
 type DouyinPublishActionRequest struct {
-	UserId int64  `thrift:"user_id,1" frugal:"1,default,i64" json:"user_id"`
-	Data   []byte `thrift:"data,2" frugal:"2,default,binary" json:"data"`
-	Title  string `thrift:"title,3" frugal:"3,default,string" json:"title"`
+	UserId   int64  `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id"`
+	PlayUrl  string `thrift:"play_url,2,required" frugal:"2,required,string" json:"play_url"`
+	CoverUrl string `thrift:"cover_url,3,required" frugal:"3,required,string" json:"cover_url"`
+	Title    string `thrift:"title,4,required" frugal:"4,required,string" json:"title"`
 }
 
 func NewDouyinPublishActionRequest() *DouyinPublishActionRequest {
@@ -567,8 +604,12 @@ func (p *DouyinPublishActionRequest) GetUserId() (v int64) {
 	return p.UserId
 }
 
-func (p *DouyinPublishActionRequest) GetData() (v []byte) {
-	return p.Data
+func (p *DouyinPublishActionRequest) GetPlayUrl() (v string) {
+	return p.PlayUrl
+}
+
+func (p *DouyinPublishActionRequest) GetCoverUrl() (v string) {
+	return p.CoverUrl
 }
 
 func (p *DouyinPublishActionRequest) GetTitle() (v string) {
@@ -577,8 +618,11 @@ func (p *DouyinPublishActionRequest) GetTitle() (v string) {
 func (p *DouyinPublishActionRequest) SetUserId(val int64) {
 	p.UserId = val
 }
-func (p *DouyinPublishActionRequest) SetData(val []byte) {
-	p.Data = val
+func (p *DouyinPublishActionRequest) SetPlayUrl(val string) {
+	p.PlayUrl = val
+}
+func (p *DouyinPublishActionRequest) SetCoverUrl(val string) {
+	p.CoverUrl = val
 }
 func (p *DouyinPublishActionRequest) SetTitle(val string) {
 	p.Title = val
@@ -586,14 +630,19 @@ func (p *DouyinPublishActionRequest) SetTitle(val string) {
 
 var fieldIDToName_DouyinPublishActionRequest = map[int16]string{
 	1: "user_id",
-	2: "data",
-	3: "title",
+	2: "play_url",
+	3: "cover_url",
+	4: "title",
 }
 
 func (p *DouyinPublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
+	var issetUserId bool = false
+	var issetPlayUrl bool = false
+	var issetCoverUrl bool = false
+	var issetTitle bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -614,6 +663,7 @@ func (p *DouyinPublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
+				issetUserId = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -624,6 +674,7 @@ func (p *DouyinPublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
+				issetPlayUrl = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -634,6 +685,18 @@ func (p *DouyinPublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
+				issetCoverUrl = true
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 4:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField4(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetTitle = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -653,6 +716,25 @@ func (p *DouyinPublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 		goto ReadStructEndError
 	}
 
+	if !issetUserId {
+		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetPlayUrl {
+		fieldId = 2
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetCoverUrl {
+		fieldId = 3
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetTitle {
+		fieldId = 4
+		goto RequiredFieldNotSetError
+	}
 	return nil
 ReadStructBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -667,6 +749,8 @@ ReadFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
 ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+RequiredFieldNotSetError:
+	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinPublishActionRequest[fieldId]))
 }
 
 func (p *DouyinPublishActionRequest) ReadField1(iprot thrift.TProtocol) error {
@@ -679,15 +763,24 @@ func (p *DouyinPublishActionRequest) ReadField1(iprot thrift.TProtocol) error {
 }
 
 func (p *DouyinPublishActionRequest) ReadField2(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadBinary(); err != nil {
+	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Data = []byte(v)
+		p.PlayUrl = v
 	}
 	return nil
 }
 
 func (p *DouyinPublishActionRequest) ReadField3(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		p.CoverUrl = v
+	}
+	return nil
+}
+
+func (p *DouyinPublishActionRequest) ReadField4(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
@@ -712,6 +805,10 @@ func (p *DouyinPublishActionRequest) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField3(oprot); err != nil {
 			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
 			goto WriteFieldError
 		}
 
@@ -751,10 +848,10 @@ WriteFieldEndError:
 }
 
 func (p *DouyinPublishActionRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("data", thrift.STRING, 2); err != nil {
+	if err = oprot.WriteFieldBegin("play_url", thrift.STRING, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteBinary([]byte(p.Data)); err != nil {
+	if err := oprot.WriteString(p.PlayUrl); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -768,10 +865,10 @@ WriteFieldEndError:
 }
 
 func (p *DouyinPublishActionRequest) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("title", thrift.STRING, 3); err != nil {
+	if err = oprot.WriteFieldBegin("cover_url", thrift.STRING, 3); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.Title); err != nil {
+	if err := oprot.WriteString(p.CoverUrl); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -782,6 +879,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
+func (p *DouyinPublishActionRequest) writeField4(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("title", thrift.STRING, 4); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Title); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
 }
 
 func (p *DouyinPublishActionRequest) String() string {
@@ -800,10 +914,13 @@ func (p *DouyinPublishActionRequest) DeepEqual(ano *DouyinPublishActionRequest) 
 	if !p.Field1DeepEqual(ano.UserId) {
 		return false
 	}
-	if !p.Field2DeepEqual(ano.Data) {
+	if !p.Field2DeepEqual(ano.PlayUrl) {
 		return false
 	}
-	if !p.Field3DeepEqual(ano.Title) {
+	if !p.Field3DeepEqual(ano.CoverUrl) {
+		return false
+	}
+	if !p.Field4DeepEqual(ano.Title) {
 		return false
 	}
 	return true
@@ -816,14 +933,21 @@ func (p *DouyinPublishActionRequest) Field1DeepEqual(src int64) bool {
 	}
 	return true
 }
-func (p *DouyinPublishActionRequest) Field2DeepEqual(src []byte) bool {
+func (p *DouyinPublishActionRequest) Field2DeepEqual(src string) bool {
 
-	if bytes.Compare(p.Data, src) != 0 {
+	if strings.Compare(p.PlayUrl, src) != 0 {
 		return false
 	}
 	return true
 }
 func (p *DouyinPublishActionRequest) Field3DeepEqual(src string) bool {
+
+	if strings.Compare(p.CoverUrl, src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *DouyinPublishActionRequest) Field4DeepEqual(src string) bool {
 
 	if strings.Compare(p.Title, src) != 0 {
 		return false
@@ -832,7 +956,7 @@ func (p *DouyinPublishActionRequest) Field3DeepEqual(src string) bool {
 }
 
 type DouyinPublishActionResponse struct {
-	BaseResp *base.DouyinBaseResponse `thrift:"base_resp,1" frugal:"1,default,base.DouyinBaseResponse" json:"base_resp"`
+	BaseResp *base.DouyinBaseResponse `thrift:"base_resp,1,required" frugal:"1,required,base.DouyinBaseResponse" json:"base_resp"`
 }
 
 func NewDouyinPublishActionResponse() *DouyinPublishActionResponse {
@@ -867,6 +991,7 @@ func (p *DouyinPublishActionResponse) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
+	var issetBaseResp bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -887,6 +1012,7 @@ func (p *DouyinPublishActionResponse) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
+				issetBaseResp = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -906,6 +1032,10 @@ func (p *DouyinPublishActionResponse) Read(iprot thrift.TProtocol) (err error) {
 		goto ReadStructEndError
 	}
 
+	if !issetBaseResp {
+		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
 	return nil
 ReadStructBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -920,6 +1050,8 @@ ReadFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
 ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+RequiredFieldNotSetError:
+	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinPublishActionResponse[fieldId]))
 }
 
 func (p *DouyinPublishActionResponse) ReadField1(iprot thrift.TProtocol) error {
@@ -1004,7 +1136,7 @@ func (p *DouyinPublishActionResponse) Field1DeepEqual(src *base.DouyinBaseRespon
 }
 
 type DouyinPublishListRequest struct {
-	UserId int64 `thrift:"user_id,1" frugal:"1,default,i64" json:"user_id"`
+	UserId int64 `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id"`
 }
 
 func NewDouyinPublishListRequest() *DouyinPublishListRequest {
@@ -1030,6 +1162,7 @@ func (p *DouyinPublishListRequest) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
+	var issetUserId bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -1050,6 +1183,7 @@ func (p *DouyinPublishListRequest) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
+				issetUserId = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -1069,6 +1203,10 @@ func (p *DouyinPublishListRequest) Read(iprot thrift.TProtocol) (err error) {
 		goto ReadStructEndError
 	}
 
+	if !issetUserId {
+		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
 	return nil
 ReadStructBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -1083,6 +1221,8 @@ ReadFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
 ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+RequiredFieldNotSetError:
+	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinPublishListRequest[fieldId]))
 }
 
 func (p *DouyinPublishListRequest) ReadField1(iprot thrift.TProtocol) error {
@@ -1168,8 +1308,8 @@ func (p *DouyinPublishListRequest) Field1DeepEqual(src int64) bool {
 }
 
 type DouyinPublishListResponse struct {
-	BaseResp  *base.DouyinBaseResponse `thrift:"base_resp,1" frugal:"1,default,base.DouyinBaseResponse" json:"base_resp"`
-	VideoList []*base.Video            `thrift:"video_list,2" frugal:"2,default,list<base.Video>" json:"video_list"`
+	BaseResp  *base.DouyinBaseResponse `thrift:"base_resp,1,required" frugal:"1,required,base.DouyinBaseResponse" json:"base_resp"`
+	VideoList []*base.Video            `thrift:"video_list,2,required" frugal:"2,required,list<base.Video>" json:"video_list"`
 }
 
 func NewDouyinPublishListResponse() *DouyinPublishListResponse {
@@ -1212,6 +1352,8 @@ func (p *DouyinPublishListResponse) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
+	var issetBaseResp bool = false
+	var issetVideoList bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -1232,6 +1374,7 @@ func (p *DouyinPublishListResponse) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
+				issetBaseResp = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -1242,6 +1385,7 @@ func (p *DouyinPublishListResponse) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
+				issetVideoList = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -1261,6 +1405,15 @@ func (p *DouyinPublishListResponse) Read(iprot thrift.TProtocol) (err error) {
 		goto ReadStructEndError
 	}
 
+	if !issetBaseResp {
+		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetVideoList {
+		fieldId = 2
+		goto RequiredFieldNotSetError
+	}
 	return nil
 ReadStructBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -1275,6 +1428,8 @@ ReadFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
 ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+RequiredFieldNotSetError:
+	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinPublishListResponse[fieldId]))
 }
 
 func (p *DouyinPublishListResponse) ReadField1(iprot thrift.TProtocol) error {
