@@ -7,10 +7,11 @@ import (
 )
 
 // Video model to idl
-func Video(v *model.Video) *base.Video {
+func Video(v *model.Video) (*base.Video, error) {
 	if v == nil {
-		return nil
+		return nil, nil
 	}
+	//TODO: rpc call
 	return &base.Video{
 		Id: int64(v.ID),
 		Author: &base.User{
@@ -20,18 +21,22 @@ func Video(v *model.Video) *base.Video {
 			FollowerCount: 0,
 			IsFollow:      false,
 		},
-		PlayUrl:  consts.MinIOServer + v.PlayUrl,
-		CoverUrl: consts.MinIOServer + v.CoverUrl,
-		Title:    v.Title,
-	}
+		PlayUrl:      consts.MinIOServer + v.PlayUrl,
+		CoverUrl:     consts.MinIOServer + v.CoverUrl,
+		CommentCount: 0,
+		IsFavorite:   false,
+		Title:        v.Title,
+	}, nil
 }
 
-func Videos(videos []*model.Video) []*base.Video {
+func Videos(videos []*model.Video) ([]*base.Video, error) {
 	vs := make([]*base.Video, 0)
 	for _, vid := range videos {
-		if v := Video(vid); v != nil {
-			vs = append(vs, v)
+		v, err := Video(vid)
+		if err != nil {
+			return nil, err
 		}
+		vs = append(vs, v)
 	}
-	return vs
+	return vs, nil
 }
