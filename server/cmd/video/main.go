@@ -30,6 +30,8 @@ func main() {
 		provider.WithInsecure(),
 	)
 	defer p.Shutdown(context.Background())
+	initialize.InitMinio()
+	initialize.InitInteraction()
 
 	impl := new(VideoServiceImpl)
 	// Create new server.
