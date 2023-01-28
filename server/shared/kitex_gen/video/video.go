@@ -3,6 +3,7 @@
 package video
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
@@ -235,7 +236,7 @@ func (p *DouyinFeedRequest) Field2DeepEqual(src int64) bool {
 
 type DouyinFeedResponse struct {
 	BaseResp  *base.DouyinBaseResponse `thrift:"base_resp,1" frugal:"1,default,base.DouyinBaseResponse" json:"base_resp"`
-	VideoList *base.Video              `thrift:"video_list,2" frugal:"2,default,base.Video" json:"video_list"`
+	VideoList []*base.Video            `thrift:"video_list,2" frugal:"2,default,list<base.Video>" json:"video_list"`
 	NextTime  int64                    `thrift:"next_time,3" frugal:"3,default,i64" json:"next_time"`
 }
 
@@ -256,12 +257,7 @@ func (p *DouyinFeedResponse) GetBaseResp() (v *base.DouyinBaseResponse) {
 	return p.BaseResp
 }
 
-var DouyinFeedResponse_VideoList_DEFAULT *base.Video
-
-func (p *DouyinFeedResponse) GetVideoList() (v *base.Video) {
-	if !p.IsSetVideoList() {
-		return DouyinFeedResponse_VideoList_DEFAULT
-	}
+func (p *DouyinFeedResponse) GetVideoList() (v []*base.Video) {
 	return p.VideoList
 }
 
@@ -271,7 +267,7 @@ func (p *DouyinFeedResponse) GetNextTime() (v int64) {
 func (p *DouyinFeedResponse) SetBaseResp(val *base.DouyinBaseResponse) {
 	p.BaseResp = val
 }
-func (p *DouyinFeedResponse) SetVideoList(val *base.Video) {
+func (p *DouyinFeedResponse) SetVideoList(val []*base.Video) {
 	p.VideoList = val
 }
 func (p *DouyinFeedResponse) SetNextTime(val int64) {
@@ -286,10 +282,6 @@ var fieldIDToName_DouyinFeedResponse = map[int16]string{
 
 func (p *DouyinFeedResponse) IsSetBaseResp() bool {
 	return p.BaseResp != nil
-}
-
-func (p *DouyinFeedResponse) IsSetVideoList() bool {
-	return p.VideoList != nil
 }
 
 func (p *DouyinFeedResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -322,7 +314,7 @@ func (p *DouyinFeedResponse) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 2:
-			if fieldTypeId == thrift.STRUCT {
+			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -380,8 +372,20 @@ func (p *DouyinFeedResponse) ReadField1(iprot thrift.TProtocol) error {
 }
 
 func (p *DouyinFeedResponse) ReadField2(iprot thrift.TProtocol) error {
-	p.VideoList = base.NewVideo()
-	if err := p.VideoList.Read(iprot); err != nil {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
+		return err
+	}
+	p.VideoList = make([]*base.Video, 0, size)
+	for i := 0; i < size; i++ {
+		_elem := base.NewVideo()
+		if err := _elem.Read(iprot); err != nil {
+			return err
+		}
+
+		p.VideoList = append(p.VideoList, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
 		return err
 	}
 	return nil
@@ -451,10 +455,18 @@ WriteFieldEndError:
 }
 
 func (p *DouyinFeedResponse) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("video_list", thrift.STRUCT, 2); err != nil {
+	if err = oprot.WriteFieldBegin("video_list", thrift.LIST, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := p.VideoList.Write(oprot); err != nil {
+	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.VideoList)); err != nil {
+		return err
+	}
+	for _, v := range p.VideoList {
+		if err := v.Write(oprot); err != nil {
+			return err
+		}
+	}
+	if err := oprot.WriteListEnd(); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -516,10 +528,16 @@ func (p *DouyinFeedResponse) Field1DeepEqual(src *base.DouyinBaseResponse) bool 
 	}
 	return true
 }
-func (p *DouyinFeedResponse) Field2DeepEqual(src *base.Video) bool {
+func (p *DouyinFeedResponse) Field2DeepEqual(src []*base.Video) bool {
 
-	if !p.VideoList.DeepEqual(src) {
+	if len(p.VideoList) != len(src) {
 		return false
+	}
+	for i, v := range p.VideoList {
+		_src := src[i]
+		if !v.DeepEqual(_src) {
+			return false
+		}
 	}
 	return true
 }
@@ -533,7 +551,7 @@ func (p *DouyinFeedResponse) Field3DeepEqual(src int64) bool {
 
 type DouyinPublishActionRequest struct {
 	UserId int64  `thrift:"user_id,1" frugal:"1,default,i64" json:"user_id"`
-	Data   int8   `thrift:"data,2" frugal:"2,default,byte" json:"data"`
+	Data   []byte `thrift:"data,2" frugal:"2,default,binary" json:"data"`
 	Title  string `thrift:"title,3" frugal:"3,default,string" json:"title"`
 }
 
@@ -549,7 +567,7 @@ func (p *DouyinPublishActionRequest) GetUserId() (v int64) {
 	return p.UserId
 }
 
-func (p *DouyinPublishActionRequest) GetData() (v int8) {
+func (p *DouyinPublishActionRequest) GetData() (v []byte) {
 	return p.Data
 }
 
@@ -559,7 +577,7 @@ func (p *DouyinPublishActionRequest) GetTitle() (v string) {
 func (p *DouyinPublishActionRequest) SetUserId(val int64) {
 	p.UserId = val
 }
-func (p *DouyinPublishActionRequest) SetData(val int8) {
+func (p *DouyinPublishActionRequest) SetData(val []byte) {
 	p.Data = val
 }
 func (p *DouyinPublishActionRequest) SetTitle(val string) {
@@ -602,7 +620,7 @@ func (p *DouyinPublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 2:
-			if fieldTypeId == thrift.BYTE {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -661,10 +679,10 @@ func (p *DouyinPublishActionRequest) ReadField1(iprot thrift.TProtocol) error {
 }
 
 func (p *DouyinPublishActionRequest) ReadField2(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadByte(); err != nil {
+	if v, err := iprot.ReadBinary(); err != nil {
 		return err
 	} else {
-		p.Data = v
+		p.Data = []byte(v)
 	}
 	return nil
 }
@@ -733,10 +751,10 @@ WriteFieldEndError:
 }
 
 func (p *DouyinPublishActionRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("data", thrift.BYTE, 2); err != nil {
+	if err = oprot.WriteFieldBegin("data", thrift.STRING, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteByte(p.Data); err != nil {
+	if err := oprot.WriteBinary([]byte(p.Data)); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -798,9 +816,9 @@ func (p *DouyinPublishActionRequest) Field1DeepEqual(src int64) bool {
 	}
 	return true
 }
-func (p *DouyinPublishActionRequest) Field2DeepEqual(src int8) bool {
+func (p *DouyinPublishActionRequest) Field2DeepEqual(src []byte) bool {
 
-	if p.Data != src {
+	if bytes.Compare(p.Data, src) != 0 {
 		return false
 	}
 	return true

@@ -240,7 +240,7 @@ func (p *DouyinFeedResponse) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 2:
-			if fieldTypeId == thrift.STRUCT {
+			if fieldTypeId == thrift.LIST {
 				l, err = p.FastReadField2(buf[offset:])
 				offset += l
 				if err != nil {
@@ -318,13 +318,27 @@ func (p *DouyinFeedResponse) FastReadField1(buf []byte) (int, error) {
 func (p *DouyinFeedResponse) FastReadField2(buf []byte) (int, error) {
 	offset := 0
 
-	tmp := base.NewVideo()
-	if l, err := tmp.FastRead(buf[offset:]); err != nil {
+	_, size, l, err := bthrift.Binary.ReadListBegin(buf[offset:])
+	offset += l
+	if err != nil {
+		return offset, err
+	}
+	p.VideoList = make([]*base.Video, 0, size)
+	for i := 0; i < size; i++ {
+		_elem := base.NewVideo()
+		if l, err := _elem.FastRead(buf[offset:]); err != nil {
+			return offset, err
+		} else {
+			offset += l
+		}
+
+		p.VideoList = append(p.VideoList, _elem)
+	}
+	if l, err := bthrift.Binary.ReadListEnd(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
 	}
-	p.VideoList = tmp
 	return offset, nil
 }
 
@@ -383,8 +397,16 @@ func (p *DouyinFeedResponse) fastWriteField1(buf []byte, binaryWriter bthrift.Bi
 
 func (p *DouyinFeedResponse) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "video_list", thrift.STRUCT, 2)
-	offset += p.VideoList.FastWriteNocopy(buf[offset:], binaryWriter)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "video_list", thrift.LIST, 2)
+	listBeginOffset := offset
+	offset += bthrift.Binary.ListBeginLength(thrift.STRUCT, 0)
+	var length int
+	for _, v := range p.VideoList {
+		length++
+		offset += v.FastWriteNocopy(buf[offset:], binaryWriter)
+	}
+	bthrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.STRUCT, length)
+	offset += bthrift.Binary.WriteListEnd(buf[offset:])
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
 }
@@ -408,8 +430,12 @@ func (p *DouyinFeedResponse) field1Length() int {
 
 func (p *DouyinFeedResponse) field2Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("video_list", thrift.STRUCT, 2)
-	l += p.VideoList.BLength()
+	l += bthrift.Binary.FieldBeginLength("video_list", thrift.LIST, 2)
+	l += bthrift.Binary.ListBeginLength(thrift.STRUCT, len(p.VideoList))
+	for _, v := range p.VideoList {
+		l += v.BLength()
+	}
+	l += bthrift.Binary.ListEndLength()
 	l += bthrift.Binary.FieldEndLength()
 	return l
 }
@@ -460,7 +486,7 @@ func (p *DouyinPublishActionRequest) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 2:
-			if fieldTypeId == thrift.BYTE {
+			if fieldTypeId == thrift.STRING {
 				l, err = p.FastReadField2(buf[offset:])
 				offset += l
 				if err != nil {
@@ -539,12 +565,12 @@ func (p *DouyinPublishActionRequest) FastReadField1(buf []byte) (int, error) {
 func (p *DouyinPublishActionRequest) FastReadField2(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadByte(buf[offset:]); err != nil {
+	if v, l, err := bthrift.Binary.ReadBinary(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
 
-		p.Data = v
+		p.Data = []byte(v)
 
 	}
 	return offset, nil
@@ -606,8 +632,8 @@ func (p *DouyinPublishActionRequest) fastWriteField1(buf []byte, binaryWriter bt
 
 func (p *DouyinPublishActionRequest) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "data", thrift.BYTE, 2)
-	offset += bthrift.Binary.WriteByte(buf[offset:], p.Data)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "data", thrift.STRING, 2)
+	offset += bthrift.Binary.WriteBinaryNocopy(buf[offset:], binaryWriter, []byte(p.Data))
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -633,8 +659,8 @@ func (p *DouyinPublishActionRequest) field1Length() int {
 
 func (p *DouyinPublishActionRequest) field2Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("data", thrift.BYTE, 2)
-	l += bthrift.Binary.ByteLength(p.Data)
+	l += bthrift.Binary.FieldBeginLength("data", thrift.STRING, 2)
+	l += bthrift.Binary.BinaryLengthNocopy([]byte(p.Data))
 
 	l += bthrift.Binary.FieldEndLength()
 	return l

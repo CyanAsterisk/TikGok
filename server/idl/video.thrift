@@ -8,13 +8,13 @@ struct douyin_feed_request {
 
 struct douyin_feed_response {
     1: base.douyin_base_response base_resp
-    2: base.Video video_list // Video list
+    2: list<base.Video> video_list // Video list
     3: i64 next_time // In the video returned this time, publish the earliest time as the latest_time in the next request
 }
 
 struct douyin_publish_action_request {
     1: i64 user_id // User Id
-    2: byte data // Video data
+    2: binary data // Video data
     3: string title // Video title
 }
 

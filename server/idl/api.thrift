@@ -50,7 +50,7 @@ struct douyin_feed_response {
 
 struct douyin_publish_action_request {
     1: string token(api.form="token") // User authentication token
-    2: byte data(api.form="data") // Video data
+    2: binary data (api.form="data") // Video data
     3: string title(api.form="title", api.vd="len($)>0 && len($)<33") // Video title
 }
 
