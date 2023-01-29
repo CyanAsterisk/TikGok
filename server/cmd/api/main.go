@@ -17,6 +17,7 @@ func main() {
 	initialize.InitLogger()
 	r, info := initialize.InitNacos()
 	tracer, cfg := hertztracing.NewServerTracer()
+	initialize.InitMinio()
 	// create a new server
 	h := server.New(
 		tracer,

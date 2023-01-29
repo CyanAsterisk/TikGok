@@ -29,13 +29,6 @@ type ServerConfig struct {
 	MysqlInfo          MysqlConfig          `mapstructure:"mysql" json:"mysql"`
 	OtelInfo           OtelConfig           `mapstructure:"otel" json:"otel"`
 	InteractionSrvInfo InteractionSrvConfig `mapstructure:"interaction_srv" json:"interaction_srv"`
-	MinioInfo          MinioConfig          `mapstructure:"minio" json:"minio"`
-}
-
-type MinioConfig struct {
-	Endpoint        string `mapstructure:"endpoint" json:"endpoint"`
-	AccessKeyID     string `mapstructure:"access-key-id" json:"access-key-id"`
-	SecretAccessKey string `mapstructure:"secret-access-key" json:"secret-access-key"`
 }
 
 type InteractionSrvConfig struct {

@@ -28,8 +28,15 @@ type ServerConfig struct {
 	InteractionSrvInfo RPCSrvConfig `mapstructure:"interaction_srv" json:"interaction_srv"`
 	SocialitySrvInfo   RPCSrvConfig `mapstructure:"sociality_srv" json:"sociality_srv"`
 	VideoSrvInfo       RPCSrvConfig `mapstructure:"video_srv" json:"video_srv"`
+	MinioInfo          MinioConfig  `mapstructure:"minio" json:"minio"`
 }
 
 type RPCSrvConfig struct {
 	Name string `mapstructure:"name" json:"name"`
+}
+
+type MinioConfig struct {
+	Endpoint        string `mapstructure:"endpoint" json:"endpoint"`
+	AccessKeyID     string `mapstructure:"access-key-id" json:"access-key-id"`
+	SecretAccessKey string `mapstructure:"secret-access-key" json:"secret-access-key"`
 }
