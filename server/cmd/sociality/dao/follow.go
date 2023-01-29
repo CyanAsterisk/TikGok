@@ -53,7 +53,7 @@ func UpdateFollow(userId, followId int64, actionType int8) error {
 func FindRecord(userId, followId int64) (*model.Follow, error) {
 	var follow *model.Follow
 	err := global.DB.Model(model.Follow{}).
-		Where(&model.Follow{UserId: userId, FollowerId: followId}).Error
+		Where(&model.Follow{UserId: userId, FollowerId: followId}).First(&follow).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, nil
 	}
@@ -94,22 +94,22 @@ func GetFollowingIdList(userId int64) ([]int64, error) {
 // GetFriendsList gets friends list.
 func GetFriendsList(userId int64) ([]int64, error) {
 	var followingList []int64
-	var list []int64
+	var friendsList []int64
 	err := global.DB.Model(model.Follow{}).
-		Where(&model.Follow{FollowerId: userId, ActionType: consts.IsFollow}).Pluck("user_id", &list).
+		Where(&model.Follow{FollowerId: userId, ActionType: consts.IsFollow}).Pluck("user_id", &followingList).
 		FindInBatches(&followingList, 100, func(tx *gorm.DB, batch int) error {
 			for _, c := range followingList {
 				_, err := FindRecord(userId, c)
 				if err != nil {
 					return err
 				}
-				list = append(list, c)
+				friendsList = append(friendsList, c)
 			}
-			tx.Save(&list)
+			tx.Save(&friendsList)
 			return nil
 		}).Error
 	if err != nil {
 		return nil, err
 	}
-	return list, nil
+	return friendsList, nil
 }
