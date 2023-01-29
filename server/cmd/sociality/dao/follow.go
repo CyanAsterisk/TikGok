@@ -7,17 +7,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// GetRelation gets relation by userId and followerId.
-func GetRelation(userId, followerId int64) (*model.Follow, error) {
-	var follow *model.Follow
-	err := global.DB.Model(model.Follow{}).
-		Where(&model.Follow{UserId: userId, FollowerId: followerId, ActionType: consts.IsFollow}).Error
-	if err != nil {
-		return nil, err
-	}
-	return follow, nil
-}
-
 // GetFollowerNumsByUserId gets follower nums by userId.
 func GetFollowerNumsByUserId(userId int64) (int64, error) {
 	var num int64
@@ -96,6 +85,29 @@ func GetFollowingIdList(userId int64) ([]int64, error) {
 	if err == gorm.ErrRecordNotFound {
 		return nil, nil
 	}
+	if err != nil {
+		return nil, err
+	}
+	return list, nil
+}
+
+// GetFriendsList gets friends list.
+func GetFriendsList(userId int64) ([]int64, error) {
+	var followingList []int64
+	var list []int64
+	err := global.DB.Model(model.Follow{}).
+		Where(&model.Follow{FollowerId: userId, ActionType: consts.IsFollow}).Pluck("user_id", &list).
+		FindInBatches(&followingList, 100, func(tx *gorm.DB, batch int) error {
+			for _, c := range followingList {
+				_, err := FindRecord(userId, c)
+				if err != nil {
+					return err
+				}
+				list = append(list, c)
+			}
+			tx.Save(&list)
+			return nil
+		}).Error
 	if err != nil {
 		return nil, err
 	}

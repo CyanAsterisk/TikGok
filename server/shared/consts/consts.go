@@ -51,13 +51,13 @@ const (
 
 	FreePortAddress = "localhost:0"
 
-	InvalidComment = 0
+	InvalidComment = 2
 	ValidComment   = 1
 
-	IsNotLike = 0
+	IsNotLike = 2
 	IsLike    = 1
 
-	IsNotFollow = 0
+	IsNotFollow = 2
 	IsFollow    = 1
 
 	MySQLImage         = "mysql:latest"
