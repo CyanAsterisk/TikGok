@@ -26,6 +26,7 @@ const (
 	CommentSnowflakeNode  = 4
 	FavoriteSnowflakeNode = 5
 	FollowSnowflakeNode   = 6
+	MinioSnowflakeNode    = 7
 
 	ApiGroup         = "API_GROUP"
 	UserGroup        = "AUTH_GROUP"
@@ -65,4 +66,9 @@ const (
 	MySQLContainerIP   = "127.0.0.1"
 	MySQLPort          = "0"
 	MySQLAdmin         = "root"
+
+	MinIOBucket = "tikgok"
+	MinIOServer = "localhost:9000"
+
+	VideosLimit = 10
 )
