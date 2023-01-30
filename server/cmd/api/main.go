@@ -7,6 +7,7 @@ import (
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/initialize"
+	"github.com/CyanAsterisk/TikGok/server/cmd/api/initialize/rpc"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	hertztracing "github.com/hertz-contrib/obs-opentelemetry/tracing"
 	"github.com/hertz-contrib/pprof"
@@ -18,6 +19,7 @@ func main() {
 	r, info := initialize.InitNacos()
 	tracer, cfg := hertztracing.NewServerTracer()
 	initialize.InitMinio()
+	rpc.Init()
 	// create a new server
 	h := server.New(
 		tracer,
