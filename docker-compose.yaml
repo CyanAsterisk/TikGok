@@ -12,6 +12,21 @@ services:
       - MYSQL_DATABASE=FreeCar
       - MYSQL_ROOT_PASSWORD=123456
 
+  # MinIO
+  minio:
+    image: minio/minio:latest
+    command: server --console-address ":9001" /data 
+    volumes:
+      - ./pkg/configs/minio:/root/.minio
+      - ./pkg/data/minio:/data
+    environment:
+      - MINIO_ACCESS_KEY=admin
+      - MINIO_SECRET_KEY=admin123
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    restart: always
+
   # Nacos
   nacos:
     image: "nacos/nacos-server:v2.1.2-slim"
@@ -62,7 +77,6 @@ services:
 
   # VictoriaMetrics
   victoriametrics:
-    container_name: victoriametrics
     image: victoriametrics/victoria-metrics
     ports:
       - "8428:8428"
