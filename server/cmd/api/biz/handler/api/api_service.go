@@ -5,231 +5,244 @@ package api
 import (
 	"context"
 
-	api "github.com/CyanAsterisk/TikGok/server/cmd/api/biz/model/api"
+	"github.com/CyanAsterisk/TikGok/server/cmd/api/biz/model/api"
+	"github.com/CyanAsterisk/TikGok/server/cmd/api/global"
+	"github.com/CyanAsterisk/TikGok/server/cmd/api/tools"
+	"github.com/CyanAsterisk/TikGok/server/shared/consts"
+	"github.com/CyanAsterisk/TikGok/server/shared/errno"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/user"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/video"
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // Register .
 // @router /douyin/user/register [POST]
 func Register(ctx context.Context, c *app.RequestContext) {
+	var resp api.DouyinUserRegisterResponse
 	var err error
-	var req api.DouyinUserRegisterRequest
+	var req user.DouyinUserRegisterRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+		resp.StatusMsg = errno.ParamsEr.ErrMsg
+		errno.SendResponse(c, resp)
 		return
 	}
 
-	resp := new(api.DouyinUserRegisterResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	res, err := global.UserClient.Register(ctx, &req)
+	if err != nil {
+		resp.StatusCode = int32(errno.UserServerErr.ErrCode)
+		resp.StatusMsg = errno.UserServerErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	resp.StatusCode = res.BaseResp.StatusCode
+	resp.StatusMsg = res.BaseResp.StatusMsg
+	resp.Token = res.Token
+	resp.UserID = res.UserId
+	errno.SendResponse(c, resp)
 }
 
 // Login .
 // @router /douyin/user/login [POST]
 func Login(ctx context.Context, c *app.RequestContext) {
+	var resp api.DouyinUserLoginResponse
 	var err error
-	var req api.DouyinUserLoginRequest
+	var req user.DouyinUserLoginRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+		resp.StatusMsg = errno.ParamsEr.ErrMsg
+		errno.SendResponse(c, resp)
 		return
 	}
 
-	resp := new(api.DouyinUserLoginResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	res, err := global.UserClient.Login(ctx, &req)
+	if err != nil {
+		resp.StatusCode = int32(errno.UserServerErr.ErrCode)
+		resp.StatusMsg = errno.UserServerErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	resp.StatusCode = res.BaseResp.StatusCode
+	resp.StatusMsg = res.BaseResp.StatusMsg
+	resp.Token = res.Token
+	resp.UserID = res.UserId
+	errno.SendResponse(c, resp)
 }
 
 // GetUserInfo .
 // @router /douyin/user [GET]
 func GetUserInfo(ctx context.Context, c *app.RequestContext) {
+	var resp api.DouyinUserResponse
 	var err error
-	var req api.DouyinUserRequest
+	var req user.DouyinUserRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+		resp.StatusMsg = errno.ParamsEr.ErrMsg
+		errno.SendResponse(c, resp)
 		return
 	}
 
-	resp := new(api.DouyinUserRequest)
-
-	c.JSON(consts.StatusOK, resp)
+	res, err := global.UserClient.GetUserInfo(ctx, &req)
+	if err != nil {
+		resp.StatusCode = int32(errno.UserServerErr.ErrCode)
+		resp.StatusMsg = errno.UserServerErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	resp.StatusCode = res.BaseResp.StatusCode
+	resp.StatusMsg = res.BaseResp.StatusMsg
+	resp.User = tools.User(res.User)
+	errno.SendResponse(c, resp)
 }
 
 // Feed .
 // @router /douyin/feed [GET]
 func Feed(ctx context.Context, c *app.RequestContext) {
+	var resp api.DouyinFeedResponse
 	var err error
-	var req api.DouyinFeedRequest
+	var req video.DouyinFeedRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+		resp.StatusMsg = errno.ParamsEr.ErrMsg
+		errno.SendResponse(c, resp)
 		return
 	}
 
-	resp := new(api.DouyinFeedResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	res, err := global.VideoClient.Feed(ctx, &req)
+	if err != nil {
+		resp.StatusCode = int32(errno.VideoServerErr.ErrCode)
+		resp.StatusMsg = errno.VideoServerErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	resp.StatusCode = res.BaseResp.StatusCode
+	resp.StatusMsg = res.BaseResp.StatusMsg
+	resp.NextTime = res.NextTime
+	resp.VideoList = tools.Videos(res.VideoList)
+	errno.SendResponse(c, resp)
 }
 
 // PublishVideo .
 // @router /douyin/publish/action [POST]
 func PublishVideo(ctx context.Context, c *app.RequestContext) {
+	var resp api.DouyinPublishActionResponse
 	var err error
 	var req api.DouyinPublishActionRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+		resp.StatusMsg = errno.ParamsEr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	aid, flag := c.Get(consts.AccountID)
+	if !flag {
+		resp.StatusCode = int32(errno.ServiceErr.ErrCode)
+		resp.StatusMsg = errno.ServiceErr.ErrMsg
+		errno.SendResponse(c, resp)
 		return
 	}
 
-	resp := new(api.DouyinPublishActionResponse)
+	fileHeader, err := c.Request.FormFile("data")
+	if err != nil {
+		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+		resp.StatusMsg = errno.ParamsEr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	playUrl, coverUrl, err := tools.UpLoadFile(fileHeader)
+
+	res, err := global.VideoClient.PublishVideo(ctx, &video.DouyinPublishActionRequest{
+		UserId:   aid.(int64),
+		PlayUrl:  playUrl,
+		CoverUrl: coverUrl,
+		Title:    req.Title,
+	})
+	if err != nil {
+		resp.StatusCode = int32(errno.UserServerErr.ErrCode)
+		resp.StatusMsg = errno.UserServerErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	resp.StatusCode = res.BaseResp.StatusCode
+	resp.StatusMsg = res.BaseResp.StatusMsg
+	errno.SendResponse(c, resp)
 }
 
 // VideoList .
 // @router /douyin/publish/list [GET]
 func VideoList(ctx context.Context, c *app.RequestContext) {
+	var resp api.DouyinPublishListResponse
 	var err error
-	var req api.DouyinPublishListRequest
+	var req video.DouyinPublishListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+		resp.StatusMsg = errno.ParamsEr.ErrMsg
+		errno.SendResponse(c, resp)
 		return
 	}
 
-	resp := new(api.DouyinPublishListResponse)
-
-	c.JSON(consts.StatusOK, resp)
+	res, err := global.VideoClient.VideoList(ctx, &req)
+	if err != nil {
+		resp.StatusCode = int32(errno.VideoServerErr.ErrCode)
+		resp.StatusMsg = errno.VideoServerErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	resp.StatusCode = res.BaseResp.StatusCode
+	resp.StatusMsg = res.BaseResp.StatusMsg
+	resp.VideoList = tools.Videos(res.VideoList)
+	errno.SendResponse(c, resp)
 }
 
 // Favorite .
 // @router /douyin/favorite/action [POST]
 func Favorite(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req api.DouyinFavoriteActionRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(api.DouyinFavoriteActionResponse)
-
-	c.JSON(consts.StatusOK, resp)
 }
 
 // FavoriteList .
 // @router /douyin/favorite/list [GET]
 func FavoriteList(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req api.DouyinFavoriteListRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp := new(api.DouyinFavoriteListResponse)
-
-	c.JSON(consts.StatusOK, resp)
 }
 
 // Comment .
 // @router /douyin/comment/action [POST]
 func Comment(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req api.DouyinCommentActionRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
 
-	resp := new(api.DouyinCommentActionResponse)
-
-	c.JSON(consts.StatusOK, resp)
 }
 
 // CommentList .
 // @router /douyin/comment/list [GET]
 func CommentList(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req api.DouyinCommentListRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
 
-	resp := new(api.DouyinCommentListResponse)
-
-	c.JSON(consts.StatusOK, resp)
 }
 
 // Action .
 // @router /douyin/relation/action [POST]
 func Action(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req api.DouyinRelationActionRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
 
-	resp := new(api.DouyinRelationActionResponse)
-
-	c.JSON(consts.StatusOK, resp)
 }
 
 // FollowingList .
 // @router /douyin/relation/follow/list [GET]
 func FollowingList(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req api.DouyinRelationFollowListRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
 
-	resp := new(api.DouyinRelationFollowListResponse)
-
-	c.JSON(consts.StatusOK, resp)
 }
 
 // FollowerList .
 // @router /douyin/relation/follower/list [GET]
 func FollowerList(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req api.DouyinRelationFollowerListRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
 
-	resp := new(api.DouyinRelationFollowerListResponse)
-
-	c.JSON(consts.StatusOK, resp)
 }
 
 // FriendList .
 // @router /douyin/relation/friend/list [GET]
 func FriendList(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req api.DouyinRelationFriendListRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
 
-	resp := new(api.DouyinRelationFriendListResponse)
-
-	c.JSON(consts.StatusOK, resp)
 }
