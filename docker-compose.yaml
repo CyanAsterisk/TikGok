@@ -9,7 +9,7 @@ services:
     ports:
       - "3306:3306"
     environment:
-      - MYSQL_DATABASE=FreeCar
+      - MYSQL_DATABASE=TikGok
       - MYSQL_ROOT_PASSWORD=123456
 
   # MinIO
