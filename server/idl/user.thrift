@@ -25,7 +25,8 @@ struct douyin_user_login_response {
 }
 
 struct douyin_user_request {
-    1: i64 user_id // User id
+    1: i64 user_id // The user who wants other's info
+    2: i64 to_user_id // The owner of the returned info.
 }
 
 struct douyin_user_response {
