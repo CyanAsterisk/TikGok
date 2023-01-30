@@ -14,7 +14,7 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/user"
 	"github.com/CyanAsterisk/TikGok/server/shared/middleware"
-	"github.com/CyanAsterisk/TikGok/server/shared/pack"
+	sTools "github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/golang-jwt/jwt"
 	"gorm.io/gorm"
@@ -35,10 +35,10 @@ func (s *UserServiceImpl) Register(_ context.Context, req *user.DouyinUserRegist
 
 	if err = dao.CreateUser(&usr); err != nil {
 		if err == gorm.ErrRegistered {
-			resp.BaseResp = pack.BuildBaseResp(errno.UserAlreadyExistErr)
+			resp.BaseResp = sTools.BuildBaseResp(errno.UserAlreadyExistErr)
 		} else {
 			klog.Error("create user error", err)
-			resp.BaseResp = pack.BuildBaseResp(errno.UserServerErr.WithMessage("create user error"))
+			resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr.WithMessage("create user error"))
 		}
 		return resp, nil
 	}
@@ -54,11 +54,11 @@ func (s *UserServiceImpl) Register(_ context.Context, req *user.DouyinUserRegist
 	})
 	if err != nil {
 		klog.Error("create token err", err)
-		resp.BaseResp = pack.BuildBaseResp(errno.UserServerErr.WithMessage("create token error"))
+		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr.WithMessage("create token error"))
 		return resp, nil
 	}
 
-	resp.BaseResp = pack.BuildBaseResp(nil)
+	resp.BaseResp = sTools.BuildBaseResp(nil)
 	return resp, err
 }
 
@@ -69,16 +69,16 @@ func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequ
 	usr, err := dao.GetUserByUsername(req.Username)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			resp.BaseResp = pack.BuildBaseResp(errno.UserNotFoundErr)
+			resp.BaseResp = sTools.BuildBaseResp(errno.UserNotFoundErr)
 		} else {
 			klog.Errorf("get user by name err", err)
-			resp.BaseResp = pack.BuildBaseResp(errno.UserServerErr.WithMessage("get user by name err"))
+			resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr.WithMessage("get user by name err"))
 		}
 		return resp, nil
 	}
 
 	if usr.Password != tools.Md5Crypt(req.Password, global.ServerConfig.MysqlInfo.Salt) {
-		resp.BaseResp = pack.BuildBaseResp(errno.UserServerErr.WithMessage("wrong password"))
+		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr.WithMessage("wrong password"))
 		return resp, nil
 	}
 
@@ -93,11 +93,11 @@ func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequ
 	})
 	if err != nil {
 		klog.Error("create token err", err)
-		resp.BaseResp = pack.BuildBaseResp(errno.UserServerErr)
+		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr)
 		return resp, nil
 	}
 
-	resp.BaseResp = pack.BuildBaseResp(nil)
+	resp.BaseResp = sTools.BuildBaseResp(nil)
 	return resp, nil
 }
 
@@ -108,14 +108,14 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserR
 	cliams, err := s.jwt.ParseToken(req.Token)
 	if err != nil {
 		klog.Error("pareseToken err", err)
-		resp.BaseResp = pack.BuildBaseResp(errno.AuthorizeFailErr)
+		resp.BaseResp = sTools.BuildBaseResp(errno.AuthorizeFailErr)
 		return resp, nil
 	}
 
 	usr, err := dao.GetUserById(req.UserId)
 	if err != nil {
 		klog.Error("get user by id failed", err)
-		resp.BaseResp = pack.BuildBaseResp(errno.UserServerErr)
+		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr)
 		return resp, nil
 	}
 	resp.User = tools.User(usr)
@@ -125,13 +125,13 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserR
 	})
 	if err != nil {
 		klog.Error("get followerList err", err)
-		resp.BaseResp = pack.BuildBaseResp(errno.RPCSocialityErr)
+		resp.BaseResp = sTools.BuildBaseResp(errno.RPCSocialityErr)
 		return resp, nil
 	}
 	if res.BaseResp.StatusCode != int32(errno.Success.ErrCode) {
 		errMsg := res.BaseResp.StatusMsg
 		klog.Error("get followerList err", errMsg)
-		resp.BaseResp = pack.BuildBaseResp(errno.RPCSocialityErr.WithMessage(errMsg))
+		resp.BaseResp = sTools.BuildBaseResp(errno.RPCSocialityErr.WithMessage(errMsg))
 		return resp, nil
 	}
 	resp.User.FollowerCount = int64(len(res.UserList))
@@ -147,17 +147,17 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserR
 	}))
 	if err != nil {
 		klog.Error("get followerList err", err)
-		resp.BaseResp = pack.BuildBaseResp(errno.RPCSocialityErr)
+		resp.BaseResp = sTools.BuildBaseResp(errno.RPCSocialityErr)
 		return resp, nil
 	}
 	if response.BaseResp.StatusCode != int32(errno.Success.ErrCode) {
 		errMsg := response.BaseResp.StatusMsg
 		klog.Error("get followerList err", errMsg)
-		resp.BaseResp = pack.BuildBaseResp(errno.RPCInteractionErr.WithMessage(errMsg))
+		resp.BaseResp = sTools.BuildBaseResp(errno.RPCInteractionErr.WithMessage(errMsg))
 		return resp, nil
 	}
 	resp.User.FollowCount = int64(len(response.UserList))
 
-	resp.BaseResp = pack.BuildBaseResp(nil)
+	resp.BaseResp = sTools.BuildBaseResp(nil)
 	return resp, nil
 }

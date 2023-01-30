@@ -9,7 +9,7 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/tools"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	video "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/video"
-	"github.com/CyanAsterisk/TikGok/server/shared/pack"
+	sTools "github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"gorm.io/gorm"
 )
@@ -26,12 +26,12 @@ func (s *VideoServiceImpl) Feed(_ context.Context, req *video.DouyinFeedRequest)
 	vs, err := dao.GetVideosByLatestTime(req.LatestTime)
 	if err != nil {
 		klog.Error("get videos by latest time err", err)
-		resp.BaseResp = pack.BuildBaseResp(errno.VideoServerErr.WithMessage("get videos error"))
+		resp.BaseResp = sTools.BuildBaseResp(errno.VideoServerErr.WithMessage("get videos error"))
 	}
 
 	if resp.VideoList, err = tools.Videos(vs); err != nil {
 		klog.Errorf("convert err", err)
-		resp.BaseResp = pack.BuildBaseResp(errno.UserServerErr)
+		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr)
 		return
 	}
 
@@ -40,7 +40,7 @@ func (s *VideoServiceImpl) Feed(_ context.Context, req *video.DouyinFeedRequest)
 	} else {
 		resp.NextTime = time.Now().UnixNano() / 1e6
 	}
-	resp.BaseResp = pack.BuildBaseResp(nil)
+	resp.BaseResp = sTools.BuildBaseResp(nil)
 	return
 }
 
@@ -60,11 +60,11 @@ func (s *VideoServiceImpl) PublishVideo(_ context.Context, req *video.DouyinPubl
 	err = dao.CreateVideo(&vid)
 	if err != nil {
 		klog.Errorf("create video err", err)
-		resp.BaseResp = pack.BuildBaseResp(errno.VideoServerErr.WithMessage("create video err"))
+		resp.BaseResp = sTools.BuildBaseResp(errno.VideoServerErr.WithMessage("create video err"))
 		return
 	}
 
-	resp.BaseResp = pack.BuildBaseResp(nil)
+	resp.BaseResp = sTools.BuildBaseResp(nil)
 	return
 }
 
@@ -74,14 +74,14 @@ func (s *VideoServiceImpl) VideoList(_ context.Context, req *video.DouyinPublish
 	vs, err := dao.GetVideosByUserId(req.UserId)
 	if err != nil {
 		klog.Error("get published video list err", err)
-		resp.BaseResp = pack.BuildBaseResp(errno.VideoServerErr.WithMessage("get published video list err"))
+		resp.BaseResp = sTools.BuildBaseResp(errno.VideoServerErr.WithMessage("get published video list err"))
 		return
 	}
 	if resp.VideoList, err = tools.Videos(vs); err != nil {
 		klog.Errorf("convert err", err)
-		resp.BaseResp = pack.BuildBaseResp(errno.UserServerErr)
+		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr)
 		return
 	}
-	resp.BaseResp = pack.BuildBaseResp(nil)
+	resp.BaseResp = sTools.BuildBaseResp(nil)
 	return
 }

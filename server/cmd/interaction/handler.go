@@ -10,7 +10,7 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction"
-	"github.com/CyanAsterisk/TikGok/server/shared/pack"
+	sTools "github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"gorm.io/gorm"
 )
@@ -44,24 +44,24 @@ func (s *InteractionServerImpl) Favorite(_ context.Context, req *interaction.Dou
 		})
 		if err != nil {
 			klog.Error("favorite error", err)
-			resp.BaseResp = pack.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
+			resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
 			return resp, nil
 		}
-		resp.BaseResp = pack.BuildBaseResp(nil)
+		resp.BaseResp = sTools.BuildBaseResp(nil)
 		return resp, nil
 	}
 	if err != nil {
 		klog.Error("favorite error", err)
-		resp.BaseResp = pack.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
+		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
 		return resp, nil
 	}
 	err = dao.UpdateFavorite(req.UserId, req.VideoId, req.ActionType)
 	if err != nil {
 		klog.Error("favorite error", err)
-		resp.BaseResp = pack.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
+		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
 		return resp, nil
 	}
-	resp.BaseResp = pack.BuildBaseResp(nil)
+	resp.BaseResp = sTools.BuildBaseResp(nil)
 	return resp, nil
 }
 
@@ -71,17 +71,17 @@ func (s *InteractionServerImpl) FavoriteList(_ context.Context, req *interaction
 	list, err := dao.GetFavoriteVideoIdListByUserId(req.UserId)
 	if err != nil {
 		klog.Error("get user favorite video list error", err)
-		resp.BaseResp = pack.BuildBaseResp(errno.InteractionServerErr.WithMessage("get user favorite video list error"))
+		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get user favorite video list error"))
 		return resp, nil
 	}
 	videos, err := s.VideoManager.GetVideos(list)
 	if err != nil {
 		klog.Error("get videos by video manager error", err)
-		resp.BaseResp = pack.BuildBaseResp(errno.InteractionServerErr.WithMessage("get user favorite video list error"))
+		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get user favorite video list error"))
 		return resp, nil
 	}
 	resp.VideoList = videos
-	resp.BaseResp = pack.BuildBaseResp(nil)
+	resp.BaseResp = sTools.BuildBaseResp(nil)
 	return resp, nil
 }
 
@@ -91,11 +91,11 @@ func (s *InteractionServerImpl) Comment(_ context.Context, req *interaction.Douy
 	cmt, err := s.GetResp(req)
 	if err != nil {
 		klog.Error("comment uses get response error", err)
-		resp.BaseResp = pack.BuildBaseResp(errno.InteractionServerErr.WithMessage("comment error"))
+		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("comment error"))
 		return resp, nil
 	}
 	resp.Comment = tools.Comment(cmt)
-	resp.BaseResp = pack.BuildBaseResp(nil)
+	resp.BaseResp = sTools.BuildBaseResp(nil)
 	return resp, nil
 }
 
@@ -105,10 +105,10 @@ func (s *InteractionServerImpl) CommentList(_ context.Context, req *interaction.
 	list, err := dao.GetCommentListByVideoId(req.VideoId)
 	if err != nil {
 		klog.Error("get comment list by video id error", err)
-		resp.BaseResp = pack.BuildBaseResp(errno.InteractionServerErr.WithMessage("get comment list error"))
+		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get comment list error"))
 		return resp, nil
 	}
 	resp.CommentList = tools.Comments(list)
-	resp.BaseResp = pack.BuildBaseResp(nil)
+	resp.BaseResp = sTools.BuildBaseResp(nil)
 	return resp, nil
 }
