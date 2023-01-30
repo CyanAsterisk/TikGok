@@ -3,7 +3,7 @@ module github.com/CyanAsterisk/TikGok
 go 1.18
 
 require (
-	github.com/apache/thrift v0.13.0
+	github.com/apache/thrift v0.17.0
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/bytedance/sonic v1.7.0
 	github.com/cloudwego/hertz v0.5.1
@@ -23,7 +23,6 @@ require (
 	github.com/nacos-group/nacos-sdk-go v1.1.4
 	github.com/spf13/viper v1.15.0
 	github.com/u2takey/ffmpeg-go v0.4.1
-	github.com/u2takey/go-utils v0.3.1
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gorm.io/driver/mysql v1.4.5
 	gorm.io/gorm v1.24.3
@@ -95,6 +94,7 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
+	github.com/u2takey/go-utils v0.3.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/runtime v0.33.0 // indirect
 	go.opentelemetry.io/contrib/propagators/b3 v1.9.0 // indirect
 	go.opentelemetry.io/contrib/propagators/ot v1.9.0 // indirect
