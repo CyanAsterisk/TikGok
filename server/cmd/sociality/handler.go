@@ -21,7 +21,7 @@ type SocialityServiceImpl struct {
 // UserManager defines the Anti Corruption Layer
 // for get user logic.
 type UserManager interface {
-	GetUsers(ctx context.Context, list []int64) ([]*base.User, error)
+	GetUsers(ctx context.Context, list []int64, uid int64) ([]*base.User, error)
 }
 
 // Action implements the SocialityServiceImpl interface.
@@ -66,7 +66,7 @@ func (s *SocialityServiceImpl) FollowingList(ctx context.Context, req *sociality
 		resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get following list error"))
 		return resp, nil
 	}
-	users, err := s.UserManager.GetUsers(ctx, list)
+	users, err := s.UserManager.GetUsers(ctx, list, req.UserId)
 	if err != nil {
 		klog.Error("get users by user manager error", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get following list error"))
@@ -86,7 +86,7 @@ func (s *SocialityServiceImpl) FollowerList(ctx context.Context, req *sociality.
 		resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get follower list error"))
 		return resp, nil
 	}
-	users, err := s.UserManager.GetUsers(ctx, list)
+	users, err := s.UserManager.GetUsers(ctx, list, req.UserId)
 	if err != nil {
 		klog.Error("get users by user manager error", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get follower list error"))
@@ -106,7 +106,7 @@ func (s *SocialityServiceImpl) FriendList(ctx context.Context, req *sociality.Do
 		resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get friends list error"))
 		return resp, nil
 	}
-	users, err := s.UserManager.GetUsers(ctx, list)
+	users, err := s.UserManager.GetUsers(ctx, list, req.UserId)
 	if err != nil {
 		klog.Error("get users by user manager error", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get friends list error"))

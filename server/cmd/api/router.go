@@ -3,7 +3,11 @@
 package main
 
 import (
+	"context"
+
 	handler "github.com/CyanAsterisk/TikGok/server/cmd/api/biz/handler"
+	"github.com/CyanAsterisk/TikGok/server/cmd/api/biz/handler/websocket"
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
@@ -11,5 +15,10 @@ import (
 func customizedRegister(r *server.Hertz) {
 	r.GET("/ping", handler.Ping)
 
-	// your code ...
+	// use web socket
+	hub := websocket.NewHub()
+	go hub.Run()
+	r.GET("/ws", func(c context.Context, ctx *app.RequestContext) {
+		websocket.ServeWs(ctx, hub)
+	})
 }
