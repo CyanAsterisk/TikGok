@@ -98,7 +98,8 @@ func UpLoadFile(videoFH *multipart.FileHeader) (playerUrl string, coverUrl strin
 	if err != nil {
 		return "", "", err
 	}
-	return videoUploadPath, coverUploadPath, nil
+	urlPrefix := consts.MinIOServer + "/" + consts.MinIOBucket
+	return urlPrefix + videoUploadPath, urlPrefix + coverUploadPath, nil
 }
 
 func getVideoCover(videoPath, coverPath string) error {
