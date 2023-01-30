@@ -1,9 +1,9 @@
 package initialize
 
 import (
-	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/global"
+	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/global"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
-	video "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/video/videoservice"
+	user "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/user/userservice"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/loadbalance"
@@ -16,8 +16,8 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/vo"
 )
 
-// InitVideo init video service.
-func InitVideo() {
+// InitUser init user service.
+func InitUser() {
 	// init resolver
 	// Read configuration information from nacos
 	sc := []constant.ServerConfig{
@@ -41,7 +41,7 @@ func InitVideo() {
 			ClientConfig:  &cc,
 			ServerConfigs: sc,
 		})
-	r := nacos.NewNacosResolver(nacosCli, nacos.WithGroup(consts.VideoGroup))
+	r := nacos.NewNacosResolver(nacosCli, nacos.WithGroup(consts.UserGroup))
 	if err != nil {
 		klog.Fatalf("new nacos client failed: %s", err.Error())
 	}
@@ -52,16 +52,16 @@ func InitVideo() {
 	)
 
 	// create a new client
-	c, err := video.NewClient(
-		global.ServerConfig.VideoSrcConfig.Name,
+	c, err := user.NewClient(
+		global.ServerConfig.UserSrvConfig.Name,
 		client.WithResolver(r),                                     // service discovery
 		client.WithLoadBalancer(loadbalance.NewWeightedBalancer()), // load balance
 		client.WithMuxConnection(1),                                // multiplexing
 		client.WithSuite(tracing.NewClientSuite()),
-		client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: global.ServerConfig.VideoSrcConfig.Name}),
+		client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: global.ServerConfig.UserSrvConfig.Name}),
 	)
 	if err != nil {
 		klog.Fatalf("ERROR: cannot init client: %v\n", err)
 	}
-	global.VideoClient = c
+	global.UserClient = c
 }

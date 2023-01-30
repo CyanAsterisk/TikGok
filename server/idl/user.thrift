@@ -26,7 +26,6 @@ struct douyin_user_login_response {
 
 struct douyin_user_request {
     1: i64 user_id // User id
-    2: string token // User authentication token
 }
 
 struct douyin_user_response {

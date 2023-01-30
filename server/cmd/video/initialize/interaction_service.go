@@ -4,7 +4,6 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/global"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction/interactionserver"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/loadbalance"
@@ -44,7 +43,7 @@ func InitInteraction() {
 		})
 	r := nacos.NewNacosResolver(nacosCli, nacos.WithGroup(consts.InteractionGroup))
 	if err != nil {
-		hlog.Fatalf("new nacos client failed: %s", err.Error())
+		klog.Fatalf("new nacos client failed: %s", err.Error())
 	}
 	provider.NewOpenTelemetryProvider(
 		provider.WithServiceName(global.ServerConfig.Name),

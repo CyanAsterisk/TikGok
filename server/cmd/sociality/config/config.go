@@ -24,8 +24,13 @@ type OtelConfig struct {
 }
 
 type ServerConfig struct {
-	Name      string      `mapstructure:"name" json:"name"`
-	Host      string      `mapstructure:"host" json:"host"`
-	MysqlInfo MysqlConfig `mapstructure:"mysql" json:"mysql"`
-	OtelInfo  OtelConfig  `mapstructure:"otel" json:"otel"`
+	Name          string        `mapstructure:"name" json:"name"`
+	Host          string        `mapstructure:"host" json:"host"`
+	MysqlInfo     MysqlConfig   `mapstructure:"mysql" json:"mysql"`
+	OtelInfo      OtelConfig    `mapstructure:"otel" json:"otel"`
+	UserSrvConfig UserSrvConfig `mapstructure:"user_srv" json:"user_srv"`
+}
+
+type UserSrvConfig struct {
+	Name string `mapstructure:"name" json:"name"`
 }

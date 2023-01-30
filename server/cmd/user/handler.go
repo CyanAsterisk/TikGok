@@ -105,13 +105,6 @@ func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequ
 func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserRequest) (resp *user.DouyinUserResponse, err error) {
 	resp = new(user.DouyinUserResponse)
 
-	cliams, err := s.jwt.ParseToken(req.Token)
-	if err != nil {
-		klog.Error("pareseToken err", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.AuthorizeFailErr)
-		return resp, nil
-	}
-
 	usr, err := dao.GetUserById(req.UserId)
 	if err != nil {
 		klog.Error("get user by id failed", err)
@@ -137,7 +130,7 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserR
 	resp.User.FollowerCount = int64(len(res.UserList))
 
 	for _, u := range res.UserList {
-		if u.Id == cliams.ID {
+		if u.Id == req.UserId {
 			resp.User.IsFollow = true
 		}
 	}

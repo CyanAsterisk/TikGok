@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/tools"
 	"net"
 	"strconv"
 
@@ -30,9 +31,12 @@ func main() {
 		provider.WithInsecure(),
 	)
 	defer p.Shutdown(context.Background())
+	initialize.InitUser()
 
 	impl := &SocialityServiceImpl{
-		UserManager: nil,
+		UserManager: &tools.UserManager{
+			UserService: global.UserClient,
+		},
 	}
 	// Create new server.
 	srv := sociality.NewServer(impl,
