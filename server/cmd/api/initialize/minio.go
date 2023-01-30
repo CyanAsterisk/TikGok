@@ -5,9 +5,9 @@ import (
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/global"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/u2takey/go-utils/klog"
 )
 
 func InitMinio() {
@@ -18,23 +18,23 @@ func InitMinio() {
 		Secure: false,
 	})
 	if err != nil {
-		klog.Fatalln(err)
+		hlog.Fatalf("create minio client err: %s", err.Error())
 	}
 	bucketName := consts.MinIOBucket
 	exists, err := mc.BucketExists(context.Background(), bucketName)
 	if err != nil {
-		klog.Fatalln(err)
+		hlog.Fatal(err)
 	}
 	if !exists {
 		err = mc.MakeBucket(context.Background(), bucketName, minio.MakeBucketOptions{Region: "cn-north-1"})
 		if err != nil {
-			klog.Fatalln(err)
+			hlog.Fatalf("make bucket err: %s", err.Error())
 		}
 	}
 	policy := `{"Version": "2012-10-17","Statement": [{"Action": ["s3:GetObject"],"Effect": "Allow","Principal": {"AWS": ["*"]},"Resource": ["arn:aws:s3:::` + bucketName + `/*"],"Sid": ""}]}`
 	err = mc.SetBucketPolicy(context.Background(), bucketName, policy)
 	if err != nil {
-		klog.Fatalln(err)
+		hlog.Fatal("set bucket policy err:%s", err)
 	}
 	global.MinioClient = mc
 }
