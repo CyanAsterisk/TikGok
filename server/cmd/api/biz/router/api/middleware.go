@@ -3,12 +3,31 @@
 package Api
 
 import (
+	"context"
+	"github.com/CyanAsterisk/TikGok/server/shared/middleware"
+
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/hertz-contrib/gzip"
+	"github.com/hertz-contrib/limiter"
+	"github.com/hertz-contrib/requestid"
+	"go.opentelemetry.io/otel/trace"
 )
 
 func rootMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		// use gzip mw
+		gzip.Gzip(gzip.DefaultCompression, gzip.WithExcludedExtensions([]string{".jpg", ".mp4", ".png"})),
+		// use limiter mw
+		limiter.AdaptiveLimit(limiter.WithCPUThreshold(900)),
+		// use requestId mw & bind with traceId
+		requestid.New(
+			requestid.WithGenerator(func(ctx context.Context, c *app.RequestContext) string {
+				traceID := trace.SpanFromContext(ctx).SpanContext().TraceID().String()
+				return traceID
+			}),
+		),
+		middleware.Recovery(),
+	}
 }
 
 func _douyinMw() []app.HandlerFunc {
@@ -22,13 +41,15 @@ func _feedMw() []app.HandlerFunc {
 }
 
 func _getuserinfoMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		middleware.JWTAuth(),
+	}
 }
 
 func _publishMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		middleware.JWTAuth(),
+	}
 }
 
 func _publishvideoMw() []app.HandlerFunc {
@@ -57,8 +78,9 @@ func _registerMw() []app.HandlerFunc {
 }
 
 func _commentMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		middleware.JWTAuth(),
+	}
 }
 
 func _comment0Mw() []app.HandlerFunc {
@@ -72,8 +94,9 @@ func _commentlistMw() []app.HandlerFunc {
 }
 
 func _favoriteMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		middleware.JWTAuth(),
+	}
 }
 
 func _favorite0Mw() []app.HandlerFunc {
@@ -87,8 +110,9 @@ func _favoritelistMw() []app.HandlerFunc {
 }
 
 func _relationMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{
+		middleware.JWTAuth(),
+	}
 }
 
 func __ctionMw() []app.HandlerFunc {
