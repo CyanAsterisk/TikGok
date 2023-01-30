@@ -10,6 +10,8 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/tools"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/user"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/video"
 	"github.com/cloudwego/hertz/pkg/app"
@@ -18,7 +20,7 @@ import (
 // Register .
 // @router /douyin/user/register [POST]
 func Register(ctx context.Context, c *app.RequestContext) {
-	var resp api.DouyinUserRegisterResponse
+	resp := new(api.DouyinUserRegisterResponse)
 	var err error
 	var req user.DouyinUserRegisterRequest
 	err = c.BindAndValidate(&req)
@@ -31,8 +33,8 @@ func Register(ctx context.Context, c *app.RequestContext) {
 
 	res, err := global.UserClient.Register(ctx, &req)
 	if err != nil {
-		resp.StatusCode = int32(errno.UserServerErr.ErrCode)
-		resp.StatusMsg = errno.UserServerErr.ErrMsg
+		resp.StatusCode = int32(errno.RPCUserErr.ErrCode)
+		resp.StatusMsg = errno.RPCUserErr.ErrMsg
 		errno.SendResponse(c, resp)
 		return
 	}
@@ -46,7 +48,7 @@ func Register(ctx context.Context, c *app.RequestContext) {
 // Login .
 // @router /douyin/user/login [POST]
 func Login(ctx context.Context, c *app.RequestContext) {
-	var resp api.DouyinUserLoginResponse
+	resp := new(api.DouyinUserLoginResponse)
 	var err error
 	var req user.DouyinUserLoginRequest
 	err = c.BindAndValidate(&req)
@@ -59,8 +61,8 @@ func Login(ctx context.Context, c *app.RequestContext) {
 
 	res, err := global.UserClient.Login(ctx, &req)
 	if err != nil {
-		resp.StatusCode = int32(errno.UserServerErr.ErrCode)
-		resp.StatusMsg = errno.UserServerErr.ErrMsg
+		resp.StatusCode = int32(errno.RPCUserErr.ErrCode)
+		resp.StatusMsg = errno.RPCUserErr.ErrMsg
 		errno.SendResponse(c, resp)
 		return
 	}
@@ -74,7 +76,7 @@ func Login(ctx context.Context, c *app.RequestContext) {
 // GetUserInfo .
 // @router /douyin/user [GET]
 func GetUserInfo(ctx context.Context, c *app.RequestContext) {
-	var resp api.DouyinUserResponse
+	resp := new(api.DouyinUserResponse)
 	var err error
 	var req user.DouyinUserRequest
 	err = c.BindAndValidate(&req)
@@ -87,8 +89,8 @@ func GetUserInfo(ctx context.Context, c *app.RequestContext) {
 
 	res, err := global.UserClient.GetUserInfo(ctx, &req)
 	if err != nil {
-		resp.StatusCode = int32(errno.UserServerErr.ErrCode)
-		resp.StatusMsg = errno.UserServerErr.ErrMsg
+		resp.StatusCode = int32(errno.RPCUserErr.ErrCode)
+		resp.StatusMsg = errno.RPCUserErr.ErrMsg
 		errno.SendResponse(c, resp)
 		return
 	}
@@ -101,7 +103,7 @@ func GetUserInfo(ctx context.Context, c *app.RequestContext) {
 // Feed .
 // @router /douyin/feed [GET]
 func Feed(ctx context.Context, c *app.RequestContext) {
-	var resp api.DouyinFeedResponse
+	resp := new(api.DouyinFeedResponse)
 	var err error
 	var req video.DouyinFeedRequest
 	err = c.BindAndValidate(&req)
@@ -114,8 +116,8 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 
 	res, err := global.VideoClient.Feed(ctx, &req)
 	if err != nil {
-		resp.StatusCode = int32(errno.VideoServerErr.ErrCode)
-		resp.StatusMsg = errno.VideoServerErr.ErrMsg
+		resp.StatusCode = int32(errno.RPCVideoErr.ErrCode)
+		resp.StatusMsg = errno.RPCVideoErr.ErrMsg
 		errno.SendResponse(c, resp)
 		return
 	}
@@ -129,7 +131,7 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 // PublishVideo .
 // @router /douyin/publish/action [POST]
 func PublishVideo(ctx context.Context, c *app.RequestContext) {
-	var resp api.DouyinPublishActionResponse
+	resp := new(api.DouyinPublishActionResponse)
 	var err error
 	var req api.DouyinPublishActionRequest
 	err = c.BindAndValidate(&req)
@@ -141,8 +143,8 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 	}
 	aid, flag := c.Get(consts.AccountID)
 	if !flag {
-		resp.StatusCode = int32(errno.ServiceErr.ErrCode)
-		resp.StatusMsg = errno.ServiceErr.ErrMsg
+		resp.StatusCode = int32(errno.RPCVideoErr.ErrCode)
+		resp.StatusMsg = errno.RPCVideoErr.ErrMsg
 		errno.SendResponse(c, resp)
 		return
 	}
@@ -164,8 +166,8 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 		Title:    req.Title,
 	})
 	if err != nil {
-		resp.StatusCode = int32(errno.UserServerErr.ErrCode)
-		resp.StatusMsg = errno.UserServerErr.ErrMsg
+		resp.StatusCode = int32(errno.RPCVideoErr.ErrCode)
+		resp.StatusMsg = errno.RPCVideoErr.ErrMsg
 		errno.SendResponse(c, resp)
 		return
 	}
@@ -177,7 +179,7 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 // VideoList .
 // @router /douyin/publish/list [GET]
 func VideoList(ctx context.Context, c *app.RequestContext) {
-	var resp api.DouyinPublishListResponse
+	resp := new(api.DouyinPublishListResponse)
 	var err error
 	var req video.DouyinPublishListRequest
 	err = c.BindAndValidate(&req)
@@ -190,8 +192,8 @@ func VideoList(ctx context.Context, c *app.RequestContext) {
 
 	res, err := global.VideoClient.VideoList(ctx, &req)
 	if err != nil {
-		resp.StatusCode = int32(errno.VideoServerErr.ErrCode)
-		resp.StatusMsg = errno.VideoServerErr.ErrMsg
+		resp.StatusCode = int32(errno.RPCVideoErr.ErrCode)
+		resp.StatusMsg = errno.RPCVideoErr.ErrMsg
 		errno.SendResponse(c, resp)
 		return
 	}
@@ -204,45 +206,276 @@ func VideoList(ctx context.Context, c *app.RequestContext) {
 // Favorite .
 // @router /douyin/favorite/action [POST]
 func Favorite(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.DouyinFavoriteActionResponse)
+	var err error
+	var req api.DouyinFavoriteActionRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+		resp.StatusMsg = errno.ParamsEr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+
+	aid, flag := c.Get(consts.AccountID)
+	if !flag {
+		resp.StatusCode = int32(errno.ServiceErr.ErrCode)
+		resp.StatusMsg = errno.ServiceErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	res, err := global.InteractionClient.Favorite(ctx, &interaction.DouyinFavoriteActionRequest{
+		UserId:     aid.(int64),
+		VideoId:    req.VideoID,
+		ActionType: req.ActionType,
+	})
+	if err != nil {
+		resp.StatusCode = int32(errno.VideoServerErr.ErrCode)
+		resp.StatusMsg = errno.VideoServerErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	resp.StatusCode = res.BaseResp.StatusCode
+	resp.StatusMsg = res.BaseResp.StatusMsg
+	errno.SendResponse(c, resp)
 }
 
 // FavoriteList .
 // @router /douyin/favorite/list [GET]
 func FavoriteList(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.DouyinFavoriteListResponse)
+	var err error
+	var req api.DouyinFavoriteListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+		resp.StatusMsg = errno.ParamsEr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+
+	aid, flag := c.Get(consts.AccountID)
+	if !flag {
+		resp.StatusCode = int32(errno.ServiceErr.ErrCode)
+		resp.StatusMsg = errno.ServiceErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	res, err := global.InteractionClient.FavoriteList(ctx, &interaction.DouyinFavoriteListRequest{
+		UserId: aid.(int64),
+	})
+	if err != nil {
+		resp.StatusCode = int32(errno.RPCInteractionErr.ErrCode)
+		resp.StatusMsg = errno.RPCInteractionErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	resp.StatusCode = res.BaseResp.StatusCode
+	resp.StatusMsg = res.BaseResp.StatusMsg
+	resp.VideoList = tools.Videos(res.VideoList)
+	errno.SendResponse(c, resp)
 }
 
 // Comment .
 // @router /douyin/comment/action [POST]
 func Comment(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.DouyinCommentActionResponse)
+	var err error
+	var req api.DouyinCommentActionRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+		resp.StatusMsg = errno.ParamsEr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
 
+	aid, flag := c.Get(consts.AccountID)
+	if !flag {
+		resp.StatusCode = int32(errno.ServiceErr.ErrCode)
+		resp.StatusMsg = errno.ServiceErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	res, err := global.InteractionClient.Comment(ctx, &interaction.DouyinCommentActionRequest{
+		UserId:      aid.(int64),
+		VideoId:     req.VideoID,
+		ActionType:  req.ActionType,
+		CommentText: req.CommentText,
+		CommentId:   req.CommentID,
+	})
+	if err != nil {
+		resp.StatusCode = int32(errno.RPCInteractionErr.ErrCode)
+		resp.StatusMsg = errno.RPCInteractionErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	resp.StatusCode = res.BaseResp.StatusCode
+	resp.StatusMsg = res.BaseResp.StatusMsg
+	resp.Comment = tools.Comment(res.Comment)
+	errno.SendResponse(c, resp)
 }
 
 // CommentList .
 // @router /douyin/comment/list [GET]
 func CommentList(ctx context.Context, c *app.RequestContext) {
-
+	resp := new(api.DouyinCommentListResponse)
+	var err error
+	var req api.DouyinCommentListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+		resp.StatusMsg = errno.ParamsEr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	res, err := global.InteractionClient.CommentList(ctx, &interaction.DouyinCommentListRequest{
+		VideoId: req.VideoID,
+	})
+	if err != nil {
+		resp.StatusCode = int32(errno.RPCInteractionErr.ErrCode)
+		resp.StatusMsg = errno.RPCInteractionErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	resp.StatusCode = res.BaseResp.StatusCode
+	resp.StatusMsg = res.BaseResp.StatusMsg
+	resp.CommentList = tools.Comments(res.CommentList)
+	errno.SendResponse(c, resp)
 }
 
 // Action .
 // @router /douyin/relation/action [POST]
 func Action(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.DouyinRelationActionResponse)
+	var err error
+	var req api.DouyinRelationActionRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+		resp.StatusMsg = errno.ParamsEr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
 
+	aid, flag := c.Get(consts.AccountID)
+	if !flag {
+		resp.StatusCode = int32(errno.ServiceErr.ErrCode)
+		resp.StatusMsg = errno.ServiceErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	res, err := global.SocialClient.Action(ctx, &sociality.DouyinRelationActionRequest{
+		UserId:     aid.(int64),
+		ToUserId:   req.ToUserID,
+		ActionType: req.ActionType,
+	})
+	if err != nil {
+		resp.StatusCode = int32(errno.RPCSocialityErr.ErrCode)
+		resp.StatusMsg = errno.RPCSocialityErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	resp.StatusCode = res.BaseResp.StatusCode
+	resp.StatusMsg = res.BaseResp.StatusMsg
+	errno.SendResponse(c, resp)
 }
 
 // FollowingList .
 // @router /douyin/relation/follow/list [GET]
 func FollowingList(ctx context.Context, c *app.RequestContext) {
-
+	resp := new(api.DouyinRelationFollowListResponse)
+	var err error
+	var req api.DouyinRelationFollowListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+		resp.StatusMsg = errno.ParamsEr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	aid, flag := c.Get(consts.AccountID)
+	if !flag {
+		resp.StatusCode = int32(errno.ServiceErr.ErrCode)
+		resp.StatusMsg = errno.ServiceErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	res, err := global.SocialClient.FollowingList(ctx, &sociality.DouyinRelationFollowListRequest{UserId: aid.(int64)})
+	if err != nil {
+		resp.StatusCode = int32(errno.RPCSocialityErr.ErrCode)
+		resp.StatusMsg = errno.RPCSocialityErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	resp.StatusCode = res.BaseResp.StatusCode
+	resp.StatusMsg = res.BaseResp.StatusMsg
+	resp.UserList = tools.Users(res.UserList)
+	errno.SendResponse(c, resp)
 }
 
 // FollowerList .
 // @router /douyin/relation/follower/list [GET]
 func FollowerList(ctx context.Context, c *app.RequestContext) {
-
+	resp := new(api.DouyinRelationFollowerListResponse)
+	var err error
+	var req api.DouyinRelationFollowerListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+		resp.StatusMsg = errno.ParamsEr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	aid, flag := c.Get(consts.AccountID)
+	if !flag {
+		resp.StatusCode = int32(errno.ServiceErr.ErrCode)
+		resp.StatusMsg = errno.ServiceErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	res, err := global.SocialClient.FollowerList(ctx, &sociality.DouyinRelationFollowerListRequest{UserId: aid.(int64)})
+	if err != nil {
+		resp.StatusCode = int32(errno.RPCSocialityErr.ErrCode)
+		resp.StatusMsg = errno.RPCSocialityErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	resp.StatusCode = res.BaseResp.StatusCode
+	resp.StatusMsg = res.BaseResp.StatusMsg
+	resp.UserList = tools.Users(res.UserList)
+	errno.SendResponse(c, resp)
 }
 
 // FriendList .
 // @router /douyin/relation/friend/list [GET]
 func FriendList(ctx context.Context, c *app.RequestContext) {
-
+	resp := new(api.DouyinRelationFriendListResponse)
+	var err error
+	var req api.DouyinRelationFriendListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+		resp.StatusMsg = errno.ParamsEr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	aid, flag := c.Get(consts.AccountID)
+	if !flag {
+		resp.StatusCode = int32(errno.ServiceErr.ErrCode)
+		resp.StatusMsg = errno.ServiceErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	res, err := global.SocialClient.FriendList(ctx, &sociality.DouyinRelationFriendListRequest{UserId: aid.(int64)})
+	if err != nil {
+		resp.StatusCode = int32(errno.RPCSocialityErr.ErrCode)
+		resp.StatusMsg = errno.RPCSocialityErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	resp.StatusCode = res.BaseResp.StatusCode
+	resp.StatusMsg = res.BaseResp.StatusMsg
+	resp.UserList = tools.Users(res.UserList)
+	errno.SendResponse(c, resp)
 }
