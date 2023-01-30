@@ -74,6 +74,9 @@ func InitNacos(Port int) (registry.Registry, *registry.Info) {
 			ServerConfigs: sc,
 		},
 	)
+	if err != nil {
+		klog.Fatalf("create registryClient err: %s", err.Error())
+	}
 
 	r := nacos.NewNacosRegistry(registryClient, nacos.WithGroup(consts.VideoGroup))
 

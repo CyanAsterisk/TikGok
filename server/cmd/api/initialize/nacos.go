@@ -74,6 +74,9 @@ func InitNacos() (registry.Registry, *registry.Info) {
 			ServerConfigs: sc,
 		},
 	)
+	if err != nil {
+		hlog.Fatal("create registryClient err: %s", err.Error())
+	}
 
 	r := nacos.NewNacosRegistry(registryClient, nacos.WithRegistryGroup(consts.ApiGroup))
 
