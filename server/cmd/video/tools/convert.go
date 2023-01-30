@@ -11,7 +11,7 @@ func Video(v *model.Video) (*base.Video, error) {
 	if v == nil {
 		return nil, nil
 	}
-	//TODO: rpc call
+	// TODO: rpc call
 	return &base.Video{
 		Id: int64(v.ID),
 		Author: &base.User{
@@ -29,6 +29,7 @@ func Video(v *model.Video) (*base.Video, error) {
 	}, nil
 }
 
+// Videos model to idl
 func Videos(videos []*model.Video) ([]*base.Video, error) {
 	vs := make([]*base.Video, 0)
 	for _, vid := range videos {

@@ -33,8 +33,18 @@ struct douyin_publish_list_response {
     2: required list<base.Video> video_list,         // List of videos posted by the user
 }
 
+struct douyin_get_video_request {
+    1: required i64 video_id, // Video id
+}
+
+struct douyin_get_video_response {
+    1: required base.douyin_base_response base_resp,
+    2: required base.Video video,
+}
+
 service VideoService {
     douyin_feed_response Feed(1: douyin_feed_request req),
     douyin_publish_action_response PublishVideo(1: douyin_publish_action_request req),
     douyin_publish_list_response VideoList(1: douyin_publish_list_request req),
+    douyin_get_video_response GetVideo(1: douyin_get_video_request req),
 }

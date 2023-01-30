@@ -85,3 +85,21 @@ func (s *VideoServiceImpl) VideoList(_ context.Context, req *video.DouyinPublish
 	resp.BaseResp = sTools.BuildBaseResp(nil)
 	return
 }
+
+// GetVideo implements the VideoServiceImpl interface.
+func (s *VideoServiceImpl) GetVideo(ctx context.Context, req *video.DouyinGetVideoRequest) (resp *video.DouyinGetVideoResponse, err error) {
+	resp = new(video.DouyinGetVideoResponse)
+	v, err := dao.GetVideoByVideoId(req.VideoId)
+	if err != nil {
+		klog.Error("get video err", err)
+		resp.BaseResp = sTools.BuildBaseResp(errno.VideoServerErr.WithMessage("get video err"))
+		return
+	}
+	if resp.Video, err = tools.Video(v); err != nil {
+		klog.Errorf("convert err", err)
+		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr)
+		return
+	}
+	resp.BaseResp = sTools.BuildBaseResp(nil)
+	return
+}

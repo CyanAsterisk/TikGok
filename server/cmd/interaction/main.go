@@ -33,8 +33,10 @@ func main() {
 	defer p.Shutdown(context.Background())
 
 	impl := &InteractionServerImpl{
-		CommentManager: &tools.Manager{},
-		VideoManager:   nil,
+		CommentManager: &tools.CommentManager{},
+		VideoManager: &tools.VideoManager{
+			VideoService: global.VideoClient,
+		},
 	}
 	// Create new server.
 	srv := interaction.NewServer(impl,

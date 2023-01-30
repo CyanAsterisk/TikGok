@@ -29,7 +29,7 @@ type CommentManager interface {
 // VideoManager defines the Anti Corruption Layer
 // for get video logic.
 type VideoManager interface {
-	GetVideos([]int64) ([]*base.Video, error)
+	GetVideos(ctx context.Context, list []int64) ([]*base.Video, error)
 }
 
 // Favorite implements the InteractionServerImpl interface.
@@ -66,7 +66,7 @@ func (s *InteractionServerImpl) Favorite(_ context.Context, req *interaction.Dou
 }
 
 // FavoriteList implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) FavoriteList(_ context.Context, req *interaction.DouyinFavoriteListRequest) (resp *interaction.DouyinFavoriteListResponse, err error) {
+func (s *InteractionServerImpl) FavoriteList(ctx context.Context, req *interaction.DouyinFavoriteListRequest) (resp *interaction.DouyinFavoriteListResponse, err error) {
 	resp = new(interaction.DouyinFavoriteListResponse)
 	list, err := dao.GetFavoriteVideoIdListByUserId(req.UserId)
 	if err != nil {
@@ -74,7 +74,7 @@ func (s *InteractionServerImpl) FavoriteList(_ context.Context, req *interaction
 		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get user favorite video list error"))
 		return resp, nil
 	}
-	videos, err := s.VideoManager.GetVideos(list)
+	videos, err := s.VideoManager.GetVideos(ctx, list)
 	if err != nil {
 		klog.Error("get videos by video manager error", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get user favorite video list error"))

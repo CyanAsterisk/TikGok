@@ -10,10 +10,10 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction"
 )
 
-type Manager struct{}
+type CommentManager struct{}
 
 // GetResp gets comment response.
-func (m *Manager) GetResp(req *interaction.DouyinCommentActionRequest) (comment *model.Comment, err error) {
+func (m *CommentManager) GetResp(req *interaction.DouyinCommentActionRequest) (comment *model.Comment, err error) {
 	switch req.ActionType {
 	case consts.ValidComment:
 		cmt, err := dao.CreateComment(&model.Comment{
