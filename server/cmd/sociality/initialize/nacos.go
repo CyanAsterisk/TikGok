@@ -6,6 +6,7 @@ import (
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/global"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
+	"github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/bwmarrin/snowflake"
 	"github.com/bytedance/sonic"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -66,6 +67,13 @@ func InitNacos(Port int) (registry.Registry, *registry.Info) {
 	err = sonic.Unmarshal([]byte(content), &global.ServerConfig)
 	if err != nil {
 		klog.Fatalf("nacos config failed: %s", err)
+	}
+
+	if global.ServerConfig.Host == "" {
+		global.ServerConfig.Host, err = tools.GetLocalIPv4Address()
+		if err != nil {
+			klog.Fatalf("get localIpv4Addr failed:%s", err.Error())
+		}
 	}
 
 	registryClient, err := clients.NewNamingClient(
