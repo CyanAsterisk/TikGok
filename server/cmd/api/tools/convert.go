@@ -47,6 +47,16 @@ func Videos(videos []*kbase.Video) []*hbase.Video {
 	return vs
 }
 
+func Comments(comments []*kbase.Comment) []*hbase.Comment {
+	cs := make([]*hbase.Comment, 0)
+	for _, comment := range comments {
+		if c := Comment(comment); c != nil {
+			cs = append(cs, c)
+		}
+	}
+	return cs
+}
+
 func Users(users []*kbase.User) []*hbase.User {
 	us := make([]*hbase.User, 0)
 	for _, ku := range users {
