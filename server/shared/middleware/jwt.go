@@ -3,13 +3,15 @@ package middleware
 import (
 	"context"
 	"errors"
+	"github.com/CyanAsterisk/TikGok/server/shared/errno"
+	"github.com/cloudwego/hertz/pkg/common/utils"
+	"net/http"
 	"strings"
 	"time"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
-	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/golang-jwt/jwt"
 )
@@ -26,7 +28,10 @@ func JWTAuth() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
 		token := c.Request.Header.Get(consts.AuthorizationKey)
 		if token == "" {
-			errno.SendResponse(c, errno.AuthorizeFailErr, TokenNotFound)
+			c.JSON(http.StatusOK, utils.H{
+				"status_code": int32(errno.ParamsEr.ErrCode),
+				"status_msg":  TokenNotFound.Error(),
+			})
 			c.Abort()
 			return
 		}
@@ -35,7 +40,10 @@ func JWTAuth() app.HandlerFunc {
 		// Parse the information contained in the token
 		claims, err := j.ParseToken(token)
 		if err != nil {
-			errno.SendResponse(c, errno.AuthorizeFailErr, err)
+			c.JSON(http.StatusOK, utils.H{
+				"status_code": int32(errno.ParamsEr.ErrCode),
+				"status_msg":  TokenInvalid.Error(),
+			})
 			c.Abort()
 			return
 		}

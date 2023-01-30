@@ -13,12 +13,6 @@ type ErrNo struct {
 	ErrMsg  string
 }
 
-type Response struct {
-	Code    int64       `json:"code"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data"`
-}
-
 func (e ErrNo) Error() string {
 	return fmt.Sprintf("err_code=%d, err_msg=%s", e.ErrCode, e.ErrMsg)
 }
@@ -58,10 +52,6 @@ var (
 )
 
 // SendResponse pack response
-func SendResponse(c *app.RequestContext, err ErrNo, data interface{}) {
-	c.JSON(consts.StatusOK, Response{
-		Code:    err.ErrCode,
-		Message: err.ErrMsg,
-		Data:    data,
-	})
+func SendResponse(c *app.RequestContext, data interface{}) {
+	c.JSON(consts.StatusOK, data)
 }
