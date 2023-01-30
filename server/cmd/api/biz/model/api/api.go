@@ -1529,10 +1529,10 @@ func (p *DouyinFeedRequest) String() string {
 }
 
 type DouyinFeedResponse struct {
-	StatusCode int32       `thrift:"status_code,1" form:"status_code" json:"status_code" query:"status_code"`
-	StatusMsg  string      `thrift:"status_msg,2" form:"status_msg" json:"status_msg" query:"status_msg"`
-	VideoList  *base.Video `thrift:"video_list,3" form:"video_list" json:"video_list" query:"video_list"`
-	NextTime   int64       `thrift:"next_time,4" form:"next_time" json:"next_time" query:"next_time"`
+	StatusCode int32         `thrift:"status_code,1" form:"status_code" json:"status_code" query:"status_code"`
+	StatusMsg  string        `thrift:"status_msg,2" form:"status_msg" json:"status_msg" query:"status_msg"`
+	VideoList  []*base.Video `thrift:"video_list,3" form:"video_list" json:"video_list" query:"video_list"`
+	NextTime   int64         `thrift:"next_time,4" form:"next_time" json:"next_time" query:"next_time"`
 }
 
 func NewDouyinFeedResponse() *DouyinFeedResponse {
@@ -1547,12 +1547,7 @@ func (p *DouyinFeedResponse) GetStatusMsg() (v string) {
 	return p.StatusMsg
 }
 
-var DouyinFeedResponse_VideoList_DEFAULT *base.Video
-
-func (p *DouyinFeedResponse) GetVideoList() (v *base.Video) {
-	if !p.IsSetVideoList() {
-		return DouyinFeedResponse_VideoList_DEFAULT
-	}
+func (p *DouyinFeedResponse) GetVideoList() (v []*base.Video) {
 	return p.VideoList
 }
 
@@ -1565,10 +1560,6 @@ var fieldIDToName_DouyinFeedResponse = map[int16]string{
 	2: "status_msg",
 	3: "video_list",
 	4: "next_time",
-}
-
-func (p *DouyinFeedResponse) IsSetVideoList() bool {
-	return p.VideoList != nil
 }
 
 func (p *DouyinFeedResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -1611,7 +1602,7 @@ func (p *DouyinFeedResponse) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 3:
-			if fieldTypeId == thrift.STRUCT {
+			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -1679,8 +1670,20 @@ func (p *DouyinFeedResponse) ReadField2(iprot thrift.TProtocol) error {
 }
 
 func (p *DouyinFeedResponse) ReadField3(iprot thrift.TProtocol) error {
-	p.VideoList = base.NewVideo()
-	if err := p.VideoList.Read(iprot); err != nil {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
+		return err
+	}
+	p.VideoList = make([]*base.Video, 0, size)
+	for i := 0; i < size; i++ {
+		_elem := base.NewVideo()
+		if err := _elem.Read(iprot); err != nil {
+			return err
+		}
+
+		p.VideoList = append(p.VideoList, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
 		return err
 	}
 	return nil
@@ -1771,10 +1774,18 @@ WriteFieldEndError:
 }
 
 func (p *DouyinFeedResponse) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("video_list", thrift.STRUCT, 3); err != nil {
+	if err = oprot.WriteFieldBegin("video_list", thrift.LIST, 3); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := p.VideoList.Write(oprot); err != nil {
+	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.VideoList)); err != nil {
+		return err
+	}
+	for _, v := range p.VideoList {
+		if err := v.Write(oprot); err != nil {
+			return err
+		}
+	}
+	if err := oprot.WriteListEnd(); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {

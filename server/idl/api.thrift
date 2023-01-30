@@ -44,7 +44,7 @@ struct douyin_feed_request {
 struct douyin_feed_response {
     1: i32 status_code // Status code, 0-success, other values-failure
     2: string status_msg // Return status description
-    3: base.Video video_list // Video list
+    3: list<base.Video> video_list // Video list
     4: i64 next_time // In the video returned this time, publish the earliest time as the latest_time in the next request
 }
 
