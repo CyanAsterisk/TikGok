@@ -31,7 +31,7 @@ const (
 	ChatSnowflakeNode     = 8
 
 	ApiGroup         = "API_GROUP"
-	UserGroup        = "AUTH_GROUP"
+	UserGroup        = "USER_GROUP"
 	InteractionGroup = "INTERACTION_GROUP"
 	SocialityGroup   = "SOCIALITY_GROUP"
 	VideoGroup       = "VIDEO_GROUP"
