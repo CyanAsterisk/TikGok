@@ -41,7 +41,7 @@ func initUser() {
 			ClientConfig:  &cc,
 			ServerConfigs: sc,
 		})
-	r := nacos.NewNacosResolver(nacosCli, nacos.WithGroup(consts.SocialityGroup))
+	r := nacos.NewNacosResolver(nacosCli, nacos.WithGroup(consts.UserGroup))
 	if err != nil {
 		klog.Fatalf("new nacos client failed: %s", err.Error())
 	}
