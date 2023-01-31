@@ -17,7 +17,6 @@ import (
 	sTools "github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/golang-jwt/jwt"
-	"gorm.io/gorm"
 )
 
 // UserServiceImpl implements the last service interface defined in the IDL.
@@ -34,7 +33,7 @@ func (s *UserServiceImpl) Register(_ context.Context, req *user.DouyinUserRegist
 	usr.Password = tools.Md5Crypt(req.Password, global.ServerConfig.MysqlInfo.Salt) // Encrypt password with md5.
 
 	if err = dao.CreateUser(&usr); err != nil {
-		if err == gorm.ErrRegistered {
+		if err == dao.ErrUserExist {
 			resp.BaseResp = sTools.BuildBaseResp(errno.UserAlreadyExistErr)
 		} else {
 			klog.Error("create user error", err)
@@ -68,7 +67,7 @@ func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequ
 
 	usr, err := dao.GetUserByUsername(req.Username)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if err == dao.ErrNoSuchUser {
 			resp.BaseResp = sTools.BuildBaseResp(errno.UserNotFoundErr)
 		} else {
 			klog.Errorf("get user by name err", err)
