@@ -5,11 +5,10 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/global"
-	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/initialize"
-	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/tools"
+	"github.com/CyanAsterisk/TikGok/server/cmd/chat/global"
+	"github.com/CyanAsterisk/TikGok/server/cmd/chat/initialize"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
-	sociality "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality/socialityservice"
+	chat "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/chat/chatservice"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/limit"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
@@ -31,16 +30,10 @@ func main() {
 		provider.WithInsecure(),
 	)
 	defer p.Shutdown(context.Background())
-	initialize.InitUser()
 
-	impl := &SocialityServiceImpl{
-		UserManager: &tools.UserManager{
-			UserService: global.UserClient,
-			ChatService: global.ChatClient,
-		},
-	}
+	impl := new(ChatServiceImpl)
 	// Create new server.
-	srv := sociality.NewServer(impl,
+	srv := chat.NewServer(impl,
 		server.WithServiceAddr(utils.NewNetAddr(consts.TCP, net.JoinHostPort(IP, strconv.Itoa(Port)))),
 		server.WithRegistry(r),
 		server.WithRegistryInfo(info),

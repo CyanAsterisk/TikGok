@@ -23,8 +23,6 @@ func NewServiceInfo() *kitex.ServiceInfo {
 		"FollowingList": kitex.NewMethodInfo(followingListHandler, newSocialityServiceFollowingListArgs, newSocialityServiceFollowingListResult, false),
 		"FollowerList":  kitex.NewMethodInfo(followerListHandler, newSocialityServiceFollowerListArgs, newSocialityServiceFollowerListResult, false),
 		"FriendList":    kitex.NewMethodInfo(friendListHandler, newSocialityServiceFriendListArgs, newSocialityServiceFriendListResult, false),
-		"ChatHistory":   kitex.NewMethodInfo(chatHistoryHandler, newSocialityServiceChatHistoryArgs, newSocialityServiceChatHistoryResult, false),
-		"SentMessage":   kitex.NewMethodInfo(sentMessageHandler, newSocialityServiceSentMessageArgs, newSocialityServiceSentMessageResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName": "sociality",
@@ -112,42 +110,6 @@ func newSocialityServiceFriendListResult() interface{} {
 	return sociality.NewSocialityServiceFriendListResult()
 }
 
-func chatHistoryHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*sociality.SocialityServiceChatHistoryArgs)
-	realResult := result.(*sociality.SocialityServiceChatHistoryResult)
-	success, err := handler.(sociality.SocialityService).ChatHistory(ctx, realArg.Req)
-	if err != nil {
-		return err
-	}
-	realResult.Success = success
-	return nil
-}
-func newSocialityServiceChatHistoryArgs() interface{} {
-	return sociality.NewSocialityServiceChatHistoryArgs()
-}
-
-func newSocialityServiceChatHistoryResult() interface{} {
-	return sociality.NewSocialityServiceChatHistoryResult()
-}
-
-func sentMessageHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*sociality.SocialityServiceSentMessageArgs)
-	realResult := result.(*sociality.SocialityServiceSentMessageResult)
-	success, err := handler.(sociality.SocialityService).SentMessage(ctx, realArg.Req)
-	if err != nil {
-		return err
-	}
-	realResult.Success = success
-	return nil
-}
-func newSocialityServiceSentMessageArgs() interface{} {
-	return sociality.NewSocialityServiceSentMessageArgs()
-}
-
-func newSocialityServiceSentMessageResult() interface{} {
-	return sociality.NewSocialityServiceSentMessageResult()
-}
-
 type kClient struct {
 	c client.Client
 }
@@ -193,26 +155,6 @@ func (p *kClient) FriendList(ctx context.Context, req *sociality.DouyinRelationF
 	_args.Req = req
 	var _result sociality.SocialityServiceFriendListResult
 	if err = p.c.Call(ctx, "FriendList", &_args, &_result); err != nil {
-		return
-	}
-	return _result.GetSuccess(), nil
-}
-
-func (p *kClient) ChatHistory(ctx context.Context, req *sociality.DouyinMessageChatRequest) (r *sociality.DouyinMessageChatResponse, err error) {
-	var _args sociality.SocialityServiceChatHistoryArgs
-	_args.Req = req
-	var _result sociality.SocialityServiceChatHistoryResult
-	if err = p.c.Call(ctx, "ChatHistory", &_args, &_result); err != nil {
-		return
-	}
-	return _result.GetSuccess(), nil
-}
-
-func (p *kClient) SentMessage(ctx context.Context, req *sociality.DouyinMessageActionRequest) (r *sociality.DouyinMessageActionResponse, err error) {
-	var _args sociality.SocialityServiceSentMessageArgs
-	_args.Req = req
-	var _result sociality.SocialityServiceSentMessageResult
-	if err = p.c.Call(ctx, "SentMessage", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

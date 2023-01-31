@@ -15,8 +15,6 @@ type Client interface {
 	FollowingList(ctx context.Context, req *sociality.DouyinRelationFollowListRequest, callOptions ...callopt.Option) (r *sociality.DouyinRelationFollowListResponse, err error)
 	FollowerList(ctx context.Context, req *sociality.DouyinRelationFollowerListRequest, callOptions ...callopt.Option) (r *sociality.DouyinRelationFollowerListResponse, err error)
 	FriendList(ctx context.Context, req *sociality.DouyinRelationFriendListRequest, callOptions ...callopt.Option) (r *sociality.DouyinRelationFriendListResponse, err error)
-	ChatHistory(ctx context.Context, req *sociality.DouyinMessageChatRequest, callOptions ...callopt.Option) (r *sociality.DouyinMessageChatResponse, err error)
-	SentMessage(ctx context.Context, req *sociality.DouyinMessageActionRequest, callOptions ...callopt.Option) (r *sociality.DouyinMessageActionResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -66,14 +64,4 @@ func (p *kSocialityServiceClient) FollowerList(ctx context.Context, req *sociali
 func (p *kSocialityServiceClient) FriendList(ctx context.Context, req *sociality.DouyinRelationFriendListRequest, callOptions ...callopt.Option) (r *sociality.DouyinRelationFriendListResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.FriendList(ctx, req)
-}
-
-func (p *kSocialityServiceClient) ChatHistory(ctx context.Context, req *sociality.DouyinMessageChatRequest, callOptions ...callopt.Option) (r *sociality.DouyinMessageChatResponse, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.ChatHistory(ctx, req)
-}
-
-func (p *kSocialityServiceClient) SentMessage(ctx context.Context, req *sociality.DouyinMessageActionRequest, callOptions ...callopt.Option) (r *sociality.DouyinMessageActionResponse, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.SentMessage(ctx, req)
 }

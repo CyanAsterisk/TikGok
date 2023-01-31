@@ -22,6 +22,7 @@ type SocialityServiceImpl struct {
 // for get user logic.
 type UserManager interface {
 	GetUsers(ctx context.Context, list []int64, uid int64) ([]*base.User, error)
+	GetFriendUsers(ctx context.Context, list []int64, uid int64) ([]*base.FriendUser, error)
 }
 
 // Action implements the SocialityServiceImpl interface.
@@ -106,7 +107,7 @@ func (s *SocialityServiceImpl) FriendList(ctx context.Context, req *sociality.Do
 		resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get friends list error"))
 		return resp, nil
 	}
-	users, err := s.UserManager.GetUsers(ctx, list, req.UserId)
+	users, err := s.UserManager.GetFriendUsers(ctx, list, req.UserId)
 	if err != nil {
 		klog.Error("get users by user manager error", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get friends list error"))

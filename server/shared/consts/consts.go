@@ -19,6 +19,7 @@ const (
 	InteractionConfigPath = "./server/cmd/interaction/config.yaml"
 	SocialityConfigPath   = "./server/cmd/sociality/config.yaml"
 	VideoConfigPath       = "./server/cmd/video/config.yaml"
+	ChatConfigPath        = "./server/cmd/chat/config.yaml"
 
 	NacosSnowflakeNode    = 1
 	UserSnowflakeNode     = 2
@@ -27,12 +28,14 @@ const (
 	FavoriteSnowflakeNode = 5
 	FollowSnowflakeNode   = 6
 	MinioSnowflakeNode    = 7
+	ChatSnowflakeNode     = 8
 
 	ApiGroup         = "API_GROUP"
 	UserGroup        = "AUTH_GROUP"
 	InteractionGroup = "INTERACTION_GROUP"
 	SocialityGroup   = "SOCIALITY_GROUP"
 	VideoGroup       = "VIDEO_GROUP"
+	ChatGroup        = "CHAT_GROUP"
 
 	NacosLogDir   = "tmp/nacos/log"
 	NacosCacheDir = "tmp/nacos/cache"

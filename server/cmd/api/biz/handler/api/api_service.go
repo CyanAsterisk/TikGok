@@ -476,6 +476,6 @@ func FriendList(ctx context.Context, c *app.RequestContext) {
 	}
 	resp.StatusCode = res.BaseResp.StatusCode
 	resp.StatusMsg = res.BaseResp.StatusMsg
-	resp.UserList = tools.Users(res.UserList)
+	// resp.UserList = tools.Users(res.UserList) TODO 将 User 改为 FUser
 	errno.SendResponse(c, resp)
 }
