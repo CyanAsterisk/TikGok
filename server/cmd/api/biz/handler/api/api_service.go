@@ -4,6 +4,7 @@ package api
 
 import (
 	"context"
+	"github.com/CyanAsterisk/TikGok/server/shared/middleware"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/biz/model/api"
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/global"
@@ -15,24 +16,27 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/user"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/video"
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
 // Register .
 // @router /douyin/user/register [POST]
 func Register(ctx context.Context, c *app.RequestContext) {
 	resp := new(api.DouyinUserRegisterResponse)
-	var err error
-	var req user.DouyinUserRegisterRequest
-	err = c.BindAndValidate(&req)
+	var req api.DouyinUserRegisterRequest
+	err := c.BindAndValidate(&req)
 	if err != nil {
 		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
 		resp.StatusMsg = errno.ParamsEr.ErrMsg
 		errno.SendResponse(c, resp)
 		return
 	}
-
-	res, err := global.UserClient.Register(ctx, &req)
+	res, err := global.UserClient.Register(ctx, &user.DouyinUserRegisterRequest{
+		Username: req.Username,
+		Password: req.Password,
+	})
 	if err != nil {
+		hlog.Errorf("rpc call user server err:%s", err.Error())
 		resp.StatusCode = int32(errno.RPCUserErr.ErrCode)
 		resp.StatusMsg = errno.RPCUserErr.ErrMsg
 		errno.SendResponse(c, resp)
@@ -49,9 +53,8 @@ func Register(ctx context.Context, c *app.RequestContext) {
 // @router /douyin/user/login [POST]
 func Login(ctx context.Context, c *app.RequestContext) {
 	resp := new(api.DouyinUserLoginResponse)
-	var err error
-	var req user.DouyinUserLoginRequest
-	err = c.BindAndValidate(&req)
+	var req api.DouyinUserLoginRequest
+	err := c.BindAndValidate(&req)
 	if err != nil {
 		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
 		resp.StatusMsg = errno.ParamsEr.ErrMsg
@@ -59,7 +62,10 @@ func Login(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	res, err := global.UserClient.Login(ctx, &req)
+	res, err := global.UserClient.Login(ctx, &user.DouyinUserLoginRequest{
+		Username: req.Username,
+		Password: req.Password,
+	})
 	if err != nil {
 		resp.StatusCode = int32(errno.RPCUserErr.ErrCode)
 		resp.StatusMsg = errno.RPCUserErr.ErrMsg
@@ -77,17 +83,26 @@ func Login(ctx context.Context, c *app.RequestContext) {
 // @router /douyin/user [GET]
 func GetUserInfo(ctx context.Context, c *app.RequestContext) {
 	resp := new(api.DouyinUserResponse)
-	var err error
-	var req user.DouyinUserRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
-		resp.StatusMsg = errno.ParamsEr.ErrMsg
+	var req api.DouyinUserRequest
+	err := c.BindAndValidate(&req)
+	// TODO: fix BindAndValidate error
+	//if err != nil {
+	//	resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+	//	resp.StatusMsg = errno.ParamsEr.Error()
+	//	errno.SendResponse(c, resp)
+	//	return
+	//}
+	aid, flag := c.Get(consts.AccountID)
+	if !flag {
+		resp.StatusCode = int32(errno.ServiceErr.ErrCode)
+		resp.StatusMsg = errno.ServiceErr.ErrMsg
 		errno.SendResponse(c, resp)
 		return
 	}
-
-	res, err := global.UserClient.GetUserInfo(ctx, &req)
+	res, err := global.UserClient.GetUserInfo(ctx, &user.DouyinUserRequest{
+		UserId:   aid.(int64),
+		ToUserId: req.UserID,
+	})
 	if err != nil {
 		resp.StatusCode = int32(errno.RPCUserErr.ErrCode)
 		resp.StatusMsg = errno.RPCUserErr.ErrMsg
@@ -105,7 +120,7 @@ func GetUserInfo(ctx context.Context, c *app.RequestContext) {
 func Feed(ctx context.Context, c *app.RequestContext) {
 	resp := new(api.DouyinFeedResponse)
 	var err error
-	var req video.DouyinFeedRequest
+	var req api.DouyinFeedRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
@@ -113,8 +128,22 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-
-	res, err := global.VideoClient.Feed(ctx, &req)
+	aid := int64(0)
+	if req.Token != "" {
+		j := middleware.NewJWT(global.ServerConfig.JWTInfo.SigningKey)
+		claims, err := j.ParseToken(req.Token)
+		if err != nil {
+			resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+			resp.StatusMsg = "bad token"
+			errno.SendResponse(c, resp)
+			return
+		}
+		aid = claims.ID
+	}
+	res, err := global.VideoClient.Feed(ctx, &video.DouyinFeedRequest{
+		LatestTime: req.LatestTime,
+		UserId:     aid,
+	})
 	if err != nil {
 		resp.StatusCode = int32(errno.RPCVideoErr.ErrCode)
 		resp.StatusMsg = errno.RPCVideoErr.ErrMsg
@@ -137,7 +166,7 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
-		resp.StatusMsg = errno.ParamsEr.ErrMsg
+		resp.StatusMsg = errno.ParamsEr.Error()
 		errno.SendResponse(c, resp)
 		return
 	}
@@ -181,7 +210,7 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 func VideoList(ctx context.Context, c *app.RequestContext) {
 	resp := new(api.DouyinPublishListResponse)
 	var err error
-	var req video.DouyinPublishListRequest
+	var req api.DouyinPublishListRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
@@ -190,7 +219,7 @@ func VideoList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	res, err := global.VideoClient.VideoList(ctx, &req)
+	res, err := global.VideoClient.VideoList(ctx, &video.DouyinPublishListRequest{UserId: req.UserID})
 	if err != nil {
 		resp.StatusCode = int32(errno.RPCVideoErr.ErrCode)
 		resp.StatusMsg = errno.RPCVideoErr.ErrMsg
