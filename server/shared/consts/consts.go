@@ -1,7 +1,5 @@
 package consts
 
-import "time"
-
 const (
 	TikGok         = "TikGok"
 	MySqlDSN       = "%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local"
@@ -9,8 +7,7 @@ const (
 
 	JWTIssuer        = "TikGok"
 	ThirtyDays       = 60 * 60 * 24 * 30
-	AuthorizationKey = "authorization"
-	TokenRefreshTime = time.Hour
+	AuthorizationKey = "token"
 	Claims           = "claims"
 	AccountID        = "accountID"
 

@@ -31,9 +31,10 @@ func main() {
 		provider.WithInsecure(),
 	)
 	defer p.Shutdown(context.Background())
+	initialize.InitSocial()
 
 	impl := &UserServiceImpl{
-		jwt: middleware.NewJWT(),
+		jwt: middleware.NewJWT(global.ServerConfig.JWTInfo.SigningKey),
 	}
 	// Create new server.
 	srv := user.NewServer(impl,

@@ -3,6 +3,7 @@
 package Api
 
 import (
+	"github.com/CyanAsterisk/TikGok/server/cmd/api/global"
 	"github.com/CyanAsterisk/TikGok/server/shared/middleware"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/gzip"
@@ -31,13 +32,13 @@ func _feedMw() []app.HandlerFunc {
 
 func _getuserinfoMw() []app.HandlerFunc {
 	return []app.HandlerFunc{
-		middleware.JWTAuth(),
+		middleware.JWTAuth(global.ServerConfig.JWTInfo.SigningKey),
 	}
 }
 
 func _publishMw() []app.HandlerFunc {
 	return []app.HandlerFunc{
-		middleware.JWTAuth(),
+		middleware.JWTAuth(global.ServerConfig.JWTInfo.SigningKey),
 	}
 }
 
@@ -68,7 +69,7 @@ func _registerMw() []app.HandlerFunc {
 
 func _commentMw() []app.HandlerFunc {
 	return []app.HandlerFunc{
-		middleware.JWTAuth(),
+		middleware.JWTAuth(global.ServerConfig.JWTInfo.SigningKey),
 	}
 }
 
@@ -84,7 +85,7 @@ func _commentlistMw() []app.HandlerFunc {
 
 func _favoriteMw() []app.HandlerFunc {
 	return []app.HandlerFunc{
-		middleware.JWTAuth(),
+		middleware.JWTAuth(global.ServerConfig.JWTInfo.SigningKey),
 	}
 }
 
@@ -100,7 +101,7 @@ func _favoritelistMw() []app.HandlerFunc {
 
 func _relationMw() []app.HandlerFunc {
 	return []app.HandlerFunc{
-		middleware.JWTAuth(),
+		middleware.JWTAuth(global.ServerConfig.JWTInfo.SigningKey),
 	}
 }
 

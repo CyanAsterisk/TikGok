@@ -23,9 +23,14 @@ type OtelConfig struct {
 	EndPoint string `mapstructure:"endpoint" json:"endpoint"`
 }
 
+type JWTConfig struct {
+	SigningKey string `mapstructure:"key" json:"key"`
+}
+
 type ServerConfig struct {
 	Name             string             `mapstructure:"name" json:"name"`
 	Host             string             `mapstructure:"host" json:"host"`
+	JWTInfo          JWTConfig          `mapstructure:"jwt" json:"jwt"`
 	MysqlInfo        MysqlConfig        `mapstructure:"mysql" json:"mysql"`
 	OtelInfo         OtelConfig         `mapstructure:"otel" json:"otel"`
 	SocialitySrvInfo SocialitySrvConfig `mapstructure:"sociality_srv" json:"sociality_srv"`
