@@ -106,6 +106,10 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserR
 
 	usr, err := dao.GetUserById(req.OwnerId)
 	if err != nil {
+		if err == dao.ErrNoSuchUser {
+			resp.BaseResp = sTools.BuildBaseResp(errno.UserNotFoundErr)
+			return resp, nil
+		}
 		klog.Error("get user by id failed", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr)
 		return resp, nil

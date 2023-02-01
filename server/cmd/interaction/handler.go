@@ -12,7 +12,6 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction"
 	sTools "github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"gorm.io/gorm"
 )
 
 // InteractionServerImpl implements the last service interface defined in the IDL.
@@ -35,8 +34,8 @@ type VideoManager interface {
 // Favorite implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) Favorite(_ context.Context, req *interaction.DouyinFavoriteActionRequest) (resp *interaction.DouyinFavoriteActionResponse, err error) {
 	resp = new(interaction.DouyinFavoriteActionResponse)
-	_, err = dao.GetFavoriteInfo(req.UserId, req.VideoId)
-	if err == gorm.ErrRecordNotFound {
+	faInfo, err := dao.GetFavoriteInfo(req.UserId, req.VideoId)
+	if err == nil && faInfo == nil {
 		err = dao.CreateFavorite(&model.Favorite{
 			UserId:     req.UserId,
 			VideoId:    req.VideoId,
