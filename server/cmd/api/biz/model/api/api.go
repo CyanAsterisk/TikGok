@@ -2621,7 +2621,7 @@ func (p *DouyinPublishListResponse) String() string {
 
 type DouyinFavoriteActionRequest struct {
 	Token      string `thrift:"token,1" json:"token" query:"token"`
-	VideoID    int64  `thrift:"video_id,2" json:"video_id" query:"video_id" vd:"len($)>0 && len($)<20"`
+	VideoID    int64  `thrift:"video_id,2" json:"video_id" query:"video_id"`
 	ActionType int8   `thrift:"action_type,3" json:"action_type" query:"action_type" vd:"$==1 || $==2"`
 }
 
@@ -3032,7 +3032,7 @@ func (p *DouyinFavoriteActionResponse) String() string {
 }
 
 type DouyinFavoriteListRequest struct {
-	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id" vd:"len($)>0 && len($)<20"`
+	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id"`
 	Token  string `thrift:"token,2" json:"token" query:"token"`
 }
 
@@ -3464,10 +3464,10 @@ func (p *DouyinFavoriteListResponse) String() string {
 
 type DouyinCommentActionRequest struct {
 	Token       string `thrift:"token,1" json:"token" query:"token"`
-	VideoID     int64  `thrift:"video_id,2" json:"video_id" query:"video_id" vd:"len($)>0 && len($)<20"`
+	VideoID     int64  `thrift:"video_id,2" json:"video_id" query:"video_id"`
 	ActionType  int8   `thrift:"action_type,3" json:"action_type" query:"action_type" vd:"$==1 || $==2"`
 	CommentText string `thrift:"comment_text,4" json:"comment_text" query:"comment_text"`
-	CommentID   int64  `thrift:"comment_id,5" json:"comment_id" query:"comment_id" vd:"len($)>0 && len($)<20"`
+	CommentID   int64  `thrift:"comment_id,5" json:"comment_id" query:"comment_id"`
 }
 
 func NewDouyinCommentActionRequest() *DouyinCommentActionRequest {
@@ -4022,7 +4022,7 @@ func (p *DouyinCommentActionResponse) String() string {
 
 type DouyinCommentListRequest struct {
 	Token   string `thrift:"token,1" json:"token" query:"token"`
-	VideoID int64  `thrift:"video_id,2" json:"video_id" query:"video_id" vd:"len($)>0 && len($)<20"`
+	VideoID int64  `thrift:"video_id,2" json:"video_id" query:"video_id"`
 }
 
 func NewDouyinCommentListRequest() *DouyinCommentListRequest {
@@ -4453,7 +4453,7 @@ func (p *DouyinCommentListResponse) String() string {
 
 type DouyinRelationActionRequest struct {
 	Token      string `thrift:"token,1" json:"token" query:"token"`
-	ToUserID   int64  `thrift:"to_user_id,2" json:"to_user_id" query:"to_user_id" vd:"len($)>0 && len($)<20"`
+	ToUserID   int64  `thrift:"to_user_id,2" json:"to_user_id" query:"to_user_id"`
 	ActionType int8   `thrift:"action_type,3" json:"action_type" query:"action_type" vd:"$==1 || $==2"`
 }
 
@@ -4864,7 +4864,7 @@ func (p *DouyinRelationActionResponse) String() string {
 }
 
 type DouyinRelationFollowListRequest struct {
-	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id" vd:"len($)>0 && len($)<20"`
+	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id"`
 	Token  string `thrift:"token,2" json:"token" query:"token"`
 }
 
@@ -5295,7 +5295,7 @@ func (p *DouyinRelationFollowListResponse) String() string {
 }
 
 type DouyinRelationFollowerListRequest struct {
-	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id" vd:"len($)>0 && len($)<20"`
+	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id"`
 	Token  string `thrift:"token,2" json:"token" query:"token"`
 }
 
@@ -5726,7 +5726,7 @@ func (p *DouyinRelationFollowerListResponse) String() string {
 }
 
 type DouyinRelationFriendListRequest struct {
-	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id" vd:"len($)>0 && len($)<20"`
+	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id"`
 	Token  string `thrift:"token,2" json:"token" query:"token"`
 }
 
