@@ -7,6 +7,17 @@ import (
 	"gorm.io/gorm"
 )
 
+// FavoriteCountByVideoId gets the number of favorite by videoId.
+func FavoriteCountByVideoId(videoId int64) (int64, error) {
+	var count int64
+	err := global.DB.Model(&model.Favorite{}).
+		Where(&model.Favorite{VideoId: videoId, ActionType: consts.IsLike}).Count(&count).Error
+	if err != nil {
+		return -1, err
+	}
+	return count, nil
+}
+
 // GetFavoriteUserList gets favorite user list by videoId.
 func GetFavoriteUserList(videoId int64) ([]int64, error) {
 	var userList []int64

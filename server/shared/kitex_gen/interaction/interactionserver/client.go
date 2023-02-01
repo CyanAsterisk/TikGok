@@ -13,8 +13,10 @@ import (
 type Client interface {
 	Favorite(ctx context.Context, req *interaction.DouyinFavoriteActionRequest, callOptions ...callopt.Option) (r *interaction.DouyinFavoriteActionResponse, err error)
 	FavoriteList(ctx context.Context, req *interaction.DouyinFavoriteListRequest, callOptions ...callopt.Option) (r *interaction.DouyinFavoriteListResponse, err error)
+	FavoriteCount(ctx context.Context, req *interaction.DouyinFavoriteCountRequest, callOptions ...callopt.Option) (r *interaction.DouyinFavoriteCountResponse, err error)
 	Comment(ctx context.Context, req *interaction.DouyinCommentActionRequest, callOptions ...callopt.Option) (r *interaction.DouyinCommentActionResponse, err error)
 	CommentList(ctx context.Context, req *interaction.DouyinCommentListRequest, callOptions ...callopt.Option) (r *interaction.DouyinCommentListResponse, err error)
+	CommentCount(ctx context.Context, req *interaction.DouyinCommentCountRequest, callOptions ...callopt.Option) (r *interaction.DouyinCommentCountResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -56,6 +58,11 @@ func (p *kInteractionServerClient) FavoriteList(ctx context.Context, req *intera
 	return p.kClient.FavoriteList(ctx, req)
 }
 
+func (p *kInteractionServerClient) FavoriteCount(ctx context.Context, req *interaction.DouyinFavoriteCountRequest, callOptions ...callopt.Option) (r *interaction.DouyinFavoriteCountResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.FavoriteCount(ctx, req)
+}
+
 func (p *kInteractionServerClient) Comment(ctx context.Context, req *interaction.DouyinCommentActionRequest, callOptions ...callopt.Option) (r *interaction.DouyinCommentActionResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.Comment(ctx, req)
@@ -64,4 +71,9 @@ func (p *kInteractionServerClient) Comment(ctx context.Context, req *interaction
 func (p *kInteractionServerClient) CommentList(ctx context.Context, req *interaction.DouyinCommentListRequest, callOptions ...callopt.Option) (r *interaction.DouyinCommentListResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.CommentList(ctx, req)
+}
+
+func (p *kInteractionServerClient) CommentCount(ctx context.Context, req *interaction.DouyinCommentCountRequest, callOptions ...callopt.Option) (r *interaction.DouyinCommentCountResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CommentCount(ctx, req)
 }

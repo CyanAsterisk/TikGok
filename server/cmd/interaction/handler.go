@@ -85,6 +85,20 @@ func (s *InteractionServerImpl) FavoriteList(ctx context.Context, req *interacti
 	return resp, nil
 }
 
+// FavoriteCount implements the InteractionServerImpl interface.
+func (s *InteractionServerImpl) FavoriteCount(_ context.Context, req *interaction.DouyinFavoriteCountRequest) (resp *interaction.DouyinFavoriteCountResponse, err error) {
+	resp = new(interaction.DouyinFavoriteCountResponse)
+	count, err := dao.FavoriteCountByVideoId(req.VideoId)
+	if err != nil {
+		klog.Error("get favorite count error", err)
+		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get favorite count error"))
+		return resp, nil
+	}
+	resp.Count = count
+	resp.BaseResp = sTools.BuildBaseResp(nil)
+	return resp, nil
+}
+
 // Comment implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) Comment(_ context.Context, req *interaction.DouyinCommentActionRequest) (resp *interaction.DouyinCommentActionResponse, err error) {
 	resp = new(interaction.DouyinCommentActionResponse)
@@ -109,6 +123,20 @@ func (s *InteractionServerImpl) CommentList(_ context.Context, req *interaction.
 		return resp, nil
 	}
 	resp.CommentList = tools.Comments(list)
+	resp.BaseResp = sTools.BuildBaseResp(nil)
+	return resp, nil
+}
+
+// CommentCount implements the InteractionServerImpl interface.
+func (s *InteractionServerImpl) CommentCount(_ context.Context, req *interaction.DouyinCommentCountRequest) (resp *interaction.DouyinCommentCountResponse, err error) {
+	resp = new(interaction.DouyinCommentCountResponse)
+	count, err := dao.CommentCountByVideoId(req.VideoId)
+	if err != nil {
+		klog.Error("get comment count error", err)
+		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get comment count error"))
+		return resp, nil
+	}
+	resp.Count = count
 	resp.BaseResp = sTools.BuildBaseResp(nil)
 	return resp, nil
 }

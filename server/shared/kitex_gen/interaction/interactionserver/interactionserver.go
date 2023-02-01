@@ -19,10 +19,12 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	serviceName := "InteractionServer"
 	handlerType := (*interaction.InteractionServer)(nil)
 	methods := map[string]kitex.MethodInfo{
-		"Favorite":     kitex.NewMethodInfo(favoriteHandler, newInteractionServerFavoriteArgs, newInteractionServerFavoriteResult, false),
-		"FavoriteList": kitex.NewMethodInfo(favoriteListHandler, newInteractionServerFavoriteListArgs, newInteractionServerFavoriteListResult, false),
-		"Comment":      kitex.NewMethodInfo(commentHandler, newInteractionServerCommentArgs, newInteractionServerCommentResult, false),
-		"CommentList":  kitex.NewMethodInfo(commentListHandler, newInteractionServerCommentListArgs, newInteractionServerCommentListResult, false),
+		"Favorite":      kitex.NewMethodInfo(favoriteHandler, newInteractionServerFavoriteArgs, newInteractionServerFavoriteResult, false),
+		"FavoriteList":  kitex.NewMethodInfo(favoriteListHandler, newInteractionServerFavoriteListArgs, newInteractionServerFavoriteListResult, false),
+		"FavoriteCount": kitex.NewMethodInfo(favoriteCountHandler, newInteractionServerFavoriteCountArgs, newInteractionServerFavoriteCountResult, false),
+		"Comment":       kitex.NewMethodInfo(commentHandler, newInteractionServerCommentArgs, newInteractionServerCommentResult, false),
+		"CommentList":   kitex.NewMethodInfo(commentListHandler, newInteractionServerCommentListArgs, newInteractionServerCommentListResult, false),
+		"CommentCount":  kitex.NewMethodInfo(commentCountHandler, newInteractionServerCommentCountArgs, newInteractionServerCommentCountResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName": "interaction",
@@ -74,6 +76,24 @@ func newInteractionServerFavoriteListResult() interface{} {
 	return interaction.NewInteractionServerFavoriteListResult()
 }
 
+func favoriteCountHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*interaction.InteractionServerFavoriteCountArgs)
+	realResult := result.(*interaction.InteractionServerFavoriteCountResult)
+	success, err := handler.(interaction.InteractionServer).FavoriteCount(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newInteractionServerFavoriteCountArgs() interface{} {
+	return interaction.NewInteractionServerFavoriteCountArgs()
+}
+
+func newInteractionServerFavoriteCountResult() interface{} {
+	return interaction.NewInteractionServerFavoriteCountResult()
+}
+
 func commentHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*interaction.InteractionServerCommentArgs)
 	realResult := result.(*interaction.InteractionServerCommentResult)
@@ -110,6 +130,24 @@ func newInteractionServerCommentListResult() interface{} {
 	return interaction.NewInteractionServerCommentListResult()
 }
 
+func commentCountHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*interaction.InteractionServerCommentCountArgs)
+	realResult := result.(*interaction.InteractionServerCommentCountResult)
+	success, err := handler.(interaction.InteractionServer).CommentCount(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newInteractionServerCommentCountArgs() interface{} {
+	return interaction.NewInteractionServerCommentCountArgs()
+}
+
+func newInteractionServerCommentCountResult() interface{} {
+	return interaction.NewInteractionServerCommentCountResult()
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -140,6 +178,16 @@ func (p *kClient) FavoriteList(ctx context.Context, req *interaction.DouyinFavor
 	return _result.GetSuccess(), nil
 }
 
+func (p *kClient) FavoriteCount(ctx context.Context, req *interaction.DouyinFavoriteCountRequest) (r *interaction.DouyinFavoriteCountResponse, err error) {
+	var _args interaction.InteractionServerFavoriteCountArgs
+	_args.Req = req
+	var _result interaction.InteractionServerFavoriteCountResult
+	if err = p.c.Call(ctx, "FavoriteCount", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
 func (p *kClient) Comment(ctx context.Context, req *interaction.DouyinCommentActionRequest) (r *interaction.DouyinCommentActionResponse, err error) {
 	var _args interaction.InteractionServerCommentArgs
 	_args.Req = req
@@ -155,6 +203,16 @@ func (p *kClient) CommentList(ctx context.Context, req *interaction.DouyinCommen
 	_args.Req = req
 	var _result interaction.InteractionServerCommentListResult
 	if err = p.c.Call(ctx, "CommentList", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) CommentCount(ctx context.Context, req *interaction.DouyinCommentCountRequest) (r *interaction.DouyinCommentCountResponse, err error) {
+	var _args interaction.InteractionServerCommentCountArgs
+	_args.Req = req
+	var _result interaction.InteractionServerCommentCountResult
+	if err = p.c.Call(ctx, "CommentCount", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
