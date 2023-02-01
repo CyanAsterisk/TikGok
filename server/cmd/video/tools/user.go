@@ -13,10 +13,10 @@ type UserManager struct {
 }
 
 // GetUsers gets users info by list.
-func (m *UserManager) GetUsers(ctx context.Context, list []int64, uid int64) ([]*base.User, error) {
+func (m *UserManager) GetUsers(ctx context.Context, list []int64, viewerId int64) ([]*base.User, error) {
 	var users []*base.User
-	for _, tid := range list {
-		u, err := m.UserService.GetUserInfo(ctx, &user.DouyinUserRequest{UserId: uid, ToUserId: tid})
+	for _, oid := range list {
+		u, err := m.UserService.GetUserInfo(ctx, &user.DouyinUserRequest{ViewerId: viewerId, OwnerId: oid})
 		if err != nil {
 			return nil, err
 		}
@@ -26,8 +26,8 @@ func (m *UserManager) GetUsers(ctx context.Context, list []int64, uid int64) ([]
 }
 
 // GetUser gets user info.
-func (m *UserManager) GetUser(ctx context.Context, UserId, toUserId int64) (*base.User, error) {
-	resp, err := m.UserService.GetUserInfo(ctx, &user.DouyinUserRequest{UserId: UserId, ToUserId: toUserId})
+func (m *UserManager) GetUser(ctx context.Context, viewerId, ownerId int64) (*base.User, error) {
+	resp, err := m.UserService.GetUserInfo(ctx, &user.DouyinUserRequest{ViewerId: viewerId, OwnerId: ownerId})
 	if err != nil {
 		return nil, err
 	}

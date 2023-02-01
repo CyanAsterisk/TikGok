@@ -49,7 +49,7 @@ func (s *VideoServiceImpl) Feed(ctx context.Context, req *video.DouyinFeedReques
 		return
 	}
 
-	resp.VideoList, err = s.packVideos(ctx, vs, req.UserId)
+	resp.VideoList, err = s.packVideos(ctx, vs, req.ViewerId)
 	if err != nil {
 		klog.Error("pack videos err", err.Error())
 		resp.BaseResp = sTools.BuildBaseResp(errno.ServiceErr.WithMessage("pack videos err"))
@@ -91,13 +91,13 @@ func (s *VideoServiceImpl) PublishVideo(_ context.Context, req *video.DouyinPubl
 // VideoList implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) VideoList(ctx context.Context, req *video.DouyinPublishListRequest) (resp *video.DouyinPublishListResponse, err error) {
 	resp = new(video.DouyinPublishListResponse)
-	vs, err := dao.GetVideosByUserId(req.UserId)
+	vs, err := dao.GetVideosByUserId(req.OwnerId)
 	if err != nil {
 		klog.Error("get published video list err", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.VideoServerErr.WithMessage("get published video list err"))
 		return
 	}
-	resp.VideoList, err = s.packVideos(ctx, vs, req.UserId)
+	resp.VideoList, err = s.packVideos(ctx, vs, req.ViewerId)
 	if err != nil {
 		klog.Error("pack videos err", err.Error())
 		resp.BaseResp = sTools.BuildBaseResp(errno.ServiceErr.WithMessage("pack videos err"))
@@ -116,7 +116,7 @@ func (s *VideoServiceImpl) GetVideo(ctx context.Context, req *video.DouyinGetVid
 		resp.BaseResp = sTools.BuildBaseResp(errno.VideoServerErr.WithMessage("get video err"))
 		return
 	}
-	resp.Video, err = s.packVideo(ctx, v, 0)
+	resp.Video, err = s.packVideo(ctx, v, req.VideoId)
 	if err != nil {
 		klog.Error("pack video err", err.Error())
 		resp.BaseResp = sTools.BuildBaseResp(errno.ServiceErr.WithMessage("pack video err"))

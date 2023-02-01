@@ -4,7 +4,7 @@ include "base.thrift"
 
 struct douyin_feed_request {
     1: required i64 latest_time, // Optional parameter, limit the latest submission timestamp of the returned video, accurate to seconds, and leave it blank to indicate the current time
-    2: required i64 user_id,     // User Id
+    2: required i64 viewer_id,   // Optional parameter, user id of viewer,set to zero when unclear
 }
 
 struct douyin_feed_response {
@@ -25,7 +25,8 @@ struct douyin_publish_action_response {
 }
 
 struct douyin_publish_list_request {
-    1: required i64 user_id, // User id
+    1: required i64 viewer_id, // User id of viewer,set to zero when unclear
+    2: required i64 owner_id,  // User id of owner
 }
 
 struct douyin_publish_list_response {
@@ -34,7 +35,8 @@ struct douyin_publish_list_response {
 }
 
 struct douyin_get_video_request {
-    1: required i64 video_id, // Video id
+    1: required i64 video_id,  // Video id
+    2: required i64 viewer_id, // User id of viewer,set to zero when unclear
 }
 
 struct douyin_get_video_response {

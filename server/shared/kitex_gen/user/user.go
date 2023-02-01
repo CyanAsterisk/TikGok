@@ -1037,8 +1037,8 @@ func (p *DouyinUserLoginResponse) Field3DeepEqual(src string) bool {
 }
 
 type DouyinUserRequest struct {
-	UserId   int64 `thrift:"user_id,1" frugal:"1,default,i64" json:"user_id"`
-	ToUserId int64 `thrift:"to_user_id,2" frugal:"2,default,i64" json:"to_user_id"`
+	ViewerId int64 `thrift:"viewer_id,1" frugal:"1,default,i64" json:"viewer_id"`
+	OwnerId  int64 `thrift:"owner_id,2" frugal:"2,default,i64" json:"owner_id"`
 }
 
 func NewDouyinUserRequest() *DouyinUserRequest {
@@ -1049,23 +1049,23 @@ func (p *DouyinUserRequest) InitDefault() {
 	*p = DouyinUserRequest{}
 }
 
-func (p *DouyinUserRequest) GetUserId() (v int64) {
-	return p.UserId
+func (p *DouyinUserRequest) GetViewerId() (v int64) {
+	return p.ViewerId
 }
 
-func (p *DouyinUserRequest) GetToUserId() (v int64) {
-	return p.ToUserId
+func (p *DouyinUserRequest) GetOwnerId() (v int64) {
+	return p.OwnerId
 }
-func (p *DouyinUserRequest) SetUserId(val int64) {
-	p.UserId = val
+func (p *DouyinUserRequest) SetViewerId(val int64) {
+	p.ViewerId = val
 }
-func (p *DouyinUserRequest) SetToUserId(val int64) {
-	p.ToUserId = val
+func (p *DouyinUserRequest) SetOwnerId(val int64) {
+	p.OwnerId = val
 }
 
 var fieldIDToName_DouyinUserRequest = map[int16]string{
-	1: "user_id",
-	2: "to_user_id",
+	1: "viewer_id",
+	2: "owner_id",
 }
 
 func (p *DouyinUserRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -1141,7 +1141,7 @@ func (p *DouyinUserRequest) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
-		p.UserId = v
+		p.ViewerId = v
 	}
 	return nil
 }
@@ -1150,7 +1150,7 @@ func (p *DouyinUserRequest) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
-		p.ToUserId = v
+		p.OwnerId = v
 	}
 	return nil
 }
@@ -1189,10 +1189,10 @@ WriteStructEndError:
 }
 
 func (p *DouyinUserRequest) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("user_id", thrift.I64, 1); err != nil {
+	if err = oprot.WriteFieldBegin("viewer_id", thrift.I64, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.UserId); err != nil {
+	if err := oprot.WriteI64(p.ViewerId); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1206,10 +1206,10 @@ WriteFieldEndError:
 }
 
 func (p *DouyinUserRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("to_user_id", thrift.I64, 2); err != nil {
+	if err = oprot.WriteFieldBegin("owner_id", thrift.I64, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.ToUserId); err != nil {
+	if err := oprot.WriteI64(p.OwnerId); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1235,10 +1235,10 @@ func (p *DouyinUserRequest) DeepEqual(ano *DouyinUserRequest) bool {
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.UserId) {
+	if !p.Field1DeepEqual(ano.ViewerId) {
 		return false
 	}
-	if !p.Field2DeepEqual(ano.ToUserId) {
+	if !p.Field2DeepEqual(ano.OwnerId) {
 		return false
 	}
 	return true
@@ -1246,14 +1246,14 @@ func (p *DouyinUserRequest) DeepEqual(ano *DouyinUserRequest) bool {
 
 func (p *DouyinUserRequest) Field1DeepEqual(src int64) bool {
 
-	if p.UserId != src {
+	if p.ViewerId != src {
 		return false
 	}
 	return true
 }
 func (p *DouyinUserRequest) Field2DeepEqual(src int64) bool {
 
-	if p.ToUserId != src {
+	if p.OwnerId != src {
 		return false
 	}
 	return true

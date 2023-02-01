@@ -61,13 +61,13 @@ func (s *SocialityServiceImpl) Action(_ context.Context, req *sociality.DouyinRe
 // FollowingList implements the SocialityServiceImpl interface.
 func (s *SocialityServiceImpl) FollowingList(ctx context.Context, req *sociality.DouyinRelationFollowListRequest) (resp *sociality.DouyinRelationFollowListResponse, err error) {
 	resp = new(sociality.DouyinRelationFollowListResponse)
-	list, err := dao.GetFollowingIdList(req.UserId)
+	list, err := dao.GetFollowingIdList(req.OwnerId)
 	if err != nil {
 		klog.Error("get following list error", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get following list error"))
 		return resp, nil
 	}
-	users, err := s.UserManager.GetUsers(ctx, list, req.UserId)
+	users, err := s.UserManager.GetUsers(ctx, list, req.ViewerId)
 	if err != nil {
 		klog.Error("get users by user manager error", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get following list error"))
@@ -81,13 +81,13 @@ func (s *SocialityServiceImpl) FollowingList(ctx context.Context, req *sociality
 // FollowerList implements the SocialityServiceImpl interface.
 func (s *SocialityServiceImpl) FollowerList(ctx context.Context, req *sociality.DouyinRelationFollowerListRequest) (resp *sociality.DouyinRelationFollowerListResponse, err error) {
 	resp = new(sociality.DouyinRelationFollowerListResponse)
-	list, err := dao.GetFollowerIdList(req.UserId)
+	list, err := dao.GetFollowerIdList(req.OwnerId)
 	if err != nil {
 		klog.Error("get follower list error", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get follower list error"))
 		return resp, nil
 	}
-	users, err := s.UserManager.GetUsers(ctx, list, req.UserId)
+	users, err := s.UserManager.GetUsers(ctx, list, req.ViewerId)
 	if err != nil {
 		klog.Error("get users by user manager error", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get follower list error"))
@@ -101,13 +101,13 @@ func (s *SocialityServiceImpl) FollowerList(ctx context.Context, req *sociality.
 // FriendList implements the SocialityServiceImpl interface.
 func (s *SocialityServiceImpl) FriendList(ctx context.Context, req *sociality.DouyinRelationFriendListRequest) (resp *sociality.DouyinRelationFriendListResponse, err error) {
 	resp = new(sociality.DouyinRelationFriendListResponse)
-	list, err := dao.GetFriendsList(req.UserId)
+	list, err := dao.GetFriendsList(req.OwnerId)
 	if err != nil {
 		klog.Error("get friends list error", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get friends list error"))
 		return resp, nil
 	}
-	users, err := s.UserManager.GetFriendUsers(ctx, list, req.UserId)
+	users, err := s.UserManager.GetFriendUsers(ctx, list, req.ViewerId)
 	if err != nil {
 		klog.Error("get users by user manager error", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get friends list error"))
