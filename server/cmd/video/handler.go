@@ -134,7 +134,6 @@ func (s *VideoServiceImpl) packVideo(ctx context.Context, mv *model.Video, uid i
 	if bv.IsFavorite, err = s.CheckFavorite(ctx, uid, bv.Id); err != nil {
 		return nil, err
 	}
-
 	if bv.CommentCount, err = s.GetCommentCount(ctx, bv.Id); err != nil {
 		return nil, err
 	}

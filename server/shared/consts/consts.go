@@ -61,6 +61,9 @@ const (
 	IsNotFollow = 2
 	IsFollow    = 1
 
+	SentMessage    = 1
+	ReceiveMessage = 0
+
 	MySQLImage         = "mysql:latest"
 	MySQLContainerPort = "3306/tcp"
 	MySQLContainerIP   = "127.0.0.1"

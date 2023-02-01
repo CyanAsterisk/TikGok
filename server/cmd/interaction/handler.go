@@ -77,7 +77,7 @@ func (s *InteractionServerImpl) FavoriteList(ctx context.Context, req *interacti
 	videos, err := s.VideoManager.GetVideos(ctx, list)
 	if err != nil {
 		klog.Error("get videos by video manager error", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get user favorite video list error"))
+		resp.BaseResp = sTools.BuildBaseResp(errno.RPCVideoErr.WithMessage("get user favorite video list error"))
 		return resp, nil
 	}
 	resp.VideoList = videos

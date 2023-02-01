@@ -15,4 +15,6 @@ enum Err {
     AuthorizeFailErr     = 30004,
     RPCVideoErr          = 40000,
     VideoServerErr       = 40001,
+    RPCChatErr           = 50000,
+    ChatServerErr        = 50001,
 }

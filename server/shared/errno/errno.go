@@ -35,20 +35,23 @@ var (
 	ParamsEr   = NewErrNo(int64(errno.Err_ParamsErr), "params err")
 	ServiceErr = NewErrNo(int64(errno.Err_ServiceErr), "service err")
 
-	RPCInteractionErr    = NewErrNo(int64(errno.Err_InteractionServerErr), "rpc call interaction server error")
-	InteractionServerErr = NewErrNo(int64(errno.Err_ParamsErr), "interaction server error")
+	RPCInteractionErr    = NewErrNo(int64(errno.Err_RPCInteractionErr), "rpc call interaction server error")
+	InteractionServerErr = NewErrNo(int64(errno.Err_InteractionServerErr), "interaction server error")
 
-	RPCSocialityErr    = NewErrNo(int64(errno.Err_ParamsErr), "rpc call sociality server error")
-	SocialityServerErr = NewErrNo(int64(errno.Err_ParamsErr), "sociality server error")
+	RPCSocialityErr    = NewErrNo(int64(errno.Err_RPCSocialityErr), "rpc call sociality server error")
+	SocialityServerErr = NewErrNo(int64(errno.Err_SocialityServerErr), "sociality server error")
 
-	RPCUserErr          = NewErrNo(int64(errno.Err_ParamsErr), "rpc call user server error")
-	UserServerErr       = NewErrNo(int64(errno.Err_ParamsErr), "user server error")
-	UserAlreadyExistErr = NewErrNo(int64(errno.Err_ParamsErr), "user already exist")
-	UserNotFoundErr     = NewErrNo(int64(errno.Err_ParamsErr), "user not found")
-	AuthorizeFailErr    = NewErrNo(int64(errno.Err_ParamsErr), "authorize failed")
+	RPCUserErr          = NewErrNo(int64(errno.Err_RPCUserErr), "rpc call user server error")
+	UserServerErr       = NewErrNo(int64(errno.Err_UserServerErr), "user server error")
+	UserAlreadyExistErr = NewErrNo(int64(errno.Err_UserAlreadyExistErr), "user already exist")
+	UserNotFoundErr     = NewErrNo(int64(errno.Err_UserNotFoundErr), "user not found")
+	AuthorizeFailErr    = NewErrNo(int64(errno.Err_AuthorizeFailErr), "authorize failed")
 
-	RPCVideoErr    = NewErrNo(int64(errno.Err_ParamsErr), "rpc call video server error")
-	VideoServerErr = NewErrNo(int64(errno.Err_ParamsErr), "video server error")
+	RPCVideoErr    = NewErrNo(int64(errno.Err_RPCVideoErr), "rpc call video server error")
+	VideoServerErr = NewErrNo(int64(errno.Err_VideoServerErr), "video server error")
+
+	RPCChatErr    = NewErrNo(int64(errno.Err_RPCChatErr), "rpc call chat server error")
+	ChatServerErr = NewErrNo(int64(errno.Err_ChatServerErr), "chat server error")
 )
 
 // SendResponse pack response

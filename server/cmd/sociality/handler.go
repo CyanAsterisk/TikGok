@@ -70,7 +70,7 @@ func (s *SocialityServiceImpl) FollowingList(ctx context.Context, req *sociality
 	users, err := s.UserManager.GetUsers(ctx, list, req.UserId)
 	if err != nil {
 		klog.Error("get users by user manager error", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get following list error"))
+		resp.BaseResp = sTools.BuildBaseResp(errno.RPCUserErr.WithMessage("get following list error"))
 		return resp, nil
 	}
 	resp.UserList = users
@@ -90,7 +90,7 @@ func (s *SocialityServiceImpl) FollowerList(ctx context.Context, req *sociality.
 	users, err := s.UserManager.GetUsers(ctx, list, req.UserId)
 	if err != nil {
 		klog.Error("get users by user manager error", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get follower list error"))
+		resp.BaseResp = sTools.BuildBaseResp(errno.RPCUserErr.WithMessage("get follower list error"))
 		return resp, nil
 	}
 	resp.UserList = users
@@ -110,7 +110,7 @@ func (s *SocialityServiceImpl) FriendList(ctx context.Context, req *sociality.Do
 	users, err := s.UserManager.GetFriendUsers(ctx, list, req.UserId)
 	if err != nil {
 		klog.Error("get users by user manager error", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get friends list error"))
+		resp.BaseResp = sTools.BuildBaseResp(errno.RPCUserErr.WithMessage("get friends list error"))
 		return resp, nil
 	}
 	resp.UserList = users
