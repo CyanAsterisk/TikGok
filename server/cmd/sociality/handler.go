@@ -10,7 +10,6 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
 	sTools "github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"gorm.io/gorm"
 )
 
 // SocialityServiceImpl implements the last service interface defined in the IDL.
@@ -28,8 +27,8 @@ type UserManager interface {
 // Action implements the SocialityServiceImpl interface.
 func (s *SocialityServiceImpl) Action(_ context.Context, req *sociality.DouyinRelationActionRequest) (resp *sociality.DouyinRelationActionResponse, err error) {
 	resp = new(sociality.DouyinRelationActionResponse)
-	_, err = dao.FindRecord(req.ToUserId, req.UserId)
-	if err == gorm.ErrRecordNotFound {
+	fr, err := dao.FindRecord(req.ToUserId, req.UserId)
+	if err == nil && fr == nil {
 		err = dao.CreateFollow(&model.Follow{
 			UserId:     req.ToUserId,
 			FollowerId: req.UserId,
