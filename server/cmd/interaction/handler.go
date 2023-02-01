@@ -12,7 +12,6 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction"
 	sTools "github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"gorm.io/gorm"
 )
 
 // InteractionServerImpl implements the last service interface defined in the IDL.
@@ -29,14 +28,14 @@ type CommentManager interface {
 // VideoManager defines the Anti Corruption Layer
 // for get video logic.
 type VideoManager interface {
-	GetVideos(ctx context.Context, list []int64) ([]*base.Video, error)
+	GetVideos(ctx context.Context, list []int64, viewerId int64) ([]*base.Video, error)
 }
 
 // Favorite implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) Favorite(_ context.Context, req *interaction.DouyinFavoriteActionRequest) (resp *interaction.DouyinFavoriteActionResponse, err error) {
 	resp = new(interaction.DouyinFavoriteActionResponse)
-	_, err = dao.GetFavoriteInfo(req.UserId, req.VideoId)
-	if err == gorm.ErrRecordNotFound {
+	faInfo, err := dao.GetFavoriteInfo(req.UserId, req.VideoId)
+	if err == nil && faInfo == nil {
 		err = dao.CreateFavorite(&model.Favorite{
 			UserId:     req.UserId,
 			VideoId:    req.VideoId,
@@ -68,13 +67,13 @@ func (s *InteractionServerImpl) Favorite(_ context.Context, req *interaction.Dou
 // FavoriteList implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) FavoriteList(ctx context.Context, req *interaction.DouyinFavoriteListRequest) (resp *interaction.DouyinFavoriteListResponse, err error) {
 	resp = new(interaction.DouyinFavoriteListResponse)
-	list, err := dao.GetFavoriteVideoIdListByUserId(req.UserId)
+	list, err := dao.GetFavoriteVideoIdListByUserId(req.OwnerId)
 	if err != nil {
 		klog.Error("get user favorite video list error", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get user favorite video list error"))
 		return resp, nil
 	}
-	videos, err := s.VideoManager.GetVideos(ctx, list)
+	videos, err := s.VideoManager.GetVideos(ctx, list, req.ViewerId)
 	if err != nil {
 		klog.Error("get videos by video manager error", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.RPCVideoErr.WithMessage("get user favorite video list error"))

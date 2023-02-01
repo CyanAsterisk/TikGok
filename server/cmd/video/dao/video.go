@@ -30,7 +30,7 @@ func GetVideosByLatestTime(latestTime int64) ([]*model.Video, error) {
 // GetVideosByUserId gets videos by userId
 func GetVideosByUserId(uid int64) ([]*model.Video, error) {
 	res := make([]*model.Video, 0)
-	if err := global.DB.Where(&model.Video{Uid: uid}).Order("update_at desc").Find(&res).Error; err != nil {
+	if err := global.DB.Where(&model.Video{Uid: uid}).Order("updated_at desc").Find(&res).Error; err != nil {
 		return nil, err
 	}
 	return res, nil

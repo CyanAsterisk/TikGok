@@ -104,8 +104,12 @@ func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequ
 func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserRequest) (resp *user.DouyinUserResponse, err error) {
 	resp = new(user.DouyinUserResponse)
 
-	usr, err := dao.GetUserById(req.ToUserId)
+	usr, err := dao.GetUserById(req.OwnerId)
 	if err != nil {
+		if err == dao.ErrNoSuchUser {
+			resp.BaseResp = sTools.BuildBaseResp(errno.UserNotFoundErr)
+			return resp, nil
+		}
 		klog.Error("get user by id failed", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr)
 		return resp, nil
@@ -113,7 +117,7 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserR
 	resp.User = tools.User(usr)
 
 	res, err := global.SocialClient.FollowerList(ctx, &sociality.DouyinRelationFollowerListRequest{
-		UserId: req.ToUserId,
+		OwnerId: req.OwnerId,
 	})
 	if err != nil {
 		klog.Error("get followerList err", err)
@@ -129,13 +133,13 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserR
 	resp.User.FollowerCount = int64(len(res.UserList))
 
 	for _, u := range res.UserList {
-		if u.Id == req.UserId {
+		if u.Id == req.ViewerId {
 			resp.User.IsFollow = true
 		}
 	}
 
 	response, err := global.SocialClient.FollowingList(ctx, (*sociality.DouyinRelationFollowListRequest)(&sociality.DouyinRelationFollowerListRequest{
-		UserId: req.ToUserId,
+		OwnerId: req.OwnerId,
 	}))
 	if err != nil {
 		klog.Error("get followerList err", err)

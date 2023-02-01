@@ -16,10 +16,10 @@ type UserManager struct {
 }
 
 // GetUsers gets users info by list.
-func (m *UserManager) GetUsers(ctx context.Context, list []int64, uid int64) ([]*base.User, error) {
+func (m *UserManager) GetUsers(ctx context.Context, list []int64, viewerId int64) ([]*base.User, error) {
 	var users []*base.User
 	for _, tid := range list {
-		u, err := m.UserService.GetUserInfo(ctx, &user.DouyinUserRequest{UserId: uid, ToUserId: tid})
+		u, err := m.UserService.GetUserInfo(ctx, &user.DouyinUserRequest{ViewerId: viewerId, OwnerId: tid})
 		if err != nil {
 			return nil, err
 		}
@@ -28,14 +28,14 @@ func (m *UserManager) GetUsers(ctx context.Context, list []int64, uid int64) ([]
 	return users, nil
 }
 
-func (m *UserManager) GetFriendUsers(ctx context.Context, list []int64, uid int64) ([]*base.FriendUser, error) {
+func (m *UserManager) GetFriendUsers(ctx context.Context, list []int64, viewerId int64) ([]*base.FriendUser, error) {
 	var fUsers []*base.FriendUser
-	for _, tid := range list {
-		u, err := m.UserService.GetUserInfo(ctx, &user.DouyinUserRequest{UserId: uid, ToUserId: tid})
+	for _, oid := range list {
+		u, err := m.UserService.GetUserInfo(ctx, &user.DouyinUserRequest{ViewerId: viewerId, OwnerId: oid})
 		if err != nil {
 			return nil, err
 		}
-		c, err := m.ChatService.LatestMessage(ctx, &chat.DouyinMessageLatestRequest{UserId: uid, ToUserId: tid})
+		c, err := m.ChatService.LatestMessage(ctx, &chat.DouyinMessageLatestRequest{UserId: viewerId, ToUserId: oid})
 		if err != nil {
 			return nil, err
 		}

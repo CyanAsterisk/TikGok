@@ -926,7 +926,7 @@ func (p *DouyinUserLoginResponse) String() string {
 }
 
 type DouyinUserRequest struct {
-	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id" vd:"len($)>0 && len($)<20"`
+	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id"`
 	Token  string `thrift:"token,2" json:"token" query:"token"`
 }
 
@@ -1824,8 +1824,7 @@ func (p *DouyinFeedResponse) String() string {
 
 type DouyinPublishActionRequest struct {
 	Token string `thrift:"token,1" form:"token" json:"token"`
-	Data  []byte `thrift:"data,2" form:"data" json:"data"`
-	Title string `thrift:"title,3" form:"title" json:"title" vd:"len($)>0 && len($)<33"`
+	Title string `thrift:"title,2" form:"title" json:"title" vd:"len($)>0 && len($)<33"`
 }
 
 func NewDouyinPublishActionRequest() *DouyinPublishActionRequest {
@@ -1836,18 +1835,13 @@ func (p *DouyinPublishActionRequest) GetToken() (v string) {
 	return p.Token
 }
 
-func (p *DouyinPublishActionRequest) GetData() (v []byte) {
-	return p.Data
-}
-
 func (p *DouyinPublishActionRequest) GetTitle() (v string) {
 	return p.Title
 }
 
 var fieldIDToName_DouyinPublishActionRequest = map[int16]string{
 	1: "token",
-	2: "data",
-	3: "title",
+	2: "title",
 }
 
 func (p *DouyinPublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -1882,16 +1876,6 @@ func (p *DouyinPublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 		case 2:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField2(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				if err = iprot.Skip(fieldTypeId); err != nil {
-					goto SkipFieldError
-				}
-			}
-		case 3:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -1939,15 +1923,6 @@ func (p *DouyinPublishActionRequest) ReadField1(iprot thrift.TProtocol) error {
 }
 
 func (p *DouyinPublishActionRequest) ReadField2(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadBinary(); err != nil {
-		return err
-	} else {
-		p.Data = []byte(v)
-	}
-	return nil
-}
-
-func (p *DouyinPublishActionRequest) ReadField3(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
@@ -1968,10 +1943,6 @@ func (p *DouyinPublishActionRequest) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
-			goto WriteFieldError
-		}
-		if err = p.writeField3(oprot); err != nil {
-			fieldId = 3
 			goto WriteFieldError
 		}
 
@@ -2011,24 +1982,7 @@ WriteFieldEndError:
 }
 
 func (p *DouyinPublishActionRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("data", thrift.STRING, 2); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteBinary([]byte(p.Data)); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
-}
-
-func (p *DouyinPublishActionRequest) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("title", thrift.STRING, 3); err != nil {
+	if err = oprot.WriteFieldBegin("title", thrift.STRING, 2); err != nil {
 		goto WriteFieldBeginError
 	}
 	if err := oprot.WriteString(p.Title); err != nil {
@@ -2039,9 +1993,9 @@ func (p *DouyinPublishActionRequest) writeField3(oprot thrift.TProtocol) (err er
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
 func (p *DouyinPublishActionRequest) String() string {
@@ -2235,7 +2189,7 @@ func (p *DouyinPublishActionResponse) String() string {
 }
 
 type DouyinPublishListRequest struct {
-	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id" vd:"len($)>0 && len($)<20"`
+	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id"`
 	Token  string `thrift:"token,2" json:"token" query:"token"`
 }
 
@@ -2667,7 +2621,7 @@ func (p *DouyinPublishListResponse) String() string {
 
 type DouyinFavoriteActionRequest struct {
 	Token      string `thrift:"token,1" json:"token" query:"token"`
-	VideoID    int64  `thrift:"video_id,2" json:"video_id" query:"video_id" vd:"len($)>0 && len($)<20"`
+	VideoID    int64  `thrift:"video_id,2" json:"video_id" query:"video_id"`
 	ActionType int8   `thrift:"action_type,3" json:"action_type" query:"action_type" vd:"$==1 || $==2"`
 }
 
@@ -3078,7 +3032,7 @@ func (p *DouyinFavoriteActionResponse) String() string {
 }
 
 type DouyinFavoriteListRequest struct {
-	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id" vd:"len($)>0 && len($)<20"`
+	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id"`
 	Token  string `thrift:"token,2" json:"token" query:"token"`
 }
 
@@ -3510,10 +3464,10 @@ func (p *DouyinFavoriteListResponse) String() string {
 
 type DouyinCommentActionRequest struct {
 	Token       string `thrift:"token,1" json:"token" query:"token"`
-	VideoID     int64  `thrift:"video_id,2" json:"video_id" query:"video_id" vd:"len($)>0 && len($)<20"`
+	VideoID     int64  `thrift:"video_id,2" json:"video_id" query:"video_id"`
 	ActionType  int8   `thrift:"action_type,3" json:"action_type" query:"action_type" vd:"$==1 || $==2"`
 	CommentText string `thrift:"comment_text,4" json:"comment_text" query:"comment_text"`
-	CommentID   int64  `thrift:"comment_id,5" json:"comment_id" query:"comment_id" vd:"len($)>0 && len($)<20"`
+	CommentID   int64  `thrift:"comment_id,5" json:"comment_id" query:"comment_id"`
 }
 
 func NewDouyinCommentActionRequest() *DouyinCommentActionRequest {
@@ -4068,7 +4022,7 @@ func (p *DouyinCommentActionResponse) String() string {
 
 type DouyinCommentListRequest struct {
 	Token   string `thrift:"token,1" json:"token" query:"token"`
-	VideoID int64  `thrift:"video_id,2" json:"video_id" query:"video_id" vd:"len($)>0 && len($)<20"`
+	VideoID int64  `thrift:"video_id,2" json:"video_id" query:"video_id"`
 }
 
 func NewDouyinCommentListRequest() *DouyinCommentListRequest {
@@ -4499,7 +4453,7 @@ func (p *DouyinCommentListResponse) String() string {
 
 type DouyinRelationActionRequest struct {
 	Token      string `thrift:"token,1" json:"token" query:"token"`
-	ToUserID   int64  `thrift:"to_user_id,2" json:"to_user_id" query:"to_user_id" vd:"len($)>0 && len($)<20"`
+	ToUserID   int64  `thrift:"to_user_id,2" json:"to_user_id" query:"to_user_id"`
 	ActionType int8   `thrift:"action_type,3" json:"action_type" query:"action_type" vd:"$==1 || $==2"`
 }
 
@@ -4910,7 +4864,7 @@ func (p *DouyinRelationActionResponse) String() string {
 }
 
 type DouyinRelationFollowListRequest struct {
-	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id" vd:"len($)>0 && len($)<20"`
+	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id"`
 	Token  string `thrift:"token,2" json:"token" query:"token"`
 }
 
@@ -5341,7 +5295,7 @@ func (p *DouyinRelationFollowListResponse) String() string {
 }
 
 type DouyinRelationFollowerListRequest struct {
-	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id" vd:"len($)>0 && len($)<20"`
+	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id"`
 	Token  string `thrift:"token,2" json:"token" query:"token"`
 }
 
@@ -5772,7 +5726,7 @@ func (p *DouyinRelationFollowerListResponse) String() string {
 }
 
 type DouyinRelationFriendListRequest struct {
-	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id" vd:"len($)>0 && len($)<20"`
+	UserID int64  `thrift:"user_id,1" json:"user_id" query:"user_id"`
 	Token  string `thrift:"token,2" json:"token" query:"token"`
 }
 

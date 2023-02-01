@@ -13,10 +13,13 @@ type VideoManager struct {
 }
 
 // GetVideos gets video list.
-func (m *VideoManager) GetVideos(ctx context.Context, list []int64) ([]*base.Video, error) {
+func (m *VideoManager) GetVideos(ctx context.Context, list []int64, viewerId int64) ([]*base.Video, error) {
 	var videos []*base.Video
 	for _, vid := range list {
-		v, err := m.VideoService.GetVideo(ctx, &video.DouyinGetVideoRequest{VideoId: vid})
+		v, err := m.VideoService.GetVideo(ctx, &video.DouyinGetVideoRequest{
+			VideoId:  vid,
+			ViewerId: viewerId,
+		})
 		if err != nil {
 			return nil, err
 		}

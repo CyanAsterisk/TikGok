@@ -920,7 +920,7 @@ func (p *DouyinUserRequest) FastReadField1(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.UserId = v
+		p.ViewerId = v
 
 	}
 	return offset, nil
@@ -934,7 +934,7 @@ func (p *DouyinUserRequest) FastReadField2(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.ToUserId = v
+		p.OwnerId = v
 
 	}
 	return offset, nil
@@ -971,8 +971,8 @@ func (p *DouyinUserRequest) BLength() int {
 
 func (p *DouyinUserRequest) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "user_id", thrift.I64, 1)
-	offset += bthrift.Binary.WriteI64(buf[offset:], p.UserId)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "viewer_id", thrift.I64, 1)
+	offset += bthrift.Binary.WriteI64(buf[offset:], p.ViewerId)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -980,8 +980,8 @@ func (p *DouyinUserRequest) fastWriteField1(buf []byte, binaryWriter bthrift.Bin
 
 func (p *DouyinUserRequest) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "to_user_id", thrift.I64, 2)
-	offset += bthrift.Binary.WriteI64(buf[offset:], p.ToUserId)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "owner_id", thrift.I64, 2)
+	offset += bthrift.Binary.WriteI64(buf[offset:], p.OwnerId)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -989,8 +989,8 @@ func (p *DouyinUserRequest) fastWriteField2(buf []byte, binaryWriter bthrift.Bin
 
 func (p *DouyinUserRequest) field1Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("user_id", thrift.I64, 1)
-	l += bthrift.Binary.I64Length(p.UserId)
+	l += bthrift.Binary.FieldBeginLength("viewer_id", thrift.I64, 1)
+	l += bthrift.Binary.I64Length(p.ViewerId)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -998,8 +998,8 @@ func (p *DouyinUserRequest) field1Length() int {
 
 func (p *DouyinUserRequest) field2Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("to_user_id", thrift.I64, 2)
-	l += bthrift.Binary.I64Length(p.ToUserId)
+	l += bthrift.Binary.FieldBeginLength("owner_id", thrift.I64, 2)
+	l += bthrift.Binary.I64Length(p.OwnerId)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l

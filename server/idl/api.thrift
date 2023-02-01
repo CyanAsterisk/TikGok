@@ -26,7 +26,7 @@ struct douyin_user_login_response {
 }
 
 struct douyin_user_request {
-    1: i64 user_id(api.query="user_id", api.vd="len($)>0 && len($)<20") // User id
+    1: i64 user_id(api.query="user_id") // User id
     2: string token(api.query="token") // User authentication token
 }
 
@@ -50,8 +50,7 @@ struct douyin_feed_response {
 
 struct douyin_publish_action_request {
     1: string token(api.form="token") // User authentication token
-    2: binary data (api.form="data") // Video data
-    3: string title(api.form="title", api.vd="len($)>0 && len($)<33") // Video title
+    2: string title(api.form="title", api.vd="len($)>0 && len($)<33") // Video title
 }
 
 struct douyin_publish_action_response {
@@ -60,7 +59,7 @@ struct douyin_publish_action_response {
 }
 
 struct douyin_publish_list_request {
-    1: i64 user_id(api.query="user_id", api.vd="len($)>0 && len($)<20") // User id
+    1: i64 user_id(api.query="user_id") // User id
     2: string token(api.query="token") // User authentication token
 }
 
@@ -72,7 +71,7 @@ struct douyin_publish_list_response {
 
 struct douyin_favorite_action_request {
     1: string token(api.query="token") // User authentication token
-    2: i64 video_id(api.query="video_id", api.vd="len($)>0 && len($)<20") // Video Id
+    2: i64 video_id(api.query="video_id") // Video Id
     3: i8 action_type(api.query="action_type", api.vd="$==1 || $==2") // 1-like, 2-unlike
 }
 
@@ -82,7 +81,7 @@ struct douyin_favorite_action_response {
 }
 
 struct douyin_favorite_list_request {
-    1: i64 user_id(api.query="user_id", api.vd="len($)>0 && len($)<20") // User id
+    1: i64 user_id(api.query="user_id") // User id
     2: string token(api.query="token") // User authentication token
 }
 
@@ -94,10 +93,10 @@ struct douyin_favorite_list_response {
 
 struct douyin_comment_action_request {
     1: string token(api.query="token") // User authentication token
-    2: i64 video_id(api.query="video_id", api.vd="len($)>0 && len($)<20") // Video Id
+    2: i64 video_id(api.query="video_id") // Video Id
     3: i8 action_type(api.query="action_type", api.vd="$==1 || $==2") // 1-like, 2-unlike
     4: string comment_text(api.query="comment_text") // The content of the comment filled by the user, used when action_type=1
-    5: i64 comment_id(api.query="comment_id", api.vd="len($)>0 && len($)<20") // The comment id to be deleted is used when action_type=2
+    5: i64 comment_id(api.query="comment_id") // The comment id to be deleted is used when action_type=2
 }
 
 struct douyin_comment_action_response {
@@ -108,7 +107,7 @@ struct douyin_comment_action_response {
 
 struct douyin_comment_list_request {
     1: string token(api.query="token") // User authentication token
-    2: i64 video_id(api.query="video_id", api.vd="len($)>0 && len($)<20") // Video Id
+    2: i64 video_id(api.query="video_id") // Video Id
 }
 
 struct douyin_comment_list_response {
@@ -119,7 +118,7 @@ struct douyin_comment_list_response {
 
 struct douyin_relation_action_request {
     1: string token(api.query="token") // User authentication token
-    2: i64 to_user_id(api.query="to_user_id", api.vd="len($)>0 && len($)<20") // The other party's user id
+    2: i64 to_user_id(api.query="to_user_id") // The other party's user id
     3: i8 action_type(api.query="action_type", api.vd="$==1 || $==2") // 1-Follow, 2-Unfollow
 }
 
@@ -129,7 +128,7 @@ struct douyin_relation_action_response {
 }
 
 struct douyin_relation_follow_list_request {
-    1: i64 user_id(api.query="user_id", api.vd="len($)>0 && len($)<20") // User id
+    1: i64 user_id(api.query="user_id") // User id
     2: string token(api.query="token") // User authentication token
 }
 
@@ -140,7 +139,7 @@ struct douyin_relation_follow_list_response {
 }
 
 struct douyin_relation_follower_list_request {
-    1: i64 user_id(api.query="user_id", api.vd="len($)>0 && len($)<20") // User id
+    1: i64 user_id(api.query="user_id") // User id
     2: string token(api.query="token") // User authentication token
 }
 
@@ -151,7 +150,7 @@ struct douyin_relation_follower_list_response {
 }
 
 struct douyin_relation_friend_list_request {
-    1: i64 user_id(api.query="user_id", api.vd="len($)>0 && len($)<20") // User id
+    1: i64 user_id(api.query="user_id") // User id
     2: string token(api.query="token") // User authentication token
 }
 

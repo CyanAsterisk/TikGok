@@ -26,7 +26,7 @@ func (i *InteractionManager) GetCommentCount(ctx context.Context, videoId int64)
 
 // CheckFavorite check one favorite the video or not.
 func (i *InteractionManager) CheckFavorite(ctx context.Context, userId int64, videoId int64) (bool, error) {
-	resp, err := i.InteractionService.FavoriteList(ctx, &interaction.DouyinFavoriteListRequest{UserId: userId})
+	resp, err := i.InteractionService.FavoriteList(ctx, &interaction.DouyinFavoriteListRequest{OwnerId: userId})
 	if err != nil {
 		return false, err
 	}

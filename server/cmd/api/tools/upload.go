@@ -83,7 +83,7 @@ func UpLoadFile(videoFH *multipart.FileHeader) (playerUrl string, coverUrl strin
 	defer os.Remove(coverTmpPath)
 
 	uploadPathBase := time.Now().Format("2006/01/02") + vId
-	videoUploadPath := uploadPathBase + suffix
+	videoUploadPath := uploadPathBase + "." + suffix
 	coverUploadPath := uploadPathBase + ".png"
 
 	_, err = global.MinioClient.FPutObject(context.Background(), consts.MinIOBucket, videoUploadPath, videoTmpPath, minio.PutObjectOptions{
@@ -98,7 +98,7 @@ func UpLoadFile(videoFH *multipart.FileHeader) (playerUrl string, coverUrl strin
 	if err != nil {
 		return "", "", err
 	}
-	urlPrefix := consts.MinIOServer + "/" + consts.MinIOBucket
+	urlPrefix := consts.MinIOServer + "/" + consts.MinIOBucket + "/"
 	return urlPrefix + videoUploadPath, urlPrefix + coverUploadPath, nil
 }
 

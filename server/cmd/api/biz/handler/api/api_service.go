@@ -4,7 +4,6 @@ package api
 
 import (
 	"context"
-	"github.com/CyanAsterisk/TikGok/server/shared/middleware"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/biz/model/api"
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/global"
@@ -15,6 +14,7 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/user"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/video"
+	"github.com/CyanAsterisk/TikGok/server/shared/middleware"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
@@ -85,13 +85,12 @@ func GetUserInfo(ctx context.Context, c *app.RequestContext) {
 	resp := new(api.DouyinUserResponse)
 	var req api.DouyinUserRequest
 	err := c.BindAndValidate(&req)
-	// TODO: fix BindAndValidate error
-	//if err != nil {
-	//	resp.StatusCode = int32(errno.ParamsEr.ErrCode)
-	//	resp.StatusMsg = errno.ParamsEr.Error()
-	//	errno.SendResponse(c, resp)
-	//	return
-	//}
+	if err != nil {
+		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+		resp.StatusMsg = errno.ParamsEr.Error()
+		errno.SendResponse(c, resp)
+		return
+	}
 	aid, flag := c.Get(consts.AccountID)
 	if !flag {
 		resp.StatusCode = int32(errno.ServiceErr.ErrCode)
@@ -100,8 +99,8 @@ func GetUserInfo(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	res, err := global.UserClient.GetUserInfo(ctx, &user.DouyinUserRequest{
-		UserId:   aid.(int64),
-		ToUserId: req.UserID,
+		ViewerId: aid.(int64),
+		OwnerId:  req.UserID,
 	})
 	if err != nil {
 		resp.StatusCode = int32(errno.RPCUserErr.ErrCode)
@@ -142,9 +141,10 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 	}
 	res, err := global.VideoClient.Feed(ctx, &video.DouyinFeedRequest{
 		LatestTime: req.LatestTime,
-		UserId:     aid,
+		ViewerId:   aid,
 	})
 	if err != nil {
+		hlog.Errorf("feed err:%s", err.Error())
 		resp.StatusCode = int32(errno.RPCVideoErr.ErrCode)
 		resp.StatusMsg = errno.RPCVideoErr.ErrMsg
 		errno.SendResponse(c, resp)
@@ -219,7 +219,17 @@ func VideoList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	res, err := global.VideoClient.VideoList(ctx, &video.DouyinPublishListRequest{UserId: req.UserID})
+	aid, flag := c.Get(consts.AccountID)
+	if !flag {
+		resp.StatusCode = int32(errno.RPCVideoErr.ErrCode)
+		resp.StatusMsg = errno.RPCVideoErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	res, err := global.VideoClient.VideoList(ctx, &video.DouyinPublishListRequest{
+		ViewerId: req.UserID,
+		OwnerId:  aid.(int64),
+	})
 	if err != nil {
 		resp.StatusCode = int32(errno.RPCVideoErr.ErrCode)
 		resp.StatusMsg = errno.RPCVideoErr.ErrMsg
@@ -291,7 +301,8 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	res, err := global.InteractionClient.FavoriteList(ctx, &interaction.DouyinFavoriteListRequest{
-		UserId: aid.(int64),
+		OwnerId:  req.UserID,
+		ViewerId: aid.(int64),
 	})
 	if err != nil {
 		resp.StatusCode = int32(errno.RPCInteractionErr.ErrCode)
@@ -430,7 +441,10 @@ func FollowingList(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.SocialClient.FollowingList(ctx, &sociality.DouyinRelationFollowListRequest{UserId: aid.(int64)})
+	res, err := global.SocialClient.FollowingList(ctx, &sociality.DouyinRelationFollowListRequest{
+		OwnerId:  req.UserID,
+		ViewerId: aid.(int64),
+	})
 	if err != nil {
 		resp.StatusCode = int32(errno.RPCSocialityErr.ErrCode)
 		resp.StatusMsg = errno.RPCSocialityErr.ErrMsg
@@ -463,7 +477,10 @@ func FollowerList(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.SocialClient.FollowerList(ctx, &sociality.DouyinRelationFollowerListRequest{UserId: aid.(int64)})
+	res, err := global.SocialClient.FollowerList(ctx, &sociality.DouyinRelationFollowerListRequest{
+		OwnerId:  req.UserID,
+		ViewerId: aid.(int64),
+	})
 	if err != nil {
 		resp.StatusCode = int32(errno.RPCSocialityErr.ErrCode)
 		resp.StatusMsg = errno.RPCSocialityErr.ErrMsg
@@ -496,7 +513,10 @@ func FriendList(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.SocialClient.FriendList(ctx, &sociality.DouyinRelationFriendListRequest{UserId: aid.(int64)})
+	res, err := global.SocialClient.FriendList(ctx, &sociality.DouyinRelationFriendListRequest{
+		OwnerId:  req.UserID,
+		ViewerId: aid.(int64),
+	})
 	if err != nil {
 		resp.StatusCode = int32(errno.RPCSocialityErr.ErrCode)
 		resp.StatusMsg = errno.RPCSocialityErr.ErrMsg

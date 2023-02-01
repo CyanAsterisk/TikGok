@@ -32,7 +32,7 @@ func (p *DouyinFeedRequest) FastRead(buf []byte) (int, error) {
 	var fieldTypeId thrift.TType
 	var fieldId int16
 	var issetLatestTime bool = false
-	var issetUserId bool = false
+	var issetViewerId bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -71,7 +71,7 @@ func (p *DouyinFeedRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetUserId = true
+				issetViewerId = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -104,7 +104,7 @@ func (p *DouyinFeedRequest) FastRead(buf []byte) (int, error) {
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetUserId {
+	if !issetViewerId {
 		fieldId = 2
 		goto RequiredFieldNotSetError
 	}
@@ -147,7 +147,7 @@ func (p *DouyinFeedRequest) FastReadField2(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.UserId = v
+		p.ViewerId = v
 
 	}
 	return offset, nil
@@ -193,8 +193,8 @@ func (p *DouyinFeedRequest) fastWriteField1(buf []byte, binaryWriter bthrift.Bin
 
 func (p *DouyinFeedRequest) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "user_id", thrift.I64, 2)
-	offset += bthrift.Binary.WriteI64(buf[offset:], p.UserId)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "viewer_id", thrift.I64, 2)
+	offset += bthrift.Binary.WriteI64(buf[offset:], p.ViewerId)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -211,8 +211,8 @@ func (p *DouyinFeedRequest) field1Length() int {
 
 func (p *DouyinFeedRequest) field2Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("user_id", thrift.I64, 2)
-	l += bthrift.Binary.I64Length(p.UserId)
+	l += bthrift.Binary.FieldBeginLength("viewer_id", thrift.I64, 2)
+	l += bthrift.Binary.I64Length(p.ViewerId)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -930,7 +930,8 @@ func (p *DouyinPublishListRequest) FastRead(buf []byte) (int, error) {
 	var l int
 	var fieldTypeId thrift.TType
 	var fieldId int16
-	var issetUserId bool = false
+	var issetViewerId bool = false
+	var issetOwnerId bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -954,7 +955,22 @@ func (p *DouyinPublishListRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetUserId = true
+				issetViewerId = true
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 2:
+			if fieldTypeId == thrift.I64 {
+				l, err = p.FastReadField2(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetOwnerId = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -982,8 +998,13 @@ func (p *DouyinPublishListRequest) FastRead(buf []byte) (int, error) {
 		goto ReadStructEndError
 	}
 
-	if !issetUserId {
+	if !issetViewerId {
 		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetOwnerId {
+		fieldId = 2
 		goto RequiredFieldNotSetError
 	}
 	return offset, nil
@@ -1011,7 +1032,21 @@ func (p *DouyinPublishListRequest) FastReadField1(buf []byte) (int, error) {
 	} else {
 		offset += l
 
-		p.UserId = v
+		p.ViewerId = v
+
+	}
+	return offset, nil
+}
+
+func (p *DouyinPublishListRequest) FastReadField2(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.OwnerId = v
 
 	}
 	return offset, nil
@@ -1027,6 +1062,7 @@ func (p *DouyinPublishListRequest) FastWriteNocopy(buf []byte, binaryWriter bthr
 	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "douyin_publish_list_request")
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
+		offset += p.fastWriteField2(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
 	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
@@ -1038,6 +1074,7 @@ func (p *DouyinPublishListRequest) BLength() int {
 	l += bthrift.Binary.StructBeginLength("douyin_publish_list_request")
 	if p != nil {
 		l += p.field1Length()
+		l += p.field2Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -1046,8 +1083,17 @@ func (p *DouyinPublishListRequest) BLength() int {
 
 func (p *DouyinPublishListRequest) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "user_id", thrift.I64, 1)
-	offset += bthrift.Binary.WriteI64(buf[offset:], p.UserId)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "viewer_id", thrift.I64, 1)
+	offset += bthrift.Binary.WriteI64(buf[offset:], p.ViewerId)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *DouyinPublishListRequest) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "owner_id", thrift.I64, 2)
+	offset += bthrift.Binary.WriteI64(buf[offset:], p.OwnerId)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
@@ -1055,8 +1101,17 @@ func (p *DouyinPublishListRequest) fastWriteField1(buf []byte, binaryWriter bthr
 
 func (p *DouyinPublishListRequest) field1Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("user_id", thrift.I64, 1)
-	l += bthrift.Binary.I64Length(p.UserId)
+	l += bthrift.Binary.FieldBeginLength("viewer_id", thrift.I64, 1)
+	l += bthrift.Binary.I64Length(p.ViewerId)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *DouyinPublishListRequest) field2Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("owner_id", thrift.I64, 2)
+	l += bthrift.Binary.I64Length(p.OwnerId)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -1282,6 +1337,7 @@ func (p *DouyinGetVideoRequest) FastRead(buf []byte) (int, error) {
 	var fieldTypeId thrift.TType
 	var fieldId int16
 	var issetVideoId bool = false
+	var issetViewerId bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -1313,6 +1369,21 @@ func (p *DouyinGetVideoRequest) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
+		case 2:
+			if fieldTypeId == thrift.I64 {
+				l, err = p.FastReadField2(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+				issetViewerId = true
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 			offset += l
@@ -1335,6 +1406,11 @@ func (p *DouyinGetVideoRequest) FastRead(buf []byte) (int, error) {
 
 	if !issetVideoId {
 		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetViewerId {
+		fieldId = 2
 		goto RequiredFieldNotSetError
 	}
 	return offset, nil
@@ -1368,6 +1444,20 @@ func (p *DouyinGetVideoRequest) FastReadField1(buf []byte) (int, error) {
 	return offset, nil
 }
 
+func (p *DouyinGetVideoRequest) FastReadField2(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.ViewerId = v
+
+	}
+	return offset, nil
+}
+
 // for compatibility
 func (p *DouyinGetVideoRequest) FastWrite(buf []byte) int {
 	return 0
@@ -1378,6 +1468,7 @@ func (p *DouyinGetVideoRequest) FastWriteNocopy(buf []byte, binaryWriter bthrift
 	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "douyin_get_video_request")
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
+		offset += p.fastWriteField2(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
 	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
@@ -1389,6 +1480,7 @@ func (p *DouyinGetVideoRequest) BLength() int {
 	l += bthrift.Binary.StructBeginLength("douyin_get_video_request")
 	if p != nil {
 		l += p.field1Length()
+		l += p.field2Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -1404,10 +1496,28 @@ func (p *DouyinGetVideoRequest) fastWriteField1(buf []byte, binaryWriter bthrift
 	return offset
 }
 
+func (p *DouyinGetVideoRequest) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "viewer_id", thrift.I64, 2)
+	offset += bthrift.Binary.WriteI64(buf[offset:], p.ViewerId)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
 func (p *DouyinGetVideoRequest) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("video_id", thrift.I64, 1)
 	l += bthrift.Binary.I64Length(p.VideoId)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *DouyinGetVideoRequest) field2Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("viewer_id", thrift.I64, 2)
+	l += bthrift.Binary.I64Length(p.ViewerId)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
