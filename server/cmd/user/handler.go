@@ -11,7 +11,6 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/tools"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
-	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/user"
 	"github.com/CyanAsterisk/TikGok/server/shared/middleware"
 	sTools "github.com/CyanAsterisk/TikGok/server/shared/tools"
@@ -22,6 +21,15 @@ import (
 // UserServiceImpl implements the last service interface defined in the IDL.
 type UserServiceImpl struct {
 	jwt *middleware.JWT
+	SocialManager
+}
+
+// SocialManager defines the Anti Corruption Layer
+// for get social logic.
+type SocialManager interface {
+	GetFollowerCount(ctx context.Context, userId int64) (count int64, err error)
+	GetFollowingCount(ctx context.Context, userId int64) (count int64, err error)
+	CheckFollow(ctx context.Context, userId int64, toUserId int64) (bool, error)
 }
 
 // Register implements the UserServiceImpl interface.
@@ -39,7 +47,7 @@ func (s *UserServiceImpl) Register(_ context.Context, req *user.DouyinUserRegist
 			klog.Error("create user error", err)
 			resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr.WithMessage("create user error"))
 		}
-		return resp, nil
+		return
 	}
 
 	resp.UserId = usr.ID
@@ -54,11 +62,11 @@ func (s *UserServiceImpl) Register(_ context.Context, req *user.DouyinUserRegist
 	if err != nil {
 		klog.Error("create token err", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr.WithMessage("create token error"))
-		return resp, nil
+		return
 	}
 
 	resp.BaseResp = sTools.BuildBaseResp(nil)
-	return resp, err
+	return
 }
 
 // Login implements the UserServiceImpl interface.
@@ -73,12 +81,12 @@ func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequ
 			klog.Errorf("get user by name err", err)
 			resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr.WithMessage("get user by name err"))
 		}
-		return resp, nil
+		return
 	}
 
 	if usr.Password != tools.Md5Crypt(req.Password, global.ServerConfig.MysqlInfo.Salt) {
 		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr.WithMessage("wrong password"))
-		return resp, nil
+		return
 	}
 
 	resp.UserId = usr.ID
@@ -93,11 +101,11 @@ func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequ
 	if err != nil {
 		klog.Error("create token err", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr)
-		return resp, nil
+		return
 	}
 
 	resp.BaseResp = sTools.BuildBaseResp(nil)
-	return resp, nil
+	return
 }
 
 // GetUserInfo implements the UserServiceImpl interface.
@@ -108,52 +116,30 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserR
 	if err != nil {
 		if err == dao.ErrNoSuchUser {
 			resp.BaseResp = sTools.BuildBaseResp(errno.UserNotFoundErr)
-			return resp, nil
+			return
 		}
 		klog.Error("get user by id failed", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr)
-		return resp, nil
+		return
 	}
 	resp.User = tools.User(usr)
 
-	res, err := global.SocialClient.FollowerList(ctx, &sociality.DouyinRelationFollowerListRequest{
-		OwnerId: req.OwnerId,
-	})
-	if err != nil {
+	if resp.User.FollowerCount, err = s.GetFollowerCount(ctx, req.OwnerId); err != nil {
 		klog.Error("get followerList err", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.RPCSocialityErr)
-		return resp, nil
+		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr.WithMessage("get followerList err"))
+		return
 	}
-	if res.BaseResp.StatusCode != int32(errno.Success.ErrCode) {
-		errMsg := res.BaseResp.StatusMsg
-		klog.Error("get followerList err", errMsg)
-		resp.BaseResp = sTools.BuildBaseResp(errno.RPCSocialityErr.WithMessage(errMsg))
-		return resp, nil
-	}
-	resp.User.FollowerCount = int64(len(res.UserList))
-
-	for _, u := range res.UserList {
-		if u.Id == req.ViewerId {
-			resp.User.IsFollow = true
-		}
+	if resp.User.FollowCount, err = s.GetFollowingCount(ctx, req.OwnerId); err != nil {
+		klog.Error("get followingList err", err)
+		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr.WithMessage("get followingList err"))
+		return
 	}
 
-	response, err := global.SocialClient.FollowingList(ctx, (*sociality.DouyinRelationFollowListRequest)(&sociality.DouyinRelationFollowerListRequest{
-		OwnerId: req.OwnerId,
-	}))
-	if err != nil {
-		klog.Error("get followerList err", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.RPCSocialityErr)
-		return resp, nil
+	if resp.User.IsFollow, err = s.CheckFollow(ctx, req.ViewerId, req.OwnerId); err != nil {
+		klog.Error("check follow err", err)
+		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr.WithMessage("check follow err"))
+		return
 	}
-	if response.BaseResp.StatusCode != int32(errno.Success.ErrCode) {
-		errMsg := response.BaseResp.StatusMsg
-		klog.Error("get followerList err", errMsg)
-		resp.BaseResp = sTools.BuildBaseResp(errno.RPCInteractionErr.WithMessage(errMsg))
-		return resp, nil
-	}
-	resp.User.FollowCount = int64(len(response.UserList))
-
 	resp.BaseResp = sTools.BuildBaseResp(nil)
-	return resp, nil
+	return
 }
