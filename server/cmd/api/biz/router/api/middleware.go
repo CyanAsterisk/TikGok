@@ -139,3 +139,19 @@ func _friendlistMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _messageMw() []app.HandlerFunc {
+	return []app.HandlerFunc{
+		middleware.JWTAuth(global.ServerConfig.JWTInfo.SigningKey),
+	}
+}
+
+func _chathistoryMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _sentmessageMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

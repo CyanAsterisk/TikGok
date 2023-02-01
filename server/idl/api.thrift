@@ -166,8 +166,9 @@ struct douyin_message_chat_request {
 }
 
 struct douyin_message_chat_response {
-    1: base.douyin_base_response base_resp
-    2: list<base.Message> message_list // Message list
+    1: i32 status_code // Status code, 0-success, other values-failure
+    2: string status_msg // Return status description
+    3: list<base.Message> message_list // Message list
 }
 
 struct douyin_message_action_request {
@@ -178,7 +179,8 @@ struct douyin_message_action_request {
 }
 
 struct douyin_message_action_response {
-    1: base.douyin_base_response base_resp
+    1: i32 status_code // Status code, 0-success, other values-failure
+    2: string status_msg // Return status description
 }
 
 service ApiService {

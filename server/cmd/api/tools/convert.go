@@ -15,6 +15,18 @@ func User(u *kbase.User) *hbase.User {
 	}
 }
 
+func FUser(fu *kbase.FriendUser) *hbase.FriendUser {
+	return &hbase.FriendUser{
+		ID:            fu.Id,
+		Name:          fu.Name,
+		FollowCount:   fu.FollowCount,
+		FollowerCount: fu.FollowerCount,
+		IsFollow:      fu.IsFollow,
+		Message:       fu.Message,
+		MsgType:       fu.MsgType,
+	}
+}
+
 func Comment(c *kbase.Comment) *hbase.Comment {
 	return &hbase.Comment{
 		ID:         c.Id,
@@ -34,6 +46,16 @@ func Video(v *kbase.Video) *hbase.Video {
 		CommentCount:  v.CommentCount,
 		IsFavorite:    v.IsFavorite,
 		Title:         v.Title,
+	}
+}
+
+func Message(m *kbase.Message) *hbase.Message {
+	return &hbase.Message{
+		ID:         m.Id,
+		ToUserID:   m.ToUserId,
+		FromUserID: m.Id,
+		Content:    m.Content,
+		CreateTime: m.CreateTime,
 	}
 }
 
@@ -65,4 +87,24 @@ func Users(users []*kbase.User) []*hbase.User {
 		}
 	}
 	return us
+}
+
+func FUsers(kfus []*kbase.FriendUser) []*hbase.FriendUser {
+	hfus := make([]*hbase.FriendUser, 0)
+	for _, kfu := range kfus {
+		if hfu := FUser(kfu); hfu != nil {
+			hfus = append(hfus, hfu)
+		}
+	}
+	return hfus
+}
+
+func Messages(kms []*kbase.Message) []*hbase.Message {
+	hms := make([]*hbase.Message, 0)
+	for _, km := range kms {
+		if hm := Message(km); hm != nil {
+			hms = append(hms, hm)
+		}
+	}
+	return hms
 }

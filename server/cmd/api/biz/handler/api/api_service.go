@@ -10,6 +10,7 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/tools"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/chat"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/user"
@@ -352,7 +353,9 @@ func Comment(ctx context.Context, c *app.RequestContext) {
 	}
 	resp.StatusCode = res.BaseResp.StatusCode
 	resp.StatusMsg = res.BaseResp.StatusMsg
-	resp.Comment = tools.Comment(res.Comment)
+	if resp.StatusCode == int32(errno.Success.ErrCode) {
+		resp.Comment = tools.Comment(res.Comment)
+	}
 	errno.SendResponse(c, resp)
 }
 
@@ -525,6 +528,67 @@ func FriendList(ctx context.Context, c *app.RequestContext) {
 	}
 	resp.StatusCode = res.BaseResp.StatusCode
 	resp.StatusMsg = res.BaseResp.StatusMsg
-	// resp.UserList = tools.Users(res.UserList) TODO 将 User 改为 FUser
+	resp.UserList = tools.FUsers(res.UserList)
+	errno.SendResponse(c, resp)
+}
+
+// ChatHistory .
+// @router /douyin/message/chat [GET]
+func ChatHistory(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.DouyinMessageChatResponse)
+	var err error
+	var req api.DouyinMessageChatRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+		resp.StatusMsg = errno.ParamsEr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+
+	res, err := global.ChatClient.ChatHistory(ctx, &chat.DouyinMessageChatRequest{
+		UserId:   req.UserID,
+		ToUserId: req.ToUserID,
+	})
+	if err != nil {
+		resp.StatusCode = int32(errno.RPCChatErr.ErrCode)
+		resp.StatusMsg = errno.RPCChatErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	resp.StatusCode = res.BaseResp.StatusCode
+	resp.StatusMsg = res.BaseResp.StatusMsg
+	resp.MessageList = tools.Messages(res.MessageList)
+	errno.SendResponse(c, resp)
+}
+
+// SentMessage .
+// @router /douyin/message/chat [POST]
+func SentMessage(ctx context.Context, c *app.RequestContext) {
+	resp := new(api.DouyinMessageActionResponse)
+	var err error
+	var req api.DouyinMessageActionRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+		resp.StatusMsg = errno.ParamsEr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+
+	res, err := global.ChatClient.SentMessage(ctx, &chat.DouyinMessageActionRequest{
+		UserId:     req.UserID,
+		ToUserId:   req.ToUserID,
+		ActionType: req.ActionType,
+		Content:    req.Content,
+	})
+	if err != nil {
+		resp.StatusCode = int32(errno.RPCChatErr.ErrCode)
+		resp.StatusMsg = errno.RPCChatErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
+	resp.StatusCode = res.BaseResp.StatusCode
+	resp.StatusMsg = res.BaseResp.StatusMsg
 	errno.SendResponse(c, resp)
 }

@@ -32,6 +32,11 @@ func Register(r *server.Hertz) {
 			_favorite.GET("/list", append(_favoritelistMw(), api.FavoriteList)...)
 		}
 		{
+			_message := _douyin.Group("/message", _messageMw()...)
+			_message.GET("/chat", append(_chathistoryMw(), api.ChatHistory)...)
+			_message.POST("/chat", append(_sentmessageMw(), api.SentMessage)...)
+		}
+		{
 			_publish := _douyin.Group("/publish", _publishMw()...)
 			_publish.POST("/action", append(_publishvideoMw(), api.PublishVideo)...)
 			_publish.GET("/list", append(_videolistMw(), api.VideoList)...)
