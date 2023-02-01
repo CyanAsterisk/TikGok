@@ -4,7 +4,6 @@ package api
 
 import (
 	"context"
-	"github.com/CyanAsterisk/TikGok/server/shared/middleware"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/biz/model/api"
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/global"
@@ -15,6 +14,7 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/user"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/video"
+	"github.com/CyanAsterisk/TikGok/server/shared/middleware"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
@@ -85,13 +85,12 @@ func GetUserInfo(ctx context.Context, c *app.RequestContext) {
 	resp := new(api.DouyinUserResponse)
 	var req api.DouyinUserRequest
 	err := c.BindAndValidate(&req)
-	// TODO: fix BindAndValidate error
-	//if err != nil {
-	//	resp.StatusCode = int32(errno.ParamsEr.ErrCode)
-	//	resp.StatusMsg = errno.ParamsEr.Error()
-	//	errno.SendResponse(c, resp)
-	//	return
-	//}
+	if err != nil {
+		resp.StatusCode = int32(errno.ParamsEr.ErrCode)
+		resp.StatusMsg = errno.ParamsEr.Error()
+		errno.SendResponse(c, resp)
+		return
+	}
 	aid, flag := c.Get(consts.AccountID)
 	if !flag {
 		resp.StatusCode = int32(errno.ServiceErr.ErrCode)
