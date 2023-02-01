@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
 
+	"github.com/CyanAsterisk/TikGok/server/cmd/chat/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -24,7 +26,7 @@ func main() {
 	)
 
 	// global mode
-	_, err := gorm.Open(mysql.Open(consts.UserMigrateDSN), &gorm.Config{
+	db, err := gorm.Open(mysql.Open(consts.UserMigrateDSN), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
 		},
@@ -32,5 +34,17 @@ func main() {
 	})
 	if err != nil {
 		panic(err)
+	}
+
+	_ = db.AutoMigrate(&model.Message{})
+
+	for i := 0; i < 10; i++ {
+		message := model.Message{
+			ToUserId:   1616071000544256000,
+			FromUserId: 1616071000577810432,
+			Content:    fmt.Sprintf("contend%d", i),
+			CreateDate: time.Now(),
+		}
+		db.Save(&message)
 	}
 }

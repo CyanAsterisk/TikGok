@@ -1,6 +1,8 @@
 package model
 
 import (
+	"time"
+
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/bwmarrin/snowflake"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -8,10 +10,11 @@ import (
 )
 
 type Message struct {
-	ID         int64 `gorm:"primarykey"`
-	UserId     int64 `gorm:"not null"`
-	FollowerId int64 `gorm:"not null"`
-	ActionType int8  `gorm:"type:tinyint;not null"`
+	ID         int64     `gorm:"primarykey"`
+	ToUserId   int64     `gorm:"not null"`
+	FromUserId int64     `gorm:"not null"`
+	Content    string    `gorm:"type:varchar(256);not null"`
+	CreateDate time.Time `gorm:"not null"`
 }
 
 // BeforeCreate uses snowflake to generate an ID.
