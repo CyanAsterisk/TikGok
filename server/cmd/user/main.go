@@ -36,7 +36,7 @@ func main() {
 
 	impl := &UserServiceImpl{
 		jwt:           middleware.NewJWT(global.ServerConfig.JWTInfo.SigningKey),
-		SocialManager: tools.SocialManager{SocialService: global.SocialClient},
+		SocialManager: &tools.SocialManager{SocialService: global.SocialClient},
 	}
 	// Create new server.
 	srv := user.NewServer(impl,
