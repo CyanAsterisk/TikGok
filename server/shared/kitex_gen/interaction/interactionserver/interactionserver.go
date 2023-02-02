@@ -25,6 +25,7 @@ func NewServiceInfo() *kitex.ServiceInfo {
 		"Comment":       kitex.NewMethodInfo(commentHandler, newInteractionServerCommentArgs, newInteractionServerCommentResult, false),
 		"CommentList":   kitex.NewMethodInfo(commentListHandler, newInteractionServerCommentListArgs, newInteractionServerCommentListResult, false),
 		"CommentCount":  kitex.NewMethodInfo(commentCountHandler, newInteractionServerCommentCountArgs, newInteractionServerCommentCountResult, false),
+		"CheckFavorite": kitex.NewMethodInfo(checkFavoriteHandler, newInteractionServerCheckFavoriteArgs, newInteractionServerCheckFavoriteResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName": "interaction",
@@ -148,6 +149,24 @@ func newInteractionServerCommentCountResult() interface{} {
 	return interaction.NewInteractionServerCommentCountResult()
 }
 
+func checkFavoriteHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*interaction.InteractionServerCheckFavoriteArgs)
+	realResult := result.(*interaction.InteractionServerCheckFavoriteResult)
+	success, err := handler.(interaction.InteractionServer).CheckFavorite(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newInteractionServerCheckFavoriteArgs() interface{} {
+	return interaction.NewInteractionServerCheckFavoriteArgs()
+}
+
+func newInteractionServerCheckFavoriteResult() interface{} {
+	return interaction.NewInteractionServerCheckFavoriteResult()
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -213,6 +232,16 @@ func (p *kClient) CommentCount(ctx context.Context, req *interaction.DouyinComme
 	_args.Req = req
 	var _result interaction.InteractionServerCommentCountResult
 	if err = p.c.Call(ctx, "CommentCount", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) CheckFavorite(ctx context.Context, req *interaction.DouyinCheckFavoriteRequest) (r *interaction.DouyinCheckFavoriteResponse, err error) {
+	var _args interaction.InteractionServerCheckFavoriteArgs
+	_args.Req = req
+	var _result interaction.InteractionServerCheckFavoriteResult
+	if err = p.c.Call(ctx, "CheckFavorite", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

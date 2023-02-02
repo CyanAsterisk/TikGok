@@ -17,6 +17,7 @@ type Client interface {
 	Comment(ctx context.Context, req *interaction.DouyinCommentActionRequest, callOptions ...callopt.Option) (r *interaction.DouyinCommentActionResponse, err error)
 	CommentList(ctx context.Context, req *interaction.DouyinCommentListRequest, callOptions ...callopt.Option) (r *interaction.DouyinCommentListResponse, err error)
 	CommentCount(ctx context.Context, req *interaction.DouyinCommentCountRequest, callOptions ...callopt.Option) (r *interaction.DouyinCommentCountResponse, err error)
+	CheckFavorite(ctx context.Context, req *interaction.DouyinCheckFavoriteRequest, callOptions ...callopt.Option) (r *interaction.DouyinCheckFavoriteResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -76,4 +77,9 @@ func (p *kInteractionServerClient) CommentList(ctx context.Context, req *interac
 func (p *kInteractionServerClient) CommentCount(ctx context.Context, req *interaction.DouyinCommentCountRequest, callOptions ...callopt.Option) (r *interaction.DouyinCommentCountResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.CommentCount(ctx, req)
+}
+
+func (p *kInteractionServerClient) CheckFavorite(ctx context.Context, req *interaction.DouyinCheckFavoriteRequest, callOptions ...callopt.Option) (r *interaction.DouyinCheckFavoriteResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CheckFavorite(ctx, req)
 }

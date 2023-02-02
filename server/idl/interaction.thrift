@@ -31,6 +31,16 @@ struct douyin_favorite_count_response {
     2: required i64 count,
 }
 
+struct douyin_check_favorite_request {
+    1: required i64 user_id
+    2: required i64 video_id
+}
+
+struct douyin_check_favorite_response {
+    1: required base.douyin_base_response base_resp
+    2: required bool check
+}
+
 struct douyin_comment_action_request {
     1: required i64 user_id,         // User Id
     2: required i64 video_id,        // Video Id
@@ -69,4 +79,5 @@ service InteractionServer {
     douyin_comment_action_response Comment(1: douyin_comment_action_request req),
     douyin_comment_list_response CommentList(1: douyin_comment_list_request req),
     douyin_comment_count_response CommentCount(1: douyin_comment_count_request req),
+    douyin_check_favorite_response CheckFavorite(1: douyin_check_favorite_request req),
 }

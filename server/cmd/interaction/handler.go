@@ -98,6 +98,24 @@ func (s *InteractionServerImpl) FavoriteCount(_ context.Context, req *interactio
 	return resp, nil
 }
 
+// CheckFavorite implements the InteractionServerImpl interface.
+func (s *InteractionServerImpl) CheckFavorite(ctx context.Context, req *interaction.DouyinCheckFavoriteRequest) (resp *interaction.DouyinCheckFavoriteResponse, err error) {
+	resp = new(interaction.DouyinCheckFavoriteResponse)
+	info, err := dao.GetFavoriteInfo(req.UserId, req.VideoId)
+	if err != nil {
+		klog.Error("check favorite error", err)
+		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("check favorite error"))
+		return resp, nil
+	}
+	if info.ActionType == consts.IsLike {
+		resp.Check = true
+	} else {
+		resp.Check = false
+	}
+	resp.BaseResp = sTools.BuildBaseResp(nil)
+	return resp, nil
+}
+
 // Comment implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) Comment(_ context.Context, req *interaction.DouyinCommentActionRequest) (resp *interaction.DouyinCommentActionResponse, err error) {
 	resp = new(interaction.DouyinCommentActionResponse)
