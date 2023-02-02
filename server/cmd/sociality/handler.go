@@ -127,7 +127,7 @@ func (s *SocialityServiceImpl) CheckFollow(_ context.Context, req *sociality.Dou
 		resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("check follow error"))
 		return resp, nil
 	}
-	if err == nil && info == nil {
+	if info == nil {
 		resp.Check = false
 	} else {
 		if info.ActionType == consts.IsFollow {

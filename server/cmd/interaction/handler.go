@@ -107,7 +107,7 @@ func (s *InteractionServerImpl) CheckFavorite(_ context.Context, req *interactio
 		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("check favorite error"))
 		return resp, nil
 	}
-	if err == nil && info == nil {
+	if info == nil {
 		resp.Check = false
 	} else {
 		if info.ActionType == consts.IsLike {
