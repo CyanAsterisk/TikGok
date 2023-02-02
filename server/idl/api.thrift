@@ -203,5 +203,5 @@ service ApiService {
     douyin_relation_friend_list_response FriendList(1: douyin_relation_friend_list_request req)(api.get="/douyin/relation/friend/list");
 
     douyin_message_chat_response ChatHistory(1: douyin_message_chat_request req)(api.get="/douyin/message/chat");
-    douyin_message_action_response SentMessage(1: douyin_message_action_request req)(api.post="/douyin/message/chat");
+    douyin_message_action_response SentMessage(1: douyin_message_action_request req)(api.post="/douyin/message/action");
 }

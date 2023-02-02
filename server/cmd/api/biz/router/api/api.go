@@ -33,8 +33,8 @@ func Register(r *server.Hertz) {
 		}
 		{
 			_message := _douyin.Group("/message", _messageMw()...)
+			_message.POST("/action", append(_sentmessageMw(), api.SentMessage)...)
 			_message.GET("/chat", append(_chathistoryMw(), api.ChatHistory)...)
-			_message.POST("/chat", append(_sentmessageMw(), api.SentMessage)...)
 		}
 		{
 			_publish := _douyin.Group("/publish", _publishMw()...)
