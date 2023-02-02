@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/model"
+	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
@@ -113,6 +113,52 @@ func (s *SocialityServiceImpl) FriendList(ctx context.Context, req *sociality.Do
 		return resp, nil
 	}
 	resp.UserList = users
+	resp.BaseResp = sTools.BuildBaseResp(nil)
+	return resp, nil
+}
+
+// CheckFollow implements the SocialityServiceImpl interface.
+func (s *SocialityServiceImpl) CheckFollow(_ context.Context, req *sociality.DouyinCheckFollowRequest) (resp *sociality.DouyinCheckFollowResponse, err error) {
+	resp = new(sociality.DouyinCheckFollowResponse)
+	info, err := dao.FindRecord(req.UserId, req.ToUserId)
+	if err != nil {
+		klog.Error("check follow error", err)
+		resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("check follow error"))
+		return resp, nil
+	}
+	if info.ActionType == consts.IsFollow {
+		resp.Check = true
+	} else {
+		resp.Check = false
+	}
+	resp.BaseResp = sTools.BuildBaseResp(nil)
+	return resp, nil
+}
+
+// GetFollowerCount implements the SocialityServiceImpl interface.
+func (s *SocialityServiceImpl) GetFollowerCount(_ context.Context, req *sociality.DouyinGetFollowerCountRequest) (resp *sociality.DouyinGetFollowerCountResponse, err error) {
+	resp = new(sociality.DouyinGetFollowerCountResponse)
+	count, err := dao.GetFollowerNumsByUserId(req.UserId)
+	if err != nil {
+		klog.Error("get follower num error", err)
+		resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get follower num error"))
+		return resp, nil
+	}
+	resp.Count = count
+	resp.BaseResp = sTools.BuildBaseResp(nil)
+	return resp, nil
+}
+
+// GetFollowingCount implements the SocialityServiceImpl interface.
+func (s *SocialityServiceImpl) GetFollowingCount(_ context.Context, req *sociality.DouyinGetFollowingCountRequest) (resp *sociality.DouyinGetFollowingCountResponse, err error) {
+	resp = new(sociality.DouyinGetFollowingCountResponse)
+	count, err := dao.GetFollowingNumsByUserId(req.UserId)
+	if err != nil {
+		klog.Error("get following num error", err)
+		resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get following num error"))
+		return resp, nil
+	}
+	resp.Count = count
 	resp.BaseResp = sTools.BuildBaseResp(nil)
 	return resp, nil
 }

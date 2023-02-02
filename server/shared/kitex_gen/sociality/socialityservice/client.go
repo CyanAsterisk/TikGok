@@ -15,6 +15,9 @@ type Client interface {
 	FollowingList(ctx context.Context, req *sociality.DouyinRelationFollowListRequest, callOptions ...callopt.Option) (r *sociality.DouyinRelationFollowListResponse, err error)
 	FollowerList(ctx context.Context, req *sociality.DouyinRelationFollowerListRequest, callOptions ...callopt.Option) (r *sociality.DouyinRelationFollowerListResponse, err error)
 	FriendList(ctx context.Context, req *sociality.DouyinRelationFriendListRequest, callOptions ...callopt.Option) (r *sociality.DouyinRelationFriendListResponse, err error)
+	CheckFollow(ctx context.Context, req *sociality.DouyinCheckFollowRequest, callOptions ...callopt.Option) (r *sociality.DouyinCheckFollowResponse, err error)
+	GetFollowerCount(ctx context.Context, req *sociality.DouyinGetFollowerCountRequest, callOptions ...callopt.Option) (r *sociality.DouyinGetFollowerCountResponse, err error)
+	GetFollowingCount(ctx context.Context, req *sociality.DouyinGetFollowingCountRequest, callOptions ...callopt.Option) (r *sociality.DouyinGetFollowingCountResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -64,4 +67,19 @@ func (p *kSocialityServiceClient) FollowerList(ctx context.Context, req *sociali
 func (p *kSocialityServiceClient) FriendList(ctx context.Context, req *sociality.DouyinRelationFriendListRequest, callOptions ...callopt.Option) (r *sociality.DouyinRelationFriendListResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.FriendList(ctx, req)
+}
+
+func (p *kSocialityServiceClient) CheckFollow(ctx context.Context, req *sociality.DouyinCheckFollowRequest, callOptions ...callopt.Option) (r *sociality.DouyinCheckFollowResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.CheckFollow(ctx, req)
+}
+
+func (p *kSocialityServiceClient) GetFollowerCount(ctx context.Context, req *sociality.DouyinGetFollowerCountRequest, callOptions ...callopt.Option) (r *sociality.DouyinGetFollowerCountResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetFollowerCount(ctx, req)
+}
+
+func (p *kSocialityServiceClient) GetFollowingCount(ctx context.Context, req *sociality.DouyinGetFollowingCountRequest, callOptions ...callopt.Option) (r *sociality.DouyinGetFollowingCountResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetFollowingCount(ctx, req)
 }

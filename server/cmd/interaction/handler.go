@@ -99,7 +99,7 @@ func (s *InteractionServerImpl) FavoriteCount(_ context.Context, req *interactio
 }
 
 // CheckFavorite implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) CheckFavorite(ctx context.Context, req *interaction.DouyinCheckFavoriteRequest) (resp *interaction.DouyinCheckFavoriteResponse, err error) {
+func (s *InteractionServerImpl) CheckFavorite(_ context.Context, req *interaction.DouyinCheckFavoriteRequest) (resp *interaction.DouyinCheckFavoriteResponse, err error) {
 	resp = new(interaction.DouyinCheckFavoriteResponse)
 	info, err := dao.GetFavoriteInfo(req.UserId, req.VideoId)
 	if err != nil {
