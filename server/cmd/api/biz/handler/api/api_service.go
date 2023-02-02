@@ -545,9 +545,16 @@ func ChatHistory(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
+	aid, flag := c.Get(consts.AccountID)
+	if !flag {
+		resp.StatusCode = int32(errno.ServiceErr.ErrCode)
+		resp.StatusMsg = errno.ServiceErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
 
 	res, err := global.ChatClient.ChatHistory(ctx, &chat.DouyinMessageChatRequest{
-		UserId:   req.UserID,
+		UserId:   aid.(int64),
 		ToUserId: req.ToUserID,
 	})
 	if err != nil {
@@ -575,9 +582,15 @@ func SentMessage(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-
+	aid, flag := c.Get(consts.AccountID)
+	if !flag {
+		resp.StatusCode = int32(errno.ServiceErr.ErrCode)
+		resp.StatusMsg = errno.ServiceErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
 	res, err := global.ChatClient.SentMessage(ctx, &chat.DouyinMessageActionRequest{
-		UserId:     req.UserID,
+		UserId:     aid.(int64),
 		ToUserId:   req.ToUserID,
 		ActionType: req.ActionType,
 		Content:    req.Content,

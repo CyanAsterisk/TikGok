@@ -161,7 +161,7 @@ struct douyin_relation_friend_list_response {
 }
 
 struct douyin_message_chat_request {
-    1: i64 user_id // User Id
+    1: string token // User authentication token
     2: i64 to_user_id // The other party's user id
 }
 
@@ -172,7 +172,7 @@ struct douyin_message_chat_response {
 }
 
 struct douyin_message_action_request {
-    1: i64 user_id // User Id
+    1: string token // User authentication token
     2: i64 to_user_id // The other party's user id
     3: i8 action_type // 1- Send a message
     4: string content // Message content

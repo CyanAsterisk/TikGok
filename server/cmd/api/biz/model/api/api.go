@@ -6165,16 +6165,16 @@ func (p *DouyinRelationFriendListResponse) String() string {
 }
 
 type DouyinMessageChatRequest struct {
-	UserID   int64 `thrift:"user_id,1" form:"user_id" json:"user_id" query:"user_id"`
-	ToUserID int64 `thrift:"to_user_id,2" form:"to_user_id" json:"to_user_id" query:"to_user_id"`
+	Token    string `thrift:"token,1" form:"token" json:"token" query:"token"`
+	ToUserID int64  `thrift:"to_user_id,2" form:"to_user_id" json:"to_user_id" query:"to_user_id"`
 }
 
 func NewDouyinMessageChatRequest() *DouyinMessageChatRequest {
 	return &DouyinMessageChatRequest{}
 }
 
-func (p *DouyinMessageChatRequest) GetUserID() (v int64) {
-	return p.UserID
+func (p *DouyinMessageChatRequest) GetToken() (v string) {
+	return p.Token
 }
 
 func (p *DouyinMessageChatRequest) GetToUserID() (v int64) {
@@ -6182,7 +6182,7 @@ func (p *DouyinMessageChatRequest) GetToUserID() (v int64) {
 }
 
 var fieldIDToName_DouyinMessageChatRequest = map[int16]string{
-	1: "user_id",
+	1: "token",
 	2: "to_user_id",
 }
 
@@ -6206,7 +6206,7 @@ func (p *DouyinMessageChatRequest) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -6256,10 +6256,10 @@ ReadStructEndError:
 }
 
 func (p *DouyinMessageChatRequest) ReadField1(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadI64(); err != nil {
+	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.UserID = v
+		p.Token = v
 	}
 	return nil
 }
@@ -6307,10 +6307,10 @@ WriteStructEndError:
 }
 
 func (p *DouyinMessageChatRequest) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("user_id", thrift.I64, 1); err != nil {
+	if err = oprot.WriteFieldBegin("token", thrift.STRING, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.UserID); err != nil {
+	if err := oprot.WriteString(p.Token); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -6596,7 +6596,7 @@ func (p *DouyinMessageChatResponse) String() string {
 }
 
 type DouyinMessageActionRequest struct {
-	UserID     int64  `thrift:"user_id,1" form:"user_id" json:"user_id" query:"user_id"`
+	Token      string `thrift:"token,1" form:"token" json:"token" query:"token"`
 	ToUserID   int64  `thrift:"to_user_id,2" form:"to_user_id" json:"to_user_id" query:"to_user_id"`
 	ActionType int8   `thrift:"action_type,3" form:"action_type" json:"action_type" query:"action_type"`
 	Content    string `thrift:"content,4" form:"content" json:"content" query:"content"`
@@ -6606,8 +6606,8 @@ func NewDouyinMessageActionRequest() *DouyinMessageActionRequest {
 	return &DouyinMessageActionRequest{}
 }
 
-func (p *DouyinMessageActionRequest) GetUserID() (v int64) {
-	return p.UserID
+func (p *DouyinMessageActionRequest) GetToken() (v string) {
+	return p.Token
 }
 
 func (p *DouyinMessageActionRequest) GetToUserID() (v int64) {
@@ -6623,7 +6623,7 @@ func (p *DouyinMessageActionRequest) GetContent() (v string) {
 }
 
 var fieldIDToName_DouyinMessageActionRequest = map[int16]string{
-	1: "user_id",
+	1: "token",
 	2: "to_user_id",
 	3: "action_type",
 	4: "content",
@@ -6649,7 +6649,7 @@ func (p *DouyinMessageActionRequest) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -6719,10 +6719,10 @@ ReadStructEndError:
 }
 
 func (p *DouyinMessageActionRequest) ReadField1(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadI64(); err != nil {
+	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.UserID = v
+		p.Token = v
 	}
 	return nil
 }
@@ -6796,10 +6796,10 @@ WriteStructEndError:
 }
 
 func (p *DouyinMessageActionRequest) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("user_id", thrift.I64, 1); err != nil {
+	if err = oprot.WriteFieldBegin("token", thrift.STRING, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.UserID); err != nil {
+	if err := oprot.WriteString(p.Token); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
