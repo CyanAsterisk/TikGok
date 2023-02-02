@@ -33,11 +33,22 @@ func main() {
 	defer p.Shutdown(context.Background())
 	initialize.InitUser()
 
+	Publisher, err := tools.NewPublisher(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
+	if err != nil {
+		klog.Fatal("cannot create publisher", err)
+	}
+	Subscriber, err := tools.NewSubscriber(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
+	if err != nil {
+		klog.Fatal("cannot create subscriber", err.Error())
+	}
+
 	impl := &SocialityServiceImpl{
 		UserManager: &tools.UserManager{
 			UserService: global.UserClient,
 			ChatService: global.ChatClient,
 		},
+		Publisher:  Publisher,
+		Subscriber: Subscriber,
 	}
 	// Create new server.
 	srv := sociality.NewServer(impl,
@@ -49,7 +60,7 @@ func main() {
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: global.ServerConfig.Name}),
 	)
 
-	err := srv.Run()
+	err = srv.Run()
 	if err != nil {
 		klog.Fatal(err)
 	}

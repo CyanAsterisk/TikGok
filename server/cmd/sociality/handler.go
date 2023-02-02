@@ -16,6 +16,9 @@ import (
 // SocialityServiceImpl implements the last service interface defined in the IDL.
 type SocialityServiceImpl struct {
 	UserManager
+	RedisManager
+	Publisher
+	Subscriber
 }
 
 // UserManager defines the Anti Corruption Layer
@@ -23,6 +26,19 @@ type SocialityServiceImpl struct {
 type UserManager interface {
 	GetUsers(ctx context.Context, list []int64, uid int64) ([]*base.User, error)
 	GetFriendUsers(ctx context.Context, list []int64, uid int64) ([]*base.FriendUser, error)
+}
+
+type RedisManager interface {
+}
+
+// Publisher defines the publisher interface.
+type Publisher interface {
+	Publish(context.Context, *sociality.DouyinRelationActionRequest) error
+}
+
+// Subscriber defines a car update subscriber.
+type Subscriber interface {
+	Subscribe(context.Context) (ch chan *sociality.DouyinRelationActionRequest, cleanUp func(), err error)
 }
 
 // Action implements the SocialityServiceImpl interface.

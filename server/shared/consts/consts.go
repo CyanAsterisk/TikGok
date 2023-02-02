@@ -74,4 +74,6 @@ const (
 	MinIOServer = "localhost:9000"
 
 	VideosLimit = 10
+
+	RabbitMqURI = "amqp://%s:%s@%s:%d/"
 )
