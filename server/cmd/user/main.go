@@ -7,6 +7,7 @@ import (
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/initialize"
+	"github.com/CyanAsterisk/TikGok/server/cmd/user/tools"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	user "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/user/userservice"
 	"github.com/CyanAsterisk/TikGok/server/shared/middleware"
@@ -34,7 +35,8 @@ func main() {
 	initialize.InitSocial()
 
 	impl := &UserServiceImpl{
-		jwt: middleware.NewJWT(global.ServerConfig.JWTInfo.SigningKey),
+		jwt:           middleware.NewJWT(global.ServerConfig.JWTInfo.SigningKey),
+		SocialManager: tools.SocialManager{SocialService: global.SocialClient},
 	}
 	// Create new server.
 	srv := user.NewServer(impl,
