@@ -2,6 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"github.com/CyanAsterisk/TikGok/server/cmd/chat/dao"
+	"github.com/CyanAsterisk/TikGok/server/cmd/chat/tools"
 	"net"
 	"strconv"
 
@@ -30,6 +33,9 @@ func main() {
 		provider.WithInsecure(),
 	)
 	defer p.Shutdown(context.Background())
+	a, _ := dao.GetMessages(1616071000544256000, 1616071000577810432)
+	b := tools.Messages(a)
+	fmt.Println(b)
 
 	impl := new(ChatServiceImpl)
 	// Create new server.
