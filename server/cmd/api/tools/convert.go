@@ -6,6 +6,9 @@ import (
 )
 
 func User(u *kbase.User) *hbase.User {
+	if u == nil {
+		return nil
+	}
 	return &hbase.User{
 		ID:            u.Id,
 		Name:          u.Name,
@@ -16,6 +19,9 @@ func User(u *kbase.User) *hbase.User {
 }
 
 func FUser(fu *kbase.FriendUser) *hbase.FriendUser {
+	if fu == nil {
+		return nil
+	}
 	return &hbase.FriendUser{
 		ID:            fu.Id,
 		Name:          fu.Name,
@@ -28,6 +34,9 @@ func FUser(fu *kbase.FriendUser) *hbase.FriendUser {
 }
 
 func Comment(c *kbase.Comment) *hbase.Comment {
+	if c == nil {
+		return nil
+	}
 	return &hbase.Comment{
 		ID:         c.Id,
 		User:       User(c.User),
@@ -37,6 +46,9 @@ func Comment(c *kbase.Comment) *hbase.Comment {
 }
 
 func Video(v *kbase.Video) *hbase.Video {
+	if v == nil {
+		return nil
+	}
 	return &hbase.Video{
 		ID:            v.Id,
 		Author:        User(v.Author),
@@ -50,6 +62,9 @@ func Video(v *kbase.Video) *hbase.Video {
 }
 
 func Message(m *kbase.Message) *hbase.Message {
+	if m == nil {
+		return nil
+	}
 	return &hbase.Message{
 		ID:         m.Id,
 		ToUserID:   m.ToUserId,
