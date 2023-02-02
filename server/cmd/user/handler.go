@@ -47,7 +47,7 @@ func (s *UserServiceImpl) Register(_ context.Context, req *user.DouyinUserRegist
 			klog.Error("create user error", err)
 			resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr.WithMessage("create user error"))
 		}
-		return
+		return resp, nil
 	}
 
 	resp.UserId = usr.ID
@@ -62,11 +62,11 @@ func (s *UserServiceImpl) Register(_ context.Context, req *user.DouyinUserRegist
 	if err != nil {
 		klog.Error("create token err", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr.WithMessage("create token error"))
-		return
+		return resp, nil
 	}
 
 	resp.BaseResp = sTools.BuildBaseResp(nil)
-	return
+	return resp, nil
 }
 
 // Login implements the UserServiceImpl interface.
@@ -81,12 +81,12 @@ func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequ
 			klog.Errorf("get user by name err", err)
 			resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr.WithMessage("get user by name err"))
 		}
-		return
+		return resp, nil
 	}
 
 	if usr.Password != tools.Md5Crypt(req.Password, global.ServerConfig.MysqlInfo.Salt) {
 		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr.WithMessage("wrong password"))
-		return
+		return resp, nil
 	}
 
 	resp.UserId = usr.ID
@@ -101,11 +101,11 @@ func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequ
 	if err != nil {
 		klog.Error("create token err", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr)
-		return
+		return resp, nil
 	}
 
 	resp.BaseResp = sTools.BuildBaseResp(nil)
-	return
+	return resp, nil
 }
 
 // GetUserInfo implements the UserServiceImpl interface.
@@ -116,30 +116,30 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserR
 	if err != nil {
 		if err == dao.ErrNoSuchUser {
 			resp.BaseResp = sTools.BuildBaseResp(errno.UserNotFoundErr)
-			return
+			return resp, nil
 		}
 		klog.Error("get user by id failed", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr)
-		return
+		return resp, nil
 	}
 	resp.User = tools.User(usr)
 
 	if resp.User.FollowerCount, err = s.GetFollowerCount(ctx, req.OwnerId); err != nil {
 		klog.Error("get followerList err", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr.WithMessage("get followerList err"))
-		return
+		return resp, nil
 	}
 	if resp.User.FollowCount, err = s.GetFollowingCount(ctx, req.OwnerId); err != nil {
 		klog.Error("get followingList err", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr.WithMessage("get followingList err"))
-		return
+		return resp, nil
 	}
 
 	if resp.User.IsFollow, err = s.CheckFollow(ctx, req.ViewerId, req.OwnerId); err != nil {
 		klog.Error("check follow err", err)
 		resp.BaseResp = sTools.BuildBaseResp(errno.UserServerErr.WithMessage("check follow err"))
-		return
+		return resp, nil
 	}
 	resp.BaseResp = sTools.BuildBaseResp(nil)
-	return
+	return resp, nil
 }
