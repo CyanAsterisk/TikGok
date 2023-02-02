@@ -22,15 +22,26 @@ func (i *InteractionManager) GetCommentCount(ctx context.Context, videoId int64)
 	}
 	if res.BaseResp.StatusCode != int32(errno.Success.ErrCode) {
 		klog.Errorf("get comment count err", res.BaseResp.StatusMsg)
-		return 0, errno.ServiceErr.WithMessage(res.BaseResp.StatusMsg)
+		return 0, errno.InteractionServerErr.WithMessage(res.BaseResp.StatusMsg)
 	}
 	return res.Count, nil
 }
 
 // CheckFavorite check one favorite the video or not.
 func (i *InteractionManager) CheckFavorite(ctx context.Context, userId int64, videoId int64) (bool, error) {
-	//TODO: add rpc api
-	return false, nil
+	res, err := i.InteractionService.CheckFavorite(ctx, &interaction.DouyinCheckFavoriteRequest{
+		UserId:  userId,
+		VideoId: videoId,
+	})
+	if err != nil {
+		klog.Errorf("check favorite err", err.Error())
+		return false, err
+	}
+	if res.BaseResp.StatusCode != int32(errno.Success.ErrCode) {
+		klog.Errorf("check favorite err", res.BaseResp.StatusMsg)
+		return false, errno.InteractionServerErr.WithMessage(res.BaseResp.StatusMsg)
+	}
+	return res.Check, nil
 }
 
 // GetFavoriteCount get the favorite num of the video.
@@ -42,7 +53,7 @@ func (i *InteractionManager) GetFavoriteCount(ctx context.Context, videoId int64
 	}
 	if res.BaseResp.StatusCode != int32(errno.Success.ErrCode) {
 		klog.Errorf("get favorite count err", res.BaseResp.StatusMsg)
-		return 0, errno.ServiceErr.WithMessage(res.BaseResp.StatusMsg)
+		return 0, errno.InteractionServerErr.WithMessage(res.BaseResp.StatusMsg)
 	}
 	return res.Count, nil
 }
