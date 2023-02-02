@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
@@ -126,10 +127,14 @@ func (s *SocialityServiceImpl) CheckFollow(_ context.Context, req *sociality.Dou
 		resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("check follow error"))
 		return resp, nil
 	}
-	if info.ActionType == consts.IsFollow {
-		resp.Check = true
-	} else {
+	if err == nil && info == nil {
 		resp.Check = false
+	} else {
+		if info.ActionType == consts.IsFollow {
+			resp.Check = true
+		} else {
+			resp.Check = false
+		}
 	}
 	resp.BaseResp = sTools.BuildBaseResp(nil)
 	return resp, nil
