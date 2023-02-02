@@ -6,6 +6,11 @@ start:
 stop:
 	docker-compose down
 
+# run the chat
+.PHONY: chat
+chat:
+	go run ./server/cmd/chat
+
 # run the interaction
 .PHONY: interaction
 interaction:
