@@ -29,7 +29,7 @@ type UserManager interface {
 
 type RedisManager interface {
 	Action(context.Context, *sociality.DouyinRelationActionRequest) error
-	Check(ctx context.Context, uid int64, toUid int64) (bool, error)
+	Check(ctx context.Context, uid, toUid int64) (bool, error)
 	Count(ctx context.Context, uid int64, option int8) (int64, error)
 	List(ctx context.Context, uid int64, option int8) ([]int64, error)
 }

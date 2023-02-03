@@ -3,8 +3,8 @@ package pkg
 import (
 	"context"
 	"fmt"
-	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
 
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
 	"github.com/bytedance/sonic"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/streadway/amqp"
