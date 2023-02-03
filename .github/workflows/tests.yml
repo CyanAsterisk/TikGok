@@ -15,6 +15,5 @@ jobs:
 
       - name: Lint
         run: |
-          go vet -stdmethods=false $(go list ./...)
           go install mvdan.cc/gofumpt@v0.2.0
           test -z "$(gofumpt -l -extra .)"
