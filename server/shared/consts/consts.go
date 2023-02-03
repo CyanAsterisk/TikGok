@@ -76,4 +76,7 @@ const (
 	VideosLimit = 10
 
 	RabbitMqURI = "amqp://%s:%s@%s:%d/"
+
+	RedisFollowingClientDB = 0
+	RedisFollowerClientDB  = 1
 )

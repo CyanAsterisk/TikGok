@@ -19,6 +19,12 @@ type MysqlConfig struct {
 	Salt     string `mapstructure:"salt" json:"salt"`
 }
 
+type RedisConfig struct {
+	Host     string `mapstructure:"host" json:"host"`
+	Port     int    `mapstructure:"port" json:"port"`
+	Password string `mapstructure:"password" json:"password"`
+}
+
 type RabbitMqConfig struct {
 	Host     string `mapstructure:"host" json:"host"`
 	Port     int    `mapstructure:"port" json:"port"`
@@ -35,6 +41,7 @@ type ServerConfig struct {
 	Name          string         `mapstructure:"name" json:"name"`
 	Host          string         `mapstructure:"host" json:"host"`
 	MysqlInfo     MysqlConfig    `mapstructure:"mysql" json:"mysql"`
+	RedisInfo     RedisConfig    `mapstructure:"redis" json:"redis"`
 	RabbitMqInfo  RabbitMqConfig `mapstructure:"rabbitmq" json:"rabbitmq"`
 	OtelInfo      OtelConfig     `mapstructure:"otel" json:"otel"`
 	UserSrvConfig UserSrvConfig  `mapstructure:"user_srv" json:"user_srv"`

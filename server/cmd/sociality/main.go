@@ -25,6 +25,7 @@ func main() {
 	IP, Port := initialize.InitFlag()
 	r, info := initialize.InitNacos(Port)
 	initialize.InitDB()
+	initialize.InitRedis()
 	initialize.InitMq()
 	p := provider.NewOpenTelemetryProvider(
 		provider.WithServiceName(global.ServerConfig.Name),
