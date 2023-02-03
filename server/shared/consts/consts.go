@@ -79,4 +79,11 @@ const (
 
 	RedisFollowingClientDB = 0
 	RedisFollowerClientDB  = 1
+
+	FollowingList = 0
+	FollowerList  = 1
+	FriendsList   = 2
+
+	FollowingCount = 0
+	FollowerCount  = 1
 )
