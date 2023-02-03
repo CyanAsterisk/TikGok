@@ -13,8 +13,15 @@ jobs:
         with:
           go-version: 1.19
 
+      - uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
       - name: Lint
         run: |
           go vet -stdmethods=false $(go list ./...)
-          go install mvdan.cc/gofumpt@v0.4.0
+          go install mvdan.cc/gofumpt@v0.3.0
           test -z "$(gofumpt -l -extra .)"
