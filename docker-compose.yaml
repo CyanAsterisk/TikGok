@@ -5,7 +5,7 @@ services:
   mysql:
     image: mysql:latest
     volumes:
-      - ./pkg/configs/sql:/docker-entrypoint-initdb.d
+      - ./video_data/configs/sql:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
     environment:
@@ -17,8 +17,8 @@ services:
     image: minio/minio:latest
     command: server --console-address ":9001" /data 
     volumes:
-      - ./pkg/configs/minio:/root/.minio
-      - ./pkg/data/minio:/data
+      - ./video_data/configs/minio:/root/.minio
+      - ./video_data/data/minio:/data
     environment:
       - MINIO_ACCESS_KEY=admin
       - MINIO_SECRET_KEY=admin123
