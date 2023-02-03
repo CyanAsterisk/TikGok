@@ -6,11 +6,11 @@ import (
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/model"
-	"github.com/CyanAsterisk/TikGok/server/cmd/chat/tools"
+	"github.com/CyanAsterisk/TikGok/server/cmd/chat/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/chat"
-	sTools "github.com/CyanAsterisk/TikGok/server/shared/tools"
+	"github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
@@ -23,11 +23,11 @@ func (s *ChatServiceImpl) ChatHistory(_ context.Context, req *chat.DouyinMessage
 	msgs, err := dao.GetMessages(req.UserId, req.ToUserId)
 	if err != nil {
 		klog.Error("get chat history error", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.ChatServerErr.WithMessage("get chat history error"))
+		resp.BaseResp = tools.BuildBaseResp(errno.ChatServerErr.WithMessage("get chat history error"))
 		return resp, nil
 	}
-	resp.MessageList = tools.Messages(msgs)
-	resp.BaseResp = sTools.BuildBaseResp(nil)
+	resp.MessageList = pkg.Messages(msgs)
+	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 }
 
@@ -42,10 +42,10 @@ func (s *ChatServiceImpl) SentMessage(_ context.Context, req *chat.DouyinMessage
 	})
 	if err != nil {
 		klog.Error("sent message error", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.ChatServerErr.WithMessage("sent message error"))
+		resp.BaseResp = tools.BuildBaseResp(errno.ChatServerErr.WithMessage("sent message error"))
 		return resp, nil
 	}
-	resp.BaseResp = sTools.BuildBaseResp(nil)
+	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 }
 
@@ -55,7 +55,7 @@ func (s *ChatServiceImpl) LatestMessage(_ context.Context, req *chat.DouyinMessa
 	msg, err := dao.GetLatestMessage(req.UserId, req.ToUserId)
 	if err != nil {
 		klog.Error("get latest message error", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.ChatServerErr.WithMessage("get latest message error"))
+		resp.BaseResp = tools.BuildBaseResp(errno.ChatServerErr.WithMessage("get latest message error"))
 		return resp, nil
 	}
 	if msg.FromUserId == req.UserId {
@@ -64,6 +64,6 @@ func (s *ChatServiceImpl) LatestMessage(_ context.Context, req *chat.DouyinMessa
 		resp.MsgType = consts.ReceiveMessage
 	}
 	resp.Message = msg.Content
-	resp.BaseResp = sTools.BuildBaseResp(nil)
+	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 }

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/dao"
-	"github.com/CyanAsterisk/TikGok/server/cmd/chat/tools"
+	"github.com/CyanAsterisk/TikGok/server/cmd/chat/pkg"
 	"net"
 	"strconv"
 
@@ -34,7 +34,7 @@ func main() {
 	)
 	defer p.Shutdown(context.Background())
 	a, _ := dao.GetMessages(1616071000544256000, 1616071000577810432)
-	b := tools.Messages(a)
+	b := pkg.Messages(a)
 	fmt.Println(b)
 
 	impl := new(ChatServiceImpl)

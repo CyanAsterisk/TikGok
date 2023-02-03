@@ -1,12 +1,12 @@
 package initialize
 
 import (
+	"github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"net"
 	"strconv"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/global"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
-	"github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/bwmarrin/snowflake"
 	"github.com/bytedance/sonic"
 	"github.com/cloudwego/kitex/pkg/klog"

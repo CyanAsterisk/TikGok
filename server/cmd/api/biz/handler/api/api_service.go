@@ -7,7 +7,7 @@ import (
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/biz/model/api"
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/global"
-	"github.com/CyanAsterisk/TikGok/server/cmd/api/tools"
+	"github.com/CyanAsterisk/TikGok/server/cmd/api/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/chat"
@@ -111,7 +111,7 @@ func GetUserInfo(ctx context.Context, c *app.RequestContext) {
 	}
 	resp.StatusCode = res.BaseResp.StatusCode
 	resp.StatusMsg = res.BaseResp.StatusMsg
-	resp.User = tools.User(res.User)
+	resp.User = pkg.User(res.User)
 	errno.SendResponse(c, resp)
 }
 
@@ -154,7 +154,7 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 	resp.StatusCode = res.BaseResp.StatusCode
 	resp.StatusMsg = res.BaseResp.StatusMsg
 	resp.NextTime = res.NextTime
-	resp.VideoList = tools.Videos(res.VideoList)
+	resp.VideoList = pkg.Videos(res.VideoList)
 	errno.SendResponse(c, resp)
 }
 
@@ -187,7 +187,7 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	playUrl, coverUrl, err := tools.UpLoadFile(fileHeader)
+	playUrl, coverUrl, err := pkg.UpLoadFile(fileHeader)
 
 	res, err := global.VideoClient.PublishVideo(ctx, &video.DouyinPublishActionRequest{
 		UserId:   aid.(int64),
@@ -239,7 +239,7 @@ func VideoList(ctx context.Context, c *app.RequestContext) {
 	}
 	resp.StatusCode = res.BaseResp.StatusCode
 	resp.StatusMsg = res.BaseResp.StatusMsg
-	resp.VideoList = tools.Videos(res.VideoList)
+	resp.VideoList = pkg.Videos(res.VideoList)
 	errno.SendResponse(c, resp)
 }
 
@@ -313,7 +313,7 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 	}
 	resp.StatusCode = res.BaseResp.StatusCode
 	resp.StatusMsg = res.BaseResp.StatusMsg
-	resp.VideoList = tools.Videos(res.VideoList)
+	resp.VideoList = pkg.Videos(res.VideoList)
 	errno.SendResponse(c, resp)
 }
 
@@ -354,7 +354,7 @@ func Comment(ctx context.Context, c *app.RequestContext) {
 	resp.StatusCode = res.BaseResp.StatusCode
 	resp.StatusMsg = res.BaseResp.StatusMsg
 	if resp.StatusCode == int32(errno.Success.ErrCode) {
-		resp.Comment = tools.Comment(res.Comment)
+		resp.Comment = pkg.Comment(res.Comment)
 	}
 	errno.SendResponse(c, resp)
 }
@@ -383,7 +383,7 @@ func CommentList(ctx context.Context, c *app.RequestContext) {
 	}
 	resp.StatusCode = res.BaseResp.StatusCode
 	resp.StatusMsg = res.BaseResp.StatusMsg
-	resp.CommentList = tools.Comments(res.CommentList)
+	resp.CommentList = pkg.Comments(res.CommentList)
 	errno.SendResponse(c, resp)
 }
 
@@ -456,7 +456,7 @@ func FollowingList(ctx context.Context, c *app.RequestContext) {
 	}
 	resp.StatusCode = res.BaseResp.StatusCode
 	resp.StatusMsg = res.BaseResp.StatusMsg
-	resp.UserList = tools.Users(res.UserList)
+	resp.UserList = pkg.Users(res.UserList)
 	errno.SendResponse(c, resp)
 }
 
@@ -492,7 +492,7 @@ func FollowerList(ctx context.Context, c *app.RequestContext) {
 	}
 	resp.StatusCode = res.BaseResp.StatusCode
 	resp.StatusMsg = res.BaseResp.StatusMsg
-	resp.UserList = tools.Users(res.UserList)
+	resp.UserList = pkg.Users(res.UserList)
 	errno.SendResponse(c, resp)
 }
 
@@ -528,7 +528,7 @@ func FriendList(ctx context.Context, c *app.RequestContext) {
 	}
 	resp.StatusCode = res.BaseResp.StatusCode
 	resp.StatusMsg = res.BaseResp.StatusMsg
-	resp.UserList = tools.FUsers(res.UserList)
+	resp.UserList = pkg.FUsers(res.UserList)
 	errno.SendResponse(c, resp)
 }
 
@@ -565,7 +565,7 @@ func ChatHistory(ctx context.Context, c *app.RequestContext) {
 	}
 	resp.StatusCode = res.BaseResp.StatusCode
 	resp.StatusMsg = res.BaseResp.StatusMsg
-	resp.MessageList = tools.Messages(res.MessageList)
+	resp.MessageList = pkg.Messages(res.MessageList)
 	errno.SendResponse(c, resp)
 }
 

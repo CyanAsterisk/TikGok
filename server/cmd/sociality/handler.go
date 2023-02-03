@@ -9,7 +9,7 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
-	sTools "github.com/CyanAsterisk/TikGok/server/shared/tools"
+	"github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
@@ -53,24 +53,24 @@ func (s *SocialityServiceImpl) Action(_ context.Context, req *sociality.DouyinRe
 		})
 		if err != nil {
 			klog.Error("follow action error", err)
-			resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("follow action error"))
+			resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("follow action error"))
 			return resp, nil
 		}
-		resp.BaseResp = sTools.BuildBaseResp(nil)
+		resp.BaseResp = tools.BuildBaseResp(nil)
 		return resp, nil
 	}
 	if err != nil {
 		klog.Error("follow error", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("follow action error"))
+		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("follow action error"))
 		return resp, nil
 	}
 	err = dao.UpdateFollow(req.ToUserId, req.UserId, req.ActionType)
 	if err != nil {
 		klog.Error("follow error", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.InteractionServerErr.WithMessage("follow action error"))
+		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("follow action error"))
 		return resp, nil
 	}
-	resp.BaseResp = sTools.BuildBaseResp(nil)
+	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 }
 
@@ -80,17 +80,17 @@ func (s *SocialityServiceImpl) FollowingList(ctx context.Context, req *sociality
 	list, err := dao.GetFollowingIdList(req.OwnerId)
 	if err != nil {
 		klog.Error("get following list error", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get following list error"))
+		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get following list error"))
 		return resp, nil
 	}
 	users, err := s.UserManager.GetUsers(ctx, list, req.ViewerId)
 	if err != nil {
 		klog.Error("get users by user manager error", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.RPCUserErr.WithMessage("get following list error"))
+		resp.BaseResp = tools.BuildBaseResp(errno.RPCUserErr.WithMessage("get following list error"))
 		return resp, nil
 	}
 	resp.UserList = users
-	resp.BaseResp = sTools.BuildBaseResp(nil)
+	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 }
 
@@ -100,17 +100,17 @@ func (s *SocialityServiceImpl) FollowerList(ctx context.Context, req *sociality.
 	list, err := dao.GetFollowerIdList(req.OwnerId)
 	if err != nil {
 		klog.Error("get follower list error", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get follower list error"))
+		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get follower list error"))
 		return resp, nil
 	}
 	users, err := s.UserManager.GetUsers(ctx, list, req.ViewerId)
 	if err != nil {
 		klog.Error("get users by user manager error", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.RPCUserErr.WithMessage("get follower list error"))
+		resp.BaseResp = tools.BuildBaseResp(errno.RPCUserErr.WithMessage("get follower list error"))
 		return resp, nil
 	}
 	resp.UserList = users
-	resp.BaseResp = sTools.BuildBaseResp(nil)
+	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 }
 
@@ -120,17 +120,17 @@ func (s *SocialityServiceImpl) FriendList(ctx context.Context, req *sociality.Do
 	list, err := dao.GetFriendsList(req.OwnerId)
 	if err != nil {
 		klog.Error("get friends list error", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get friends list error"))
+		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get friends list error"))
 		return resp, nil
 	}
 	users, err := s.UserManager.GetFriendUsers(ctx, list, req.ViewerId)
 	if err != nil {
 		klog.Error("get users by user manager error", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.RPCUserErr.WithMessage("get friends list error"))
+		resp.BaseResp = tools.BuildBaseResp(errno.RPCUserErr.WithMessage("get friends list error"))
 		return resp, nil
 	}
 	resp.UserList = users
-	resp.BaseResp = sTools.BuildBaseResp(nil)
+	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 }
 
@@ -140,7 +140,7 @@ func (s *SocialityServiceImpl) CheckFollow(_ context.Context, req *sociality.Dou
 	info, err := dao.FindRecord(req.UserId, req.ToUserId)
 	if err != nil {
 		klog.Error("check follow error", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("check follow error"))
+		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("check follow error"))
 		return resp, nil
 	}
 	if info == nil {
@@ -152,7 +152,7 @@ func (s *SocialityServiceImpl) CheckFollow(_ context.Context, req *sociality.Dou
 			resp.Check = false
 		}
 	}
-	resp.BaseResp = sTools.BuildBaseResp(nil)
+	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 }
 
@@ -162,11 +162,11 @@ func (s *SocialityServiceImpl) GetFollowerCount(_ context.Context, req *socialit
 	count, err := dao.GetFollowerNumsByUserId(req.UserId)
 	if err != nil {
 		klog.Error("get follower num error", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get follower num error"))
+		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get follower num error"))
 		return resp, nil
 	}
 	resp.Count = count
-	resp.BaseResp = sTools.BuildBaseResp(nil)
+	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 }
 
@@ -176,10 +176,10 @@ func (s *SocialityServiceImpl) GetFollowingCount(_ context.Context, req *sociali
 	count, err := dao.GetFollowingNumsByUserId(req.UserId)
 	if err != nil {
 		klog.Error("get following num error", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get following num error"))
+		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get following num error"))
 		return resp, nil
 	}
 	resp.Count = count
-	resp.BaseResp = sTools.BuildBaseResp(nil)
+	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 }

@@ -7,7 +7,7 @@ import (
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/initialize"
-	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/tools"
+	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	sociality "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality/socialityservice"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -35,17 +35,17 @@ func main() {
 	defer p.Shutdown(context.Background())
 	initialize.InitUser()
 
-	Publisher, err := tools.NewPublisher(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
+	Publisher, err := pkg.NewPublisher(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
 	if err != nil {
 		klog.Fatal("cannot create publisher", err)
 	}
-	Subscriber, err := tools.NewSubscriber(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
+	Subscriber, err := pkg.NewSubscriber(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
 	if err != nil {
 		klog.Fatal("cannot create subscriber", err.Error())
 	}
 
 	impl := &SocialityServiceImpl{
-		UserManager: &tools.UserManager{
+		UserManager: &pkg.UserManager{
 			UserService: global.UserClient,
 			ChatService: global.ChatClient,
 		},

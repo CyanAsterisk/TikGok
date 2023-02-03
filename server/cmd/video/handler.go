@@ -6,11 +6,11 @@ import (
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/model"
-	"github.com/CyanAsterisk/TikGok/server/cmd/video/tools"
+	"github.com/CyanAsterisk/TikGok/server/cmd/video/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
-	video "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/video"
-	sTools "github.com/CyanAsterisk/TikGok/server/shared/tools"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/video"
+	"github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"gorm.io/gorm"
 )
@@ -45,14 +45,14 @@ func (s *VideoServiceImpl) Feed(ctx context.Context, req *video.DouyinFeedReques
 	vs, err := dao.GetVideosByLatestTime(req.LatestTime)
 	if err != nil {
 		klog.Error("get videos by latest time err", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.VideoServerErr.WithMessage("get videos error"))
+		resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("get videos error"))
 		return
 	}
 
 	resp.VideoList, err = s.packVideos(ctx, vs, req.ViewerId)
 	if err != nil {
 		klog.Error("pack videos err", err.Error())
-		resp.BaseResp = sTools.BuildBaseResp(errno.ServiceErr.WithMessage("pack videos err"))
+		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr.WithMessage("pack videos err"))
 		return
 	}
 	if len(vs) > 0 {
@@ -60,7 +60,7 @@ func (s *VideoServiceImpl) Feed(ctx context.Context, req *video.DouyinFeedReques
 	} else {
 		resp.NextTime = time.Now().UnixNano() / 1e6
 	}
-	resp.BaseResp = sTools.BuildBaseResp(nil)
+	resp.BaseResp = tools.BuildBaseResp(nil)
 	return
 }
 
@@ -80,11 +80,11 @@ func (s *VideoServiceImpl) PublishVideo(_ context.Context, req *video.DouyinPubl
 	err = dao.CreateVideo(&vid)
 	if err != nil {
 		klog.Errorf("create video err", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.VideoServerErr.WithMessage("create video err"))
+		resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("create video err"))
 		return
 	}
 
-	resp.BaseResp = sTools.BuildBaseResp(nil)
+	resp.BaseResp = tools.BuildBaseResp(nil)
 	return
 }
 
@@ -94,16 +94,16 @@ func (s *VideoServiceImpl) VideoList(ctx context.Context, req *video.DouyinPubli
 	vs, err := dao.GetVideosByUserId(req.OwnerId)
 	if err != nil {
 		klog.Error("get published video list err", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.VideoServerErr.WithMessage("get published video list err"))
+		resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("get published video list err"))
 		return
 	}
 	resp.VideoList, err = s.packVideos(ctx, vs, req.ViewerId)
 	if err != nil {
 		klog.Error("pack videos err", err.Error())
-		resp.BaseResp = sTools.BuildBaseResp(errno.ServiceErr.WithMessage("pack videos err"))
+		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr.WithMessage("pack videos err"))
 		return
 	}
-	resp.BaseResp = sTools.BuildBaseResp(nil)
+	resp.BaseResp = tools.BuildBaseResp(nil)
 	return
 }
 
@@ -113,21 +113,21 @@ func (s *VideoServiceImpl) GetVideo(ctx context.Context, req *video.DouyinGetVid
 	v, err := dao.GetVideoByVideoId(req.VideoId)
 	if err != nil {
 		klog.Error("get video err", err)
-		resp.BaseResp = sTools.BuildBaseResp(errno.VideoServerErr.WithMessage("get video err"))
+		resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("get video err"))
 		return
 	}
 	resp.Video, err = s.packVideo(ctx, v, req.VideoId)
 	if err != nil {
 		klog.Error("pack video err", err.Error())
-		resp.BaseResp = sTools.BuildBaseResp(errno.ServiceErr.WithMessage("pack video err"))
+		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr.WithMessage("pack video err"))
 		return
 	}
-	resp.BaseResp = sTools.BuildBaseResp(nil)
+	resp.BaseResp = tools.BuildBaseResp(nil)
 	return
 }
 
 func (s *VideoServiceImpl) packVideo(ctx context.Context, mv *model.Video, uid int64) (bv *base.Video, err error) {
-	bv = tools.Video(mv)
+	bv = pkg.Video(mv)
 	if bv.Author, err = s.GetUser(ctx, uid, mv.Uid); err != nil {
 		return nil, err
 	}

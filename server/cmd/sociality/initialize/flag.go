@@ -2,9 +2,9 @@ package initialize
 
 import (
 	"flag"
+	"github.com/CyanAsterisk/TikGok/server/shared/tools"
 
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
-	"github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 

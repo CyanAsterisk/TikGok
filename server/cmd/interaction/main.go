@@ -7,7 +7,7 @@ import (
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/initialize"
-	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/tools"
+	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	interaction "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction/interactionserver"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -34,8 +34,8 @@ func main() {
 	initialize.InitVideo()
 
 	impl := &InteractionServerImpl{
-		CommentManager: &tools.CommentManager{},
-		VideoManager: &tools.VideoManager{
+		CommentManager: &pkg.CommentManager{},
+		VideoManager: &pkg.VideoManager{
 			VideoService: global.VideoClient,
 		},
 	}

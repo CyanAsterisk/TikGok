@@ -7,7 +7,7 @@ import (
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/initialize"
-	"github.com/CyanAsterisk/TikGok/server/cmd/video/tools"
+	"github.com/CyanAsterisk/TikGok/server/cmd/video/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	video "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/video/videoservice"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -35,8 +35,8 @@ func main() {
 	initialize.InitUser()
 
 	impl := &VideoServiceImpl{
-		UserManager:        &tools.UserManager{UserService: global.UserClient},
-		InteractionManager: &tools.InteractionManager{InteractionService: global.InteractClient},
+		UserManager:        &pkg.UserManager{UserService: global.UserClient},
+		InteractionManager: &pkg.InteractionManager{InteractionService: global.InteractClient},
 	}
 	// Create new server.
 	srv := video.NewServer(impl,

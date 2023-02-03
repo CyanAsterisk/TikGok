@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/model"
-	"github.com/CyanAsterisk/TikGok/server/cmd/user/tools"
+	"github.com/CyanAsterisk/TikGok/server/cmd/user/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -40,7 +40,7 @@ func main() {
 	_ = db.AutoMigrate(&model.User{})
 
 	for i := 0; i < 10; i++ {
-		cryPassword := tools.Md5Crypt(fmt.Sprintf("Password%d", i), "TikGok")
+		cryPassword := pkg.Md5Crypt(fmt.Sprintf("Password%d", i), "TikGok")
 		user := model.User{
 			Username: fmt.Sprintf("User%d", i),
 			Password: cryPassword,
