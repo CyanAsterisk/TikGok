@@ -14,6 +14,7 @@ jobs:
           go-version: 1.19
 
       - name: Lint
-        uses: golangci/golangci-lint-action@v3
-        with:
-          version: latest
+        run: |
+          go vet -stdmethods=false $(go list ./...)
+          go install mvdan.cc/gofumpt@v0.4.0
+          test -z "$(gofumpt -l -extra .)"
