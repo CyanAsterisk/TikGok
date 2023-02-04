@@ -2,14 +2,12 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"github.com/CyanAsterisk/TikGok/server/cmd/chat/dao"
-	"github.com/CyanAsterisk/TikGok/server/cmd/chat/pkg"
 	"net"
 	"strconv"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/initialize"
+	"github.com/CyanAsterisk/TikGok/server/cmd/chat/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	chat "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/chat/chatservice"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -27,17 +25,32 @@ func main() {
 	IP, Port := initialize.InitFlag()
 	r, info := initialize.InitNacos(Port)
 	initialize.InitDB()
+	initialize.InitRedis()
+	initialize.InitMq()
 	p := provider.NewOpenTelemetryProvider(
 		provider.WithServiceName(global.ServerConfig.Name),
 		provider.WithExportEndpoint(global.ServerConfig.OtelInfo.EndPoint),
 		provider.WithInsecure(),
 	)
 	defer p.Shutdown(context.Background())
-	a, _ := dao.GetMessages(1616071000544256000, 1616071000577810432)
-	b := pkg.Messages(a)
-	fmt.Println(b)
 
-	impl := new(ChatServiceImpl)
+	Publisher, err := pkg.NewPublisher(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
+	if err != nil {
+		klog.Fatal("cannot create publisher", err)
+	}
+	Subscriber, err := pkg.NewSubscriber(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
+	if err != nil {
+		klog.Fatal("cannot create subscriber", err.Error())
+	}
+
+	impl := &ChatServiceImpl{
+		Publisher:  Publisher,
+		Subscriber: Subscriber,
+		RedisManager: &pkg.RedisManager{
+			RedisSentClient:    global.RedisSentClient,
+			RedisReceiveClient: global.RedisReceiveClient,
+		},
+	}
 	// Create new server.
 	srv := chat.NewServer(impl,
 		server.WithServiceAddr(utils.NewNetAddr(consts.TCP, net.JoinHostPort(IP, strconv.Itoa(Port)))),
@@ -48,7 +61,7 @@ func main() {
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: global.ServerConfig.Name}),
 	)
 
-	err := srv.Run()
+	err = srv.Run()
 	if err != nil {
 		klog.Fatal(err)
 	}

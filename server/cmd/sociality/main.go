@@ -51,6 +51,10 @@ func main() {
 		},
 		Publisher:  Publisher,
 		Subscriber: Subscriber,
+		RedisManager: &pkg.RedisManager{
+			RedisFollowingClient: global.RedisFollowingClient,
+			RedisFollowerClient:  global.RedisFollowerClient,
+		},
 	}
 	// Create new server.
 	srv := sociality.NewServer(impl,
