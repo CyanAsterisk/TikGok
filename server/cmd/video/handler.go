@@ -12,13 +12,14 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/video"
 	"github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"gorm.io/gorm"
 )
 
 // VideoServiceImpl implements the last service interface defined in the IDL.
 type VideoServiceImpl struct {
 	UserManager
 	InteractionManager
+	Publisher
+	Subscriber
 }
 
 // UserManager defines the Anti Corruption Layer
@@ -34,6 +35,16 @@ type InteractionManager interface {
 	GetCommentCount(ctx context.Context, videoId int64) (int64, error)
 	CheckFavorite(ctx context.Context, userId int64, videoId int64) (bool, error)
 	GetFavoriteCount(ctx context.Context, videoId int64) (int64, error)
+}
+
+// Publisher defines the publisher video interface.
+type Publisher interface {
+	Publish(context.Context, *video.DouyinPublishActionRequest) error
+}
+
+// Subscriber defines a video publish subscriber.
+type Subscriber interface {
+	Subscribe(context.Context) (ch chan *video.DouyinPublishActionRequest, cleanUp func(), err error)
 }
 
 // Feed implements the VideoServiceImpl interface.
@@ -65,27 +76,36 @@ func (s *VideoServiceImpl) Feed(ctx context.Context, req *video.DouyinFeedReques
 }
 
 // PublishVideo implements the VideoServiceImpl interface.
-func (s *VideoServiceImpl) PublishVideo(_ context.Context, req *video.DouyinPublishActionRequest) (resp *video.DouyinPublishActionResponse, err error) {
+func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *video.DouyinPublishActionRequest) (resp *video.DouyinPublishActionResponse, err error) {
 	resp = new(video.DouyinPublishActionResponse)
-	vid := model.Video{
-		Model: gorm.Model{
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-		},
-		Uid:      req.UserId,
-		PlayUrl:  req.PlayUrl,
-		CoverUrl: req.CoverUrl,
-		Title:    req.Title,
-	}
-	err = dao.CreateVideo(&vid)
+	err = s.Publish(ctx, req)
 	if err != nil {
-		klog.Errorf("create video err", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("create video err"))
-		return
+		klog.Errorf("action publish error", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("publish video action error"))
+		return resp, nil
 	}
-
 	resp.BaseResp = tools.BuildBaseResp(nil)
-	return
+	return resp, nil
+
+	//vid := model.Video{
+	//	Model: gorm.Model{
+	//		CreatedAt: time.Now(),
+	//		UpdatedAt: time.Now(),
+	//	},
+	//	Uid:      req.UserId,
+	//	PlayUrl:  req.PlayUrl,
+	//	CoverUrl: req.CoverUrl,
+	//	Title:    req.Title,
+	//}
+	//err = dao.CreateVideo(&vid)
+	//if err != nil {
+	//	klog.Errorf("create video err", err)
+	//	resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("create video err"))
+	//	return
+	//}
+	//
+	//resp.BaseResp = tools.BuildBaseResp(nil)
+	//return
 }
 
 // VideoList implements the VideoServiceImpl interface.

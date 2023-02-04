@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/pkg"
@@ -18,6 +17,11 @@ import (
 type InteractionServerImpl struct {
 	CommentManager
 	VideoManager
+
+	CommentPublisher
+	CommentSubscriber
+	FavoritePublisher
+	FavoriteSubscriber
 }
 
 // CommentManager manage comment status.
@@ -31,37 +35,66 @@ type VideoManager interface {
 	GetVideos(ctx context.Context, list []int64, viewerId int64) ([]*base.Video, error)
 }
 
+// CommentPublisher defines the comment action publisher interface.
+type CommentPublisher interface {
+	Publish(context.Context, *interaction.DouyinCommentActionRequest) error
+}
+
+// CommentSubscriber defines a comment action subscriber.
+type CommentSubscriber interface {
+	Subscribe(context.Context) (ch chan *interaction.DouyinCommentActionRequest, cleanUp func(), err error)
+}
+
+// FavoritePublisher defines the favorite action publisher interface.
+type FavoritePublisher interface {
+	Publish(context.Context, *interaction.DouyinFavoriteActionRequest) error
+}
+
+// FavoriteSubscriber  defines a favorite action subscriber interface.
+type FavoriteSubscriber interface {
+	Subscribe(context.Context) (ch chan *interaction.DouyinFavoriteActionRequest, cleanUp func(), err error)
+}
+
 // Favorite implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) Favorite(_ context.Context, req *interaction.DouyinFavoriteActionRequest) (resp *interaction.DouyinFavoriteActionResponse, err error) {
+func (s *InteractionServerImpl) Favorite(ctx context.Context, req *interaction.DouyinFavoriteActionRequest) (resp *interaction.DouyinFavoriteActionResponse, err error) {
 	resp = new(interaction.DouyinFavoriteActionResponse)
-	faInfo, err := dao.GetFavoriteInfo(req.UserId, req.VideoId)
-	if err == nil && faInfo == nil {
-		err = dao.CreateFavorite(&model.Favorite{
-			UserId:     req.UserId,
-			VideoId:    req.VideoId,
-			ActionType: consts.IsLike,
-		})
-		if err != nil {
-			klog.Error("favorite error", err)
-			resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
-			return resp, nil
-		}
-		resp.BaseResp = tools.BuildBaseResp(nil)
-		return resp, nil
-	}
+	err = s.FavoritePublisher.Publish(ctx, req)
 	if err != nil {
-		klog.Error("favorite error", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
-		return resp, nil
-	}
-	err = dao.UpdateFavorite(req.UserId, req.VideoId, req.ActionType)
-	if err != nil {
-		klog.Error("favorite error", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
+		klog.Error("action publish error", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite action error"))
 		return resp, nil
 	}
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
+
+	//faInfo, err := dao.GetFavoriteInfo(req.UserId, req.VideoId)
+	//if err == nil && faInfo == nil {
+	//	err = dao.CreateFavorite(&model.Favorite{
+	//		UserId:     req.UserId,
+	//		VideoId:    req.VideoId,
+	//		ActionType: consts.IsLike,
+	//	})
+	//	if err != nil {
+	//		klog.Error("favorite error", err)
+	//		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
+	//		return resp, nil
+	//	}
+	//	resp.BaseResp = tools.BuildBaseResp(nil)
+	//	return resp, nil
+	//}
+	//if err != nil {
+	//	klog.Error("favorite error", err)
+	//	resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
+	//	return resp, nil
+	//}
+	//err = dao.UpdateFavorite(req.UserId, req.VideoId, req.ActionType)
+	//if err != nil {
+	//	klog.Error("favorite error", err)
+	//	resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
+	//	return resp, nil
+	//}
+	//resp.BaseResp = tools.BuildBaseResp(nil)
+	//return resp, nil
 }
 
 // FavoriteList implements the InteractionServerImpl interface.
@@ -121,17 +154,25 @@ func (s *InteractionServerImpl) CheckFavorite(_ context.Context, req *interactio
 }
 
 // Comment implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) Comment(_ context.Context, req *interaction.DouyinCommentActionRequest) (resp *interaction.DouyinCommentActionResponse, err error) {
+func (s *InteractionServerImpl) Comment(ctx context.Context, req *interaction.DouyinCommentActionRequest) (resp *interaction.DouyinCommentActionResponse, err error) {
 	resp = new(interaction.DouyinCommentActionResponse)
-	cmt, err := s.GetResp(req)
+	err = s.CommentPublisher.Publish(ctx, req)
 	if err != nil {
-		klog.Error("comment uses get response error", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("comment error"))
+		klog.Error("action publish error", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("comment action error"))
 		return resp, nil
 	}
-	resp.Comment = pkg.Comment(cmt)
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
+	//cmt, err := s.GetResp(req)
+	//if err != nil {
+	//	klog.Error("comment uses get response error", err)
+	//	resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("comment error"))
+	//	return resp, nil
+	//}
+	//resp.Comment = pkg.Comment(cmt)
+	//resp.BaseResp = tools.BuildBaseResp(nil)
+	//return resp, nil
 }
 
 // CommentList implements the InteractionServerImpl interface.

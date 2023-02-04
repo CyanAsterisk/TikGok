@@ -31,6 +31,7 @@ func main() {
 		provider.WithInsecure(),
 	)
 	defer p.Shutdown(context.Background())
+	initialize.InitMq()
 	initialize.InitInteraction()
 	initialize.InitUser()
 
