@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"time"
-
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/model"
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/pkg"
@@ -15,15 +13,43 @@ import (
 )
 
 // ChatServiceImpl implements the last service interface defined in the IDL.
-type ChatServiceImpl struct{}
+type ChatServiceImpl struct {
+	RedisManager
+	Publisher
+	Subscriber
+}
+
+// RedisManager defines the redis interface.
+type RedisManager interface {
+	Action(context.Context, *chat.DouyinMessageActionRequest) error
+	GetMessages(uid int64, toUid int64) ([]*model.Message, error)
+	GetLatestMessage(uid int64, toUid int64) (*model.Message, error)
+}
+
+// Publisher defines the publisher interface.
+type Publisher interface {
+	Publish(context.Context, *chat.DouyinMessageActionRequest) error
+}
+
+// Subscriber defines a car update subscriber.
+type Subscriber interface {
+	Subscribe(context.Context) (ch chan *chat.DouyinMessageActionRequest, cleanUp func(), err error)
+}
 
 // ChatHistory implements the ChatServiceImpl interface.
 func (s *ChatServiceImpl) ChatHistory(_ context.Context, req *chat.DouyinMessageChatRequest) (resp *chat.DouyinMessageChatResponse, err error) {
 	resp = new(chat.DouyinMessageChatResponse)
-	msgs, err := dao.GetMessages(req.UserId, req.ToUserId)
+	msgs, err := s.RedisManager.GetMessages(req.UserId, req.ToUserId)
 	if err != nil {
-		klog.Error("get chat history error", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.ChatServerErr.WithMessage("get chat history error"))
+		klog.Error("get chat history by redis error", err)
+		msgs, err = dao.GetMessages(req.UserId, req.ToUserId)
+		if err != nil {
+			klog.Error("get chat history by mysql error", err)
+			resp.BaseResp = tools.BuildBaseResp(errno.ChatServerErr.WithMessage("get chat history error"))
+			return resp, nil
+		}
+		resp.MessageList = pkg.Messages(msgs)
+		resp.BaseResp = tools.BuildBaseResp(nil)
 		return resp, nil
 	}
 	resp.MessageList = pkg.Messages(msgs)
@@ -32,19 +58,31 @@ func (s *ChatServiceImpl) ChatHistory(_ context.Context, req *chat.DouyinMessage
 }
 
 // SentMessage implements the ChatServiceImpl interface.
-func (s *ChatServiceImpl) SentMessage(_ context.Context, req *chat.DouyinMessageActionRequest) (resp *chat.DouyinMessageActionResponse, err error) {
+func (s *ChatServiceImpl) SentMessage(ctx context.Context, req *chat.DouyinMessageActionRequest) (resp *chat.DouyinMessageActionResponse, err error) {
 	resp = new(chat.DouyinMessageActionResponse)
-	err = dao.ChatAction(&model.Message{
-		ToUserId:   req.ToUserId,
-		FromUserId: req.UserId,
-		Content:    req.Content,
-		CreateDate: time.Now(),
-	})
+	err = s.Publisher.Publish(ctx, req)
 	if err != nil {
-		klog.Error("sent message error", err)
+		klog.Error("publish message error", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.ChatServerErr.WithMessage("sent message error"))
 		return resp, nil
 	}
+	err = s.RedisManager.Action(ctx, req)
+	if err != nil {
+		klog.Error("sent message by redis error", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.ChatServerErr.WithMessage("sent message error"))
+		return resp, nil
+	}
+	//err = dao.ChatAction(&model.Message{
+	//	ToUserId:   req.ToUserId,
+	//	FromUserId: req.UserId,
+	//	Content:    req.Content,
+	//	CreateDate: time.Now(),
+	//})
+	//if err != nil {
+	//	klog.Error("sent message error", err)
+	//	resp.BaseResp = tools.BuildBaseResp(errno.ChatServerErr.WithMessage("sent message error"))
+	//	return resp, nil
+	//}
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 }
@@ -52,11 +90,15 @@ func (s *ChatServiceImpl) SentMessage(_ context.Context, req *chat.DouyinMessage
 // LatestMessage implements the ChatServiceImpl interface.
 func (s *ChatServiceImpl) LatestMessage(_ context.Context, req *chat.DouyinMessageLatestRequest) (resp *chat.DouyinMessageLatestResponse, err error) {
 	resp = new(chat.DouyinMessageLatestResponse)
-	msg, err := dao.GetLatestMessage(req.UserId, req.ToUserId)
+	msg, err := s.RedisManager.GetLatestMessage(req.UserId, req.ToUserId)
 	if err != nil {
-		klog.Error("get latest message error", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.ChatServerErr.WithMessage("get latest message error"))
-		return resp, nil
+		klog.Error("get latest message by redis error", err)
+		msg, err = dao.GetLatestMessage(req.UserId, req.ToUserId)
+		if err != nil {
+			klog.Error("get latest message by mysql error", err)
+			resp.BaseResp = tools.BuildBaseResp(errno.ChatServerErr.WithMessage("get latest message error"))
+			return resp, nil
+		}
 	}
 	if msg.FromUserId == req.UserId {
 		resp.MsgType = consts.SentMessage

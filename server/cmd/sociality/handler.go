@@ -27,6 +27,7 @@ type UserManager interface {
 	GetFriendUsers(ctx context.Context, list []int64, uid int64) ([]*base.FriendUser, error)
 }
 
+// RedisManager defines the redis interface.
 type RedisManager interface {
 	Action(context.Context, *sociality.DouyinRelationActionRequest) error
 	Check(ctx context.Context, uid, toUid int64) (bool, error)
@@ -59,8 +60,6 @@ func (s *SocialityServiceImpl) Action(ctx context.Context, req *sociality.Douyin
 		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("follow action error"))
 		return resp, nil
 	}
-	resp.BaseResp = tools.BuildBaseResp(nil)
-	return resp, nil
 	//fr, err := dao.FindRecord(req.ToUserId, req.UserId)
 	//if err == nil && fr == nil {
 	//	err = dao.CreateFollow(&model.Follow{
@@ -87,8 +86,8 @@ func (s *SocialityServiceImpl) Action(ctx context.Context, req *sociality.Douyin
 	//	resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("follow action error"))
 	//	return resp, nil
 	//}
-	//resp.BaseResp = tools.BuildBaseResp(nil)
-	//return resp, nil
+	resp.BaseResp = tools.BuildBaseResp(nil)
+	return resp, nil
 }
 
 // FollowingList implements the SocialityServiceImpl interface.
