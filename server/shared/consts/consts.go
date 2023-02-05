@@ -82,9 +82,9 @@ const (
 	RedisSentClientDB      = 2
 	RedisReceiveClientDB   = 3
 
-	FollowingList = 0
-	FollowerList  = 1
-	FriendsList   = 2
+	FollowList   = 0
+	FollowerList = 1
+	FriendsList  = 2
 
 	FollowingCount = 0
 	FollowerCount  = 1

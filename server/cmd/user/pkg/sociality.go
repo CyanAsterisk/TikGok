@@ -39,3 +39,18 @@ func (s *SocialManager) BatchGetSocialInfo(ctx context.Context, viewerId int64, 
 	}
 	return resp.SocialInfoList, nil
 }
+
+func (s *SocialManager) GetRelationList(ctx context.Context, viewerId int64, ownerId int64, option int8) ([]int64, error) {
+	resp, err := s.SocialService.GetRelationIdList(ctx, &sociality.DouyinGetRelationIdListRequest{
+		ViewerId: viewerId,
+		OwnerId:  ownerId,
+		Option:   option,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if resp.BaseResp.StatusCode != int32(errno.Success.ErrCode) {
+		return nil, errno.SocialityServerErr.WithMessage(resp.BaseResp.StatusMsg)
+	}
+	return resp.UserIdList, nil
+}

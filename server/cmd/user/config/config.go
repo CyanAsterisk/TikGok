@@ -34,8 +34,13 @@ type ServerConfig struct {
 	MysqlInfo        MysqlConfig        `mapstructure:"mysql" json:"mysql"`
 	OtelInfo         OtelConfig         `mapstructure:"otel" json:"otel"`
 	SocialitySrvInfo SocialitySrvConfig `mapstructure:"sociality_srv" json:"sociality_srv"`
+	ChatSrvInfo      ChatSrvConfig      `mapstructure:"chat_srv" json:"chat_srv"`
 }
 
 type SocialitySrvConfig struct {
+	Name string `mapstructure:"name" json:"name"`
+}
+
+type ChatSrvConfig struct {
 	Name string `mapstructure:"name" json:"name"`
 }

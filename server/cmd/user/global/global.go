@@ -2,6 +2,7 @@ package global
 
 import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/config"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/chat/chatservice"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality/socialityservice"
 	"gorm.io/gorm"
 )
@@ -11,5 +12,6 @@ var (
 	ServerConfig config.ServerConfig
 	NacosConfig  config.NacosConfig
 
+	ChatClient   chatservice.Client
 	SocialClient socialityservice.Client
 )

@@ -33,10 +33,12 @@ func main() {
 	)
 	defer p.Shutdown(context.Background())
 	initialize.InitSocial()
+	initialize.InitChat()
 
 	impl := &UserServiceImpl{
 		jwt:           middleware.NewJWT(global.ServerConfig.JWTInfo.SigningKey),
 		SocialManager: &pkg.SocialManager{SocialService: global.SocialClient},
+		ChatManager:   &pkg.ChatManager{ChatService: global.ChatClient},
 	}
 	// Create new server.
 	srv := user.NewServer(impl,
