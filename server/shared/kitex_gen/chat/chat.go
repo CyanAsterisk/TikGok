@@ -1938,8 +1938,8 @@ func (p *DouyinMessageBatchGetLatestRequest) Field2DeepEqual(src []int64) bool {
 }
 
 type DouyinMessageBatchGetLatestResponse struct {
-	BaseResp  *base.DouyinBaseResponse `thrift:"base_resp,1" frugal:"1,default,base.DouyinBaseResponse" json:"base_resp"`
-	LatestMsg []*LatestMsg             `thrift:"latest_msg,2" frugal:"2,default,list<LatestMsg>" json:"latest_msg"`
+	BaseResp      *base.DouyinBaseResponse `thrift:"base_resp,1" frugal:"1,default,base.DouyinBaseResponse" json:"base_resp"`
+	LatestMsgList []*LatestMsg             `thrift:"latest_msg_list,2" frugal:"2,default,list<LatestMsg>" json:"latest_msg_list"`
 }
 
 func NewDouyinMessageBatchGetLatestResponse() *DouyinMessageBatchGetLatestResponse {
@@ -1959,19 +1959,19 @@ func (p *DouyinMessageBatchGetLatestResponse) GetBaseResp() (v *base.DouyinBaseR
 	return p.BaseResp
 }
 
-func (p *DouyinMessageBatchGetLatestResponse) GetLatestMsg() (v []*LatestMsg) {
-	return p.LatestMsg
+func (p *DouyinMessageBatchGetLatestResponse) GetLatestMsgList() (v []*LatestMsg) {
+	return p.LatestMsgList
 }
 func (p *DouyinMessageBatchGetLatestResponse) SetBaseResp(val *base.DouyinBaseResponse) {
 	p.BaseResp = val
 }
-func (p *DouyinMessageBatchGetLatestResponse) SetLatestMsg(val []*LatestMsg) {
-	p.LatestMsg = val
+func (p *DouyinMessageBatchGetLatestResponse) SetLatestMsgList(val []*LatestMsg) {
+	p.LatestMsgList = val
 }
 
 var fieldIDToName_DouyinMessageBatchGetLatestResponse = map[int16]string{
 	1: "base_resp",
-	2: "latest_msg",
+	2: "latest_msg_list",
 }
 
 func (p *DouyinMessageBatchGetLatestResponse) IsSetBaseResp() bool {
@@ -2060,14 +2060,14 @@ func (p *DouyinMessageBatchGetLatestResponse) ReadField2(iprot thrift.TProtocol)
 	if err != nil {
 		return err
 	}
-	p.LatestMsg = make([]*LatestMsg, 0, size)
+	p.LatestMsgList = make([]*LatestMsg, 0, size)
 	for i := 0; i < size; i++ {
 		_elem := NewLatestMsg()
 		if err := _elem.Read(iprot); err != nil {
 			return err
 		}
 
-		p.LatestMsg = append(p.LatestMsg, _elem)
+		p.LatestMsgList = append(p.LatestMsgList, _elem)
 	}
 	if err := iprot.ReadListEnd(); err != nil {
 		return err
@@ -2126,13 +2126,13 @@ WriteFieldEndError:
 }
 
 func (p *DouyinMessageBatchGetLatestResponse) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("latest_msg", thrift.LIST, 2); err != nil {
+	if err = oprot.WriteFieldBegin("latest_msg_list", thrift.LIST, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.LatestMsg)); err != nil {
+	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.LatestMsgList)); err != nil {
 		return err
 	}
-	for _, v := range p.LatestMsg {
+	for _, v := range p.LatestMsgList {
 		if err := v.Write(oprot); err != nil {
 			return err
 		}
@@ -2166,7 +2166,7 @@ func (p *DouyinMessageBatchGetLatestResponse) DeepEqual(ano *DouyinMessageBatchG
 	if !p.Field1DeepEqual(ano.BaseResp) {
 		return false
 	}
-	if !p.Field2DeepEqual(ano.LatestMsg) {
+	if !p.Field2DeepEqual(ano.LatestMsgList) {
 		return false
 	}
 	return true
@@ -2181,10 +2181,10 @@ func (p *DouyinMessageBatchGetLatestResponse) Field1DeepEqual(src *base.DouyinBa
 }
 func (p *DouyinMessageBatchGetLatestResponse) Field2DeepEqual(src []*LatestMsg) bool {
 
-	if len(p.LatestMsg) != len(src) {
+	if len(p.LatestMsgList) != len(src) {
 		return false
 	}
-	for i, v := range p.LatestMsg {
+	for i, v := range p.LatestMsgList {
 		_src := src[i]
 		if !v.DeepEqual(_src) {
 			return false

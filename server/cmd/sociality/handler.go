@@ -251,7 +251,7 @@ func (s *SocialityServiceImpl) GetRelationIdList(ctx context.Context, req *socia
 
 // GetSocialInfo implements the SocialityServiceImpl interface.
 func (s *SocialityServiceImpl) GetSocialInfo(ctx context.Context, req *sociality.DouyinGetSocialInfoRequest) (resp *sociality.DouyinGetSocialInfoResponse, err error) {
-	// TODO: Your code here...
+	resp = new(sociality.DouyinGetSocialInfoResponse)
 	return
 }
 

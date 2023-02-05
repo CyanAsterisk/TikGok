@@ -1640,7 +1640,7 @@ func (p *DouyinMessageBatchGetLatestResponse) FastReadField2(buf []byte) (int, e
 	if err != nil {
 		return offset, err
 	}
-	p.LatestMsg = make([]*LatestMsg, 0, size)
+	p.LatestMsgList = make([]*LatestMsg, 0, size)
 	for i := 0; i < size; i++ {
 		_elem := NewLatestMsg()
 		if l, err := _elem.FastRead(buf[offset:]); err != nil {
@@ -1649,7 +1649,7 @@ func (p *DouyinMessageBatchGetLatestResponse) FastReadField2(buf []byte) (int, e
 			offset += l
 		}
 
-		p.LatestMsg = append(p.LatestMsg, _elem)
+		p.LatestMsgList = append(p.LatestMsgList, _elem)
 	}
 	if l, err := bthrift.Binary.ReadListEnd(buf[offset:]); err != nil {
 		return offset, err
@@ -1698,11 +1698,11 @@ func (p *DouyinMessageBatchGetLatestResponse) fastWriteField1(buf []byte, binary
 
 func (p *DouyinMessageBatchGetLatestResponse) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "latest_msg", thrift.LIST, 2)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "latest_msg_list", thrift.LIST, 2)
 	listBeginOffset := offset
 	offset += bthrift.Binary.ListBeginLength(thrift.STRUCT, 0)
 	var length int
-	for _, v := range p.LatestMsg {
+	for _, v := range p.LatestMsgList {
 		length++
 		offset += v.FastWriteNocopy(buf[offset:], binaryWriter)
 	}
@@ -1722,9 +1722,9 @@ func (p *DouyinMessageBatchGetLatestResponse) field1Length() int {
 
 func (p *DouyinMessageBatchGetLatestResponse) field2Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("latest_msg", thrift.LIST, 2)
-	l += bthrift.Binary.ListBeginLength(thrift.STRUCT, len(p.LatestMsg))
-	for _, v := range p.LatestMsg {
+	l += bthrift.Binary.FieldBeginLength("latest_msg_list", thrift.LIST, 2)
+	l += bthrift.Binary.ListBeginLength(thrift.STRUCT, len(p.LatestMsgList))
+	for _, v := range p.LatestMsgList {
 		l += v.BLength()
 	}
 	l += bthrift.Binary.ListEndLength()

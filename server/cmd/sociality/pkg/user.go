@@ -63,8 +63,8 @@ func (m *UserManager) GetFriendUsers(ctx context.Context, list []int64, viewerId
 			FollowCount:   u.FollowCount,
 			FollowerCount: u.FollowerCount,
 			IsFollow:      u.IsFollow,
-			Message:       res.LatestMsg[i].Message,
-			MsgType:       res.LatestMsg[i].MsgType,
+			Message:       res.LatestMsgList[i].Message,
+			MsgType:       res.LatestMsgList[i].MsgType,
 		}
 		fUser = append(fUser, fu)
 	}
