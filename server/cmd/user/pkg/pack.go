@@ -19,14 +19,13 @@ func PackUser(user *model.User, info *base.SocialInfo) *base.User {
 }
 
 // PackUsers packs users, please make sure len(users) == len(infoList).
-func PackUsers(users []*model.User, infoList []*base.SocialInfo) []*base.User {
-	if users == nil {
+func PackUsers(userList []*model.User, infoList []*base.SocialInfo) []*base.User {
+	if userList == nil {
 		return nil
 	}
-	n := len(users)
-	res := make([]*base.User, n)
-	for i := 0; i < n; i++ {
-		res = append(res, PackUser(users[i], infoList[i]))
+	res := make([]*base.User, len(userList))
+	for i, u := range userList {
+		res = append(res, PackUser(u, infoList[i]))
 	}
 	return res
 }
