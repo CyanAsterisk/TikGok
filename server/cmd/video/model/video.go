@@ -5,14 +5,16 @@ import (
 	"github.com/bwmarrin/snowflake"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"gorm.io/gorm"
+	"time"
 )
 
 type Video struct {
-	gorm.Model
-	Uid      int64  `gorm:"column:user_id; not null"`
-	PlayUrl  string `gorm:"not null; type: varchar(255)"`
-	CoverUrl string `gorm:"not null; type: varchar(255)"`
-	Title    string `gorm:"not null; type: varchar(255)"`
+	ID        int64     `gorm:"primarykey"`
+	Uid       int64     `gorm:"column:user_id; not null"`
+	PlayUrl   string    `gorm:"not null; type: varchar(255)"`
+	CoverUrl  string    `gorm:"not null; type: varchar(255)"`
+	Title     string    `gorm:"not null; type: varchar(255)"`
+	UpdatedAt time.Time `gorm:"not null;"`
 }
 
 // BeforeCreate uses snowflake to generate an ID.
@@ -22,6 +24,6 @@ func (v *Video) BeforeCreate(_ *gorm.DB) (err error) {
 		klog.Errorf("generate id failed: %s", err.Error())
 		return err
 	}
-	v.ID = uint(sf.Generate().Int64())
+	v.ID = sf.Generate().Int64()
 	return nil
 }

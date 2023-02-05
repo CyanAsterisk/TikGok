@@ -6,6 +6,7 @@ import (
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/model"
+	"github.com/CyanAsterisk/TikGok/server/cmd/video/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/video"
@@ -58,14 +59,14 @@ func (s *VideoServiceImpl) Feed(ctx context.Context, req *video.DouyinFeedReques
 		return
 	}
 
-	resp.VideoList, err = s.packVideos(ctx, vs, req.ViewerId)
+	resp.VideoList, err = s.fillVideoList(ctx, vs, req.ViewerId)
 	if err != nil {
-		klog.Error("pack videos err", err.Error())
-		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr.WithMessage("pack videos err"))
+		klog.Error("fill video list err", err.Error())
+		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr.WithMessage("fill video list err"))
 		return
 	}
 	if len(vs) > 0 {
-		resp.NextTime = vs[len(vs)-1].CreatedAt.UnixNano() / 1e6
+		resp.NextTime = vs[len(vs)-1].UpdatedAt.UnixNano() / 1e6
 	} else {
 		resp.NextTime = time.Now().UnixNano() / 1e6
 	}
@@ -115,7 +116,7 @@ func (s *VideoServiceImpl) GetPublishedVideoList(ctx context.Context, req *video
 		resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("get published video list err"))
 		return
 	}
-	resp.VideoList, err = s.packVideos(ctx, vs, req.ViewerId)
+	resp.VideoList, err = s.fillVideoList(ctx, vs, req.ViewerId)
 	if err != nil {
 		klog.Error("pack videos err", err.Error())
 		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr.WithMessage("pack videos err"))
@@ -146,7 +147,7 @@ func (s *VideoServiceImpl) GetFavoriteVideoList(ctx context.Context, req *video.
 		}
 		videos = append(videos, v)
 	}
-	resp.VideoList, err = s.packVideos(ctx, videos, req.ViewerId)
+	resp.VideoList, err = s.fillVideoList(ctx, videos, req.ViewerId)
 	if err != nil {
 		klog.Error("pack video err", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr)
@@ -156,7 +157,23 @@ func (s *VideoServiceImpl) GetFavoriteVideoList(ctx context.Context, req *video.
 	return
 }
 
-func (s *VideoServiceImpl) packVideos(ctx context.Context, mvs []*model.Video, uid int64) (bvs []*base.Video, err error) {
-
-	return nil, nil
+func (s *VideoServiceImpl) fillVideoList(ctx context.Context, videoList []*model.Video, viewerId int64) ([]*base.Video, error) {
+	if videoList == nil {
+		return nil, nil
+	}
+	videoIdList := make([]int64, len(videoList))
+	authorIdList := make([]int64, len(videoList))
+	for _, v := range videoList {
+		videoIdList = append(videoIdList, v.ID)
+		authorIdList = append(authorIdList, v.Uid)
+	}
+	authorList, err := s.UserManager.GetUsers(ctx, authorIdList, viewerId)
+	if err != nil {
+		return nil, err
+	}
+	InfoList, err := s.InteractionManager.BatchGetInteractInfo(ctx, authorIdList, viewerId)
+	if err != nil {
+		return nil, err
+	}
+	return pkg.PackVideos(videoList, authorList, InfoList), nil
 }
