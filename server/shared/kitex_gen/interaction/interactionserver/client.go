@@ -13,14 +13,10 @@ import (
 type Client interface {
 	Favorite(ctx context.Context, req *interaction.DouyinFavoriteActionRequest, callOptions ...callopt.Option) (r *interaction.DouyinFavoriteActionResponse, err error)
 	GetFavoriteVideoIdList(ctx context.Context, req *interaction.DouyinGetFavoriteVideoIdListRequest, callOptions ...callopt.Option) (r *interaction.DouyinGetFavoriteVideoIdListResponse, err error)
-	GetFavoriteCount(ctx context.Context, req *interaction.DouyinGetFavoriteCountRequest, callOptions ...callopt.Option) (r *interaction.DouyinGetFavoriteCountResponse, err error)
-	BatchGetFavoriteCount(ctx context.Context, req *interaction.DouyinBatchGetFavoriteCountRequest, callOptions ...callopt.Option) (r *interaction.DouyinBatchGetFavoriteCountResponse, err error)
 	Comment(ctx context.Context, req *interaction.DouyinCommentActionRequest, callOptions ...callopt.Option) (r *interaction.DouyinCommentActionResponse, err error)
 	GetCommentList(ctx context.Context, req *interaction.DouyinGetCommentListRequest, callOptions ...callopt.Option) (r *interaction.DouyinGetCommentListResponse, err error)
-	GetCommentCount(ctx context.Context, req *interaction.DouyinGetCommentCountRequest, callOptions ...callopt.Option) (r *interaction.DouyinGetCommentCountResponse, err error)
-	CheckFavorite(ctx context.Context, req *interaction.DouyinCheckFavoriteRequest, callOptions ...callopt.Option) (r *interaction.DouyinCheckFavoriteResponse, err error)
-	BatchGetCommentCount(ctx context.Context, req *interaction.DouyinBatchGetCommentCountRequest, callOptions ...callopt.Option) (r *interaction.DouyinBatchGetCommentCountResponse, err error)
-	BatchCheckFavorite(ctx context.Context, req *interaction.DouyinBatchCheckFavoriteRequest, callOptions ...callopt.Option) (r *interaction.DouyinBatchCheckFavoriteResponse, err error)
+	GetInteractInfo(ctx context.Context, req *interaction.DouyinGetInteractInfoRequest, callOptions ...callopt.Option) (r *interaction.DouyinGetInteractInfoResponse, err error)
+	BatchGetInteractInfo(ctx context.Context, req *interaction.DouyinBatchGetInteractInfoRequest, callOptions ...callopt.Option) (r *interaction.DouyinBatchGetInteractInfoResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -62,16 +58,6 @@ func (p *kInteractionServerClient) GetFavoriteVideoIdList(ctx context.Context, r
 	return p.kClient.GetFavoriteVideoIdList(ctx, req)
 }
 
-func (p *kInteractionServerClient) GetFavoriteCount(ctx context.Context, req *interaction.DouyinGetFavoriteCountRequest, callOptions ...callopt.Option) (r *interaction.DouyinGetFavoriteCountResponse, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetFavoriteCount(ctx, req)
-}
-
-func (p *kInteractionServerClient) BatchGetFavoriteCount(ctx context.Context, req *interaction.DouyinBatchGetFavoriteCountRequest, callOptions ...callopt.Option) (r *interaction.DouyinBatchGetFavoriteCountResponse, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.BatchGetFavoriteCount(ctx, req)
-}
-
 func (p *kInteractionServerClient) Comment(ctx context.Context, req *interaction.DouyinCommentActionRequest, callOptions ...callopt.Option) (r *interaction.DouyinCommentActionResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.Comment(ctx, req)
@@ -82,22 +68,12 @@ func (p *kInteractionServerClient) GetCommentList(ctx context.Context, req *inte
 	return p.kClient.GetCommentList(ctx, req)
 }
 
-func (p *kInteractionServerClient) GetCommentCount(ctx context.Context, req *interaction.DouyinGetCommentCountRequest, callOptions ...callopt.Option) (r *interaction.DouyinGetCommentCountResponse, err error) {
+func (p *kInteractionServerClient) GetInteractInfo(ctx context.Context, req *interaction.DouyinGetInteractInfoRequest, callOptions ...callopt.Option) (r *interaction.DouyinGetInteractInfoResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetCommentCount(ctx, req)
+	return p.kClient.GetInteractInfo(ctx, req)
 }
 
-func (p *kInteractionServerClient) CheckFavorite(ctx context.Context, req *interaction.DouyinCheckFavoriteRequest, callOptions ...callopt.Option) (r *interaction.DouyinCheckFavoriteResponse, err error) {
+func (p *kInteractionServerClient) BatchGetInteractInfo(ctx context.Context, req *interaction.DouyinBatchGetInteractInfoRequest, callOptions ...callopt.Option) (r *interaction.DouyinBatchGetInteractInfoResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.CheckFavorite(ctx, req)
-}
-
-func (p *kInteractionServerClient) BatchGetCommentCount(ctx context.Context, req *interaction.DouyinBatchGetCommentCountRequest, callOptions ...callopt.Option) (r *interaction.DouyinBatchGetCommentCountResponse, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.BatchGetCommentCount(ctx, req)
-}
-
-func (p *kInteractionServerClient) BatchCheckFavorite(ctx context.Context, req *interaction.DouyinBatchCheckFavoriteRequest, callOptions ...callopt.Option) (r *interaction.DouyinBatchCheckFavoriteResponse, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.BatchCheckFavorite(ctx, req)
+	return p.kClient.BatchGetInteractInfo(ctx, req)
 }

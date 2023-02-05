@@ -15,6 +15,9 @@ type Client interface {
 	Login(ctx context.Context, req *user.DouyinUserLoginRequest, callOptions ...callopt.Option) (r *user.DouyinUserLoginResponse, err error)
 	GetUserInfo(ctx context.Context, req *user.DouyinGetUserRequest, callOptions ...callopt.Option) (r *user.DouyinGetUserResponse, err error)
 	BatchGetUserInfo(ctx context.Context, req *user.DouyinBatchGetUserRequest, callOptions ...callopt.Option) (r *user.DouyinBatchGetUserResonse, err error)
+	GetFollowList(ctx context.Context, req *user.DouyinGetRelationFollowListRequest, callOptions ...callopt.Option) (r *user.DouyinGetRelationFollowListResponse, err error)
+	GetFollowerList(ctx context.Context, req *user.DouyinGetRelationFollowerListRequest, callOptions ...callopt.Option) (r *user.DouyinGetRelationFollowerListResponse, err error)
+	GetFriendList(ctx context.Context, req *user.DouyinGetRelationFriendListRequest, callOptions ...callopt.Option) (r *user.DouyinGetRelationFriendListResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -64,4 +67,19 @@ func (p *kUserServiceClient) GetUserInfo(ctx context.Context, req *user.DouyinGe
 func (p *kUserServiceClient) BatchGetUserInfo(ctx context.Context, req *user.DouyinBatchGetUserRequest, callOptions ...callopt.Option) (r *user.DouyinBatchGetUserResonse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.BatchGetUserInfo(ctx, req)
+}
+
+func (p *kUserServiceClient) GetFollowList(ctx context.Context, req *user.DouyinGetRelationFollowListRequest, callOptions ...callopt.Option) (r *user.DouyinGetRelationFollowListResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetFollowList(ctx, req)
+}
+
+func (p *kUserServiceClient) GetFollowerList(ctx context.Context, req *user.DouyinGetRelationFollowerListRequest, callOptions ...callopt.Option) (r *user.DouyinGetRelationFollowerListResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetFollowerList(ctx, req)
+}
+
+func (p *kUserServiceClient) GetFriendList(ctx context.Context, req *user.DouyinGetRelationFriendListRequest, callOptions ...callopt.Option) (r *user.DouyinGetRelationFriendListResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetFriendList(ctx, req)
 }

@@ -19,8 +19,8 @@ type UserManager struct {
 // GetUsers gets users info by list.
 func (m *UserManager) GetUsers(ctx context.Context, list []int64, viewerId int64) ([]*base.User, error) {
 	resp, err := m.UserService.BatchGetUserInfo(ctx, &user.DouyinBatchGetUserRequest{
-		ViewerId: viewerId,
-		OwnerIds: list,
+		ViewerId:    viewerId,
+		OwnerIdList: list,
 	})
 	if err != nil {
 		return nil, err
@@ -28,14 +28,14 @@ func (m *UserManager) GetUsers(ctx context.Context, list []int64, viewerId int64
 	if resp.BaseResp.StatusCode != int32(errno.Success.ErrCode) {
 		return nil, errno.UserServerErr.WithMessage(resp.BaseResp.StatusMsg)
 	}
-	return resp.Users, nil
+	return resp.UserList, nil
 }
 
 func (m *UserManager) GetFriendUsers(ctx context.Context, list []int64, viewerId int64) ([]*base.FriendUser, error) {
 
 	resp, err := m.UserService.BatchGetUserInfo(ctx, &user.DouyinBatchGetUserRequest{
-		ViewerId: viewerId,
-		OwnerIds: list,
+		ViewerId:    viewerId,
+		OwnerIdList: list,
 	})
 	if err != nil {
 		return nil, err
@@ -45,8 +45,8 @@ func (m *UserManager) GetFriendUsers(ctx context.Context, list []int64, viewerId
 	}
 
 	res, err := m.ChatService.BatchGetLatestMessage(ctx, &chat.DouyinMessageBatchGetLatestRequest{
-		UserId:    viewerId,
-		ToUserIds: list,
+		UserId:       viewerId,
+		ToUserIdList: list,
 	})
 	if err != nil {
 		return nil, err
@@ -55,16 +55,16 @@ func (m *UserManager) GetFriendUsers(ctx context.Context, list []int64, viewerId
 		return nil, errno.ChatServerErr.WithMessage(resp.BaseResp.StatusMsg)
 	}
 
-	fUser := make([]*base.FriendUser, len(resp.Users))
-	for i, u := range resp.Users {
+	fUser := make([]*base.FriendUser, len(resp.UserList))
+	for i, u := range resp.UserList {
 		fu := &base.FriendUser{
 			Id:            u.Id,
 			Name:          u.Name,
 			FollowCount:   u.FollowCount,
 			FollowerCount: u.FollowerCount,
 			IsFollow:      u.IsFollow,
-			Message:       res.Message[i],
-			MsgType:       res.MsgType[i],
+			Message:       res.LatestMsg[i].Message,
+			MsgType:       res.LatestMsg[i].MsgType,
 		}
 		fUser = append(fUser, fu)
 	}

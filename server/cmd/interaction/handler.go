@@ -5,7 +5,6 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/pkg"
-	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction"
 	"github.com/CyanAsterisk/TikGok/server/shared/tools"
@@ -92,48 +91,12 @@ func (s *InteractionServerImpl) Favorite(ctx context.Context, req *interaction.D
 // GetFavoriteVideoIdList implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) GetFavoriteVideoIdList(ctx context.Context, req *interaction.DouyinGetFavoriteVideoIdListRequest) (resp *interaction.DouyinGetFavoriteVideoIdListResponse, err error) {
 	resp = new(interaction.DouyinGetFavoriteVideoIdListResponse)
-	resp.VideoList, err = dao.GetFavoriteVideoIdListByUserId(req.UserId)
+	resp.VideoIdList, err = dao.GetFavoriteVideoIdListByUserId(req.UserId)
 	if err != nil {
 		klog.Error("get user favorite video list error", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get user favorite video id list error"))
 		return resp, nil
 	}
-	return resp, nil
-}
-
-// GetFavoriteCount implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) GetFavoriteCount(_ context.Context, req *interaction.DouyinGetFavoriteCountRequest) (resp *interaction.DouyinGetFavoriteCountResponse, err error) {
-	resp = new(interaction.DouyinGetFavoriteCountResponse)
-	count, err := dao.FavoriteCountByVideoId(req.VideoId)
-	if err != nil {
-		klog.Error("get favorite count error", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get favorite count error"))
-		return resp, nil
-	}
-	resp.Count = count
-	resp.BaseResp = tools.BuildBaseResp(nil)
-	return resp, nil
-}
-
-// CheckFavorite implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) CheckFavorite(_ context.Context, req *interaction.DouyinCheckFavoriteRequest) (resp *interaction.DouyinCheckFavoriteResponse, err error) {
-	resp = new(interaction.DouyinCheckFavoriteResponse)
-	info, err := dao.GetFavoriteInfo(req.UserId, req.VideoId)
-	if err != nil {
-		klog.Error("check favorite error", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("check favorite error"))
-		return resp, nil
-	}
-	if info == nil {
-		resp.Check = false
-	} else {
-		if info.ActionType == consts.IsLike {
-			resp.Check = true
-		} else {
-			resp.Check = false
-		}
-	}
-	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 }
 
@@ -173,34 +136,14 @@ func (s *InteractionServerImpl) GetCommentList(_ context.Context, req *interacti
 	return resp, nil
 }
 
-// GetCommentCount implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) GetCommentCount(_ context.Context, req *interaction.DouyinGetCommentCountRequest) (resp *interaction.DouyinGetCommentCountResponse, err error) {
-	resp = new(interaction.DouyinGetCommentCountResponse)
-	count, err := dao.CommentCountByVideoId(req.VideoId)
-	if err != nil {
-		klog.Error("get comment count error", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get comment count error"))
-		return resp, nil
-	}
-	resp.Count = count
-	resp.BaseResp = tools.BuildBaseResp(nil)
-	return resp, nil
-}
-
-// BatchGetFavoriteCount implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) BatchGetFavoriteCount(ctx context.Context, req *interaction.DouyinBatchGetFavoriteCountRequest) (resp *interaction.DouyinBatchGetFavoriteCountResponse, err error) {
+// GetInteractInfo implements the InteractionServerImpl interface.
+func (s *InteractionServerImpl) GetInteractInfo(ctx context.Context, req *interaction.DouyinGetInteractInfoRequest) (resp *interaction.DouyinGetInteractInfoResponse, err error) {
 	// TODO: Your code here...
 	return
 }
 
-// BatchGetCommentCount implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) BatchGetCommentCount(ctx context.Context, req *interaction.DouyinBatchGetCommentCountRequest) (resp *interaction.DouyinBatchGetCommentCountResponse, err error) {
-	// TODO: Your code here...
-	return
-}
-
-// BatchCheckFavorite implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) BatchCheckFavorite(ctx context.Context, req *interaction.DouyinBatchCheckFavoriteRequest) (resp *interaction.DouyinBatchCheckFavoriteResponse, err error) {
+// BatchGetInteractInfo implements the InteractionServerImpl interface.
+func (s *InteractionServerImpl) BatchGetInteractInfo(ctx context.Context, req *interaction.DouyinBatchGetInteractInfoRequest) (resp *interaction.DouyinBatchGetInteractInfoResponse, err error) {
 	// TODO: Your code here...
 	return
 }

@@ -444,7 +444,7 @@ func FollowingList(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.SocialClient.GetFollowingList(ctx, &sociality.DouyinGetRelationFollowListRequest{
+	res, err := global.UserClient.GetFollowList(ctx, &user.DouyinGetRelationFollowListRequest{
 		OwnerId:  req.UserID,
 		ViewerId: aid.(int64),
 	})
@@ -480,7 +480,7 @@ func FollowerList(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.SocialClient.GetFollowerList(ctx, &sociality.DouyinGetRelationFollowerListRequest{
+	res, err := global.UserClient.GetFollowerList(ctx, &user.DouyinGetRelationFollowerListRequest{
 		OwnerId:  req.UserID,
 		ViewerId: aid.(int64),
 	})
@@ -516,7 +516,7 @@ func FriendList(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.SocialClient.GetFriendList(ctx, &sociality.DouyinGetRelationFriendListRequest{
+	res, err := global.UserClient.GetFriendList(ctx, &user.DouyinGetRelationFriendListRequest{
 		OwnerId:  req.UserID,
 		ViewerId: aid.(int64),
 	})

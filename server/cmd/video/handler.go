@@ -31,13 +31,8 @@ type UserManager interface {
 // InteractionManager defines the Anti Corruption Layer
 // for get interaction logic.
 type InteractionManager interface {
-	GetCommentCount(ctx context.Context, videoId int64) (int64, error)
-	CheckFavorite(ctx context.Context, userId int64, videoId int64) (bool, error)
-	GetFavoriteCount(ctx context.Context, videoId int64) (int64, error)
 	GetFavoriteVideoIdList(ctx context.Context, userId int64) ([]int64, error)
-	BatchCheckFavorite(ctx context.Context, userId int64, videoIdList []int64) ([]bool, error)
-	BatchGetCommentCount(ctx context.Context, videoIdList []int64) ([]int64, error)
-	BatchGetFavoriteCount(ctx context.Context, videoId []int64) ([]int64, error)
+	BatchGetInteractInfo(ctx context.Context, videoIdList []int64, viewerId int64) ([]*base.InteractInfo, error)
 }
 
 // Publisher defines the publisher video interface.

@@ -15,8 +15,8 @@ type UserManager struct {
 // GetUsers gets users info by list.
 func (m *UserManager) GetUsers(ctx context.Context, list []int64, viewerId int64) ([]*base.User, error) {
 	res, err := m.UserService.BatchGetUserInfo(ctx, &user.DouyinBatchGetUserRequest{
-		ViewerId: viewerId,
-		OwnerIds: list,
+		ViewerId:    viewerId,
+		OwnerIdList: list,
 	})
 	if err != nil {
 		return nil, err
@@ -24,7 +24,7 @@ func (m *UserManager) GetUsers(ctx context.Context, list []int64, viewerId int64
 	if res.BaseResp.StatusCode != int32(errno.Success.ErrCode) {
 		return nil, errno.UserServerErr.WithMessage(res.BaseResp.StatusMsg)
 	}
-	return res.Users, nil
+	return res.UserList, nil
 }
 
 // GetUser gets user info.

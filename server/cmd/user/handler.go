@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 	"time"
 
 	models "github.com/CyanAsterisk/TikGok/server/cmd/api/model"
@@ -27,13 +28,8 @@ type UserServiceImpl struct {
 // SocialManager defines the Anti Corruption Layer
 // for get social logic.
 type SocialManager interface {
-	GetFollowerCount(ctx context.Context, userId int64) (count int64, err error)
-	GetFollowingCount(ctx context.Context, userId int64) (count int64, err error)
-	CheckFollow(ctx context.Context, userId int64, toUserId int64) (bool, error)
-
-	BatchGetFollowerCount(ctx context.Context, userIds []int64) (counts []int64, err error)
-	BatchGetFollowingCount(ctx context.Context, userIds []int64) (counts []int64, err error)
-	BatchCheckFollow(ctx context.Context, userId int64, toUserIds []int64) (checks []bool, err error)
+	GetSocialInfo(ctx context.Context, viewerId int64, ownerId int64) (*base.SocialInfo, error)
+	BatchGetSocialInfo(ctx context.Context, viewerId int64, ownerIdList []int64) ([]*base.SocialInfo, error)
 }
 
 // Register implements the UserServiceImpl interface.
@@ -126,61 +122,42 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinGetUs
 		resp.BaseResp = tools.BuildBaseResp(errno.UserServerErr)
 		return resp, nil
 	}
+	info, err := s.SocialManager.GetSocialInfo(ctx, req.ViewerId, req.OwnerId)
 
-	followerCount, err := s.GetFollowerCount(ctx, req.OwnerId)
-	if err != nil {
-		klog.Error("get followerList err", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.UserServerErr.WithMessage("get followerList err"))
-		return resp, nil
-	}
-	followingCount, err := s.GetFollowingCount(ctx, req.OwnerId)
-	if err != nil {
-		klog.Error("get followingList err", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.UserServerErr.WithMessage("get followingList err"))
-		return resp, nil
-	}
-
-	isFollow, err := s.CheckFollow(ctx, req.ViewerId, req.OwnerId)
-	if err != nil {
-		klog.Error("check follow err", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.UserServerErr.WithMessage("check follow err"))
-		return resp, nil
-	}
-
-	resp.User = pkg.PackUser(usr, followerCount, followingCount, isFollow)
+	resp.User = pkg.PackUser(usr, info)
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 }
 
 // BatchGetUserInfo implements the UserServiceImpl interface.
 func (s *UserServiceImpl) BatchGetUserInfo(ctx context.Context, req *user.DouyinBatchGetUserRequest) (resp *user.DouyinBatchGetUserResonse, err error) {
-	users, err := dao.BatchGetUserById(req.OwnerIds)
+	users, err := dao.BatchGetUserById(req.OwnerIdList)
 	if err != nil {
 		klog.Error("batch get user by id err", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.RPCSocialityErr.WithMessage("batch get user by id err"))
 		return resp, nil
 	}
-	followerCnt, err := s.SocialManager.BatchGetFollowerCount(ctx, req.OwnerIds)
-	if err != nil {
-		klog.Error("batch get user follower count err", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.RPCSocialityErr.WithMessage("batch get user follower count err"))
-		return resp, nil
-	}
-	followingCnt, err := s.SocialManager.BatchGetFollowingCount(ctx, req.OwnerIds)
-	if err != nil {
-		klog.Error("batch get user following count err", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.RPCSocialityErr.WithMessage("batch get user following count err"))
-		return resp, nil
-	}
+	infoList, err := s.SocialManager.BatchGetSocialInfo(ctx, req.ViewerId, req.OwnerIdList)
 
-	isFollow, err := s.SocialManager.BatchCheckFollow(ctx, req.ViewerId, req.OwnerIds)
-	if err != nil {
-		klog.Error("batch check follow err", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.RPCSocialityErr.WithMessage("batch check follow err"))
-		return resp, nil
-	}
-
-	resp.Users = pkg.PackUsers(users, followerCnt, followingCnt, isFollow)
+	resp.UserList = pkg.PackUsers(users, infoList)
 	resp.BaseResp = tools.BuildBaseResp(nil)
+	return
+}
+
+// GetFollowList implements the UserServiceImpl interface.
+func (s *UserServiceImpl) GetFollowList(ctx context.Context, req *user.DouyinGetRelationFollowListRequest) (resp *user.DouyinGetRelationFollowListResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// GetFollowerList implements the UserServiceImpl interface.
+func (s *UserServiceImpl) GetFollowerList(ctx context.Context, req *user.DouyinGetRelationFollowerListRequest) (resp *user.DouyinGetRelationFollowerListResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// GetFriendList implements the UserServiceImpl interface.
+func (s *UserServiceImpl) GetFriendList(ctx context.Context, req *user.DouyinGetRelationFriendListRequest) (resp *user.DouyinGetRelationFriendListResponse, err error) {
+	// TODO: Your code here...
 	return
 }

@@ -23,6 +23,9 @@ func NewServiceInfo() *kitex.ServiceInfo {
 		"Login":            kitex.NewMethodInfo(loginHandler, newUserServiceLoginArgs, newUserServiceLoginResult, false),
 		"GetUserInfo":      kitex.NewMethodInfo(getUserInfoHandler, newUserServiceGetUserInfoArgs, newUserServiceGetUserInfoResult, false),
 		"BatchGetUserInfo": kitex.NewMethodInfo(batchGetUserInfoHandler, newUserServiceBatchGetUserInfoArgs, newUserServiceBatchGetUserInfoResult, false),
+		"GetFollowList":    kitex.NewMethodInfo(getFollowListHandler, newUserServiceGetFollowListArgs, newUserServiceGetFollowListResult, false),
+		"GetFollowerList":  kitex.NewMethodInfo(getFollowerListHandler, newUserServiceGetFollowerListArgs, newUserServiceGetFollowerListResult, false),
+		"GetFriendList":    kitex.NewMethodInfo(getFriendListHandler, newUserServiceGetFriendListArgs, newUserServiceGetFriendListResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName": "user",
@@ -110,6 +113,60 @@ func newUserServiceBatchGetUserInfoResult() interface{} {
 	return user.NewUserServiceBatchGetUserInfoResult()
 }
 
+func getFollowListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceGetFollowListArgs)
+	realResult := result.(*user.UserServiceGetFollowListResult)
+	success, err := handler.(user.UserService).GetFollowList(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newUserServiceGetFollowListArgs() interface{} {
+	return user.NewUserServiceGetFollowListArgs()
+}
+
+func newUserServiceGetFollowListResult() interface{} {
+	return user.NewUserServiceGetFollowListResult()
+}
+
+func getFollowerListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceGetFollowerListArgs)
+	realResult := result.(*user.UserServiceGetFollowerListResult)
+	success, err := handler.(user.UserService).GetFollowerList(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newUserServiceGetFollowerListArgs() interface{} {
+	return user.NewUserServiceGetFollowerListArgs()
+}
+
+func newUserServiceGetFollowerListResult() interface{} {
+	return user.NewUserServiceGetFollowerListResult()
+}
+
+func getFriendListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceGetFriendListArgs)
+	realResult := result.(*user.UserServiceGetFriendListResult)
+	success, err := handler.(user.UserService).GetFriendList(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newUserServiceGetFriendListArgs() interface{} {
+	return user.NewUserServiceGetFriendListArgs()
+}
+
+func newUserServiceGetFriendListResult() interface{} {
+	return user.NewUserServiceGetFriendListResult()
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -155,6 +212,36 @@ func (p *kClient) BatchGetUserInfo(ctx context.Context, req *user.DouyinBatchGet
 	_args.Req = req
 	var _result user.UserServiceBatchGetUserInfoResult
 	if err = p.c.Call(ctx, "BatchGetUserInfo", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetFollowList(ctx context.Context, req *user.DouyinGetRelationFollowListRequest) (r *user.DouyinGetRelationFollowListResponse, err error) {
+	var _args user.UserServiceGetFollowListArgs
+	_args.Req = req
+	var _result user.UserServiceGetFollowListResult
+	if err = p.c.Call(ctx, "GetFollowList", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetFollowerList(ctx context.Context, req *user.DouyinGetRelationFollowerListRequest) (r *user.DouyinGetRelationFollowerListResponse, err error) {
+	var _args user.UserServiceGetFollowerListArgs
+	_args.Req = req
+	var _result user.UserServiceGetFollowerListResult
+	if err = p.c.Call(ctx, "GetFollowerList", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetFriendList(ctx context.Context, req *user.DouyinGetRelationFriendListRequest) (r *user.DouyinGetRelationFriendListResponse, err error) {
+	var _args user.UserServiceGetFriendListArgs
+	_args.Req = req
+	var _result user.UserServiceGetFriendListResult
+	if err = p.c.Call(ctx, "GetFriendList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

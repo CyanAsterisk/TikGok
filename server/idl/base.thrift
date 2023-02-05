@@ -20,6 +20,12 @@ struct User {
     5: bool is_follow // true-followed, false-not followed
 }
 
+struct SocialInfo{
+     1: i64 follow_count // Total number of followings
+     2: i64 follower_count // Total number of followers
+     3: bool is_follow // true-followed, false-not followed
+}
+
 struct Video {
     1: i64 id // Video unique identifier
     2: User author // Video author information
@@ -29,6 +35,12 @@ struct Video {
     6: i64 comment_count // Total number of comments on the video
     7: bool is_favorite // true-liked, false-not liked
     8: string title // Video title
+}
+
+struct InteractInfo{
+    1: i64 favorite_count // Total number of likes for the video
+    2: i64 comment_count // Total number of comments on the video
+    3: bool is_favorite // true-liked, false-not liked
 }
 
 struct FriendUser {

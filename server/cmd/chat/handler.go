@@ -107,11 +107,11 @@ func (s *ChatServiceImpl) GetLatestMessage(_ context.Context, req *chat.DouyinMe
 		}
 	}
 	if msg.FromUserId == req.UserId {
-		resp.MsgType = consts.SentMessage
+		resp.LatestMsg.MsgType = consts.SentMessage
 	} else {
-		resp.MsgType = consts.ReceiveMessage
+		resp.LatestMsg.MsgType = consts.ReceiveMessage
 	}
-	resp.Message = msg.Content
+	resp.LatestMsg.Message = msg.Content
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 }
