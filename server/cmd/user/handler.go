@@ -30,6 +30,10 @@ type SocialManager interface {
 	GetFollowerCount(ctx context.Context, userId int64) (count int64, err error)
 	GetFollowingCount(ctx context.Context, userId int64) (count int64, err error)
 	CheckFollow(ctx context.Context, userId int64, toUserId int64) (bool, error)
+
+	BatchGetFollowerCount(ctx context.Context, userIds []int64) (counts []int64, err error)
+	BatchGetFollowingCount(ctx context.Context, userIds []int64) (counts []int64, err error)
+	BatchCheckFollow(ctx context.Context, userId int64, toUserIds []int64) (checks []bool, err error)
 }
 
 // Register implements the UserServiceImpl interface.
@@ -109,8 +113,8 @@ func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequ
 }
 
 // GetUserInfo implements the UserServiceImpl interface.
-func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserRequest) (resp *user.DouyinUserResponse, err error) {
-	resp = new(user.DouyinUserResponse)
+func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinGetUserRequest) (resp *user.DouyinGetUserResponse, err error) {
+	resp = new(user.DouyinGetUserResponse)
 
 	usr, err := dao.GetUserById(req.OwnerId)
 	if err != nil {
@@ -122,24 +126,61 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinUserR
 		resp.BaseResp = tools.BuildBaseResp(errno.UserServerErr)
 		return resp, nil
 	}
-	resp.User = pkg.User(usr)
 
-	if resp.User.FollowerCount, err = s.GetFollowerCount(ctx, req.OwnerId); err != nil {
+	followerCount, err := s.GetFollowerCount(ctx, req.OwnerId)
+	if err != nil {
 		klog.Error("get followerList err", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.UserServerErr.WithMessage("get followerList err"))
 		return resp, nil
 	}
-	if resp.User.FollowCount, err = s.GetFollowingCount(ctx, req.OwnerId); err != nil {
+	followingCount, err := s.GetFollowingCount(ctx, req.OwnerId)
+	if err != nil {
 		klog.Error("get followingList err", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.UserServerErr.WithMessage("get followingList err"))
 		return resp, nil
 	}
 
-	if resp.User.IsFollow, err = s.CheckFollow(ctx, req.ViewerId, req.OwnerId); err != nil {
+	isFollow, err := s.CheckFollow(ctx, req.ViewerId, req.OwnerId)
+	if err != nil {
 		klog.Error("check follow err", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.UserServerErr.WithMessage("check follow err"))
 		return resp, nil
 	}
+
+	resp.User = pkg.PackUser(usr, followerCount, followingCount, isFollow)
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
+}
+
+// BatchGetUserInfo implements the UserServiceImpl interface.
+func (s *UserServiceImpl) BatchGetUserInfo(ctx context.Context, req *user.DouyinBatchGetUserRequest) (resp *user.DouyinBatchGetUserResonse, err error) {
+	users, err := dao.BatchGetUserById(req.OwnerIds)
+	if err != nil {
+		klog.Error("batch get user by id err", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.RPCSocialityErr.WithMessage("batch get user by id err"))
+		return resp, nil
+	}
+	followerCnt, err := s.SocialManager.BatchGetFollowerCount(ctx, req.OwnerIds)
+	if err != nil {
+		klog.Error("batch get user follower count err", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.RPCSocialityErr.WithMessage("batch get user follower count err"))
+		return resp, nil
+	}
+	followingCnt, err := s.SocialManager.BatchGetFollowingCount(ctx, req.OwnerIds)
+	if err != nil {
+		klog.Error("batch get user following count err", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.RPCSocialityErr.WithMessage("batch get user following count err"))
+		return resp, nil
+	}
+
+	isFollow, err := s.SocialManager.BatchCheckFollow(ctx, req.ViewerId, req.OwnerIds)
+	if err != nil {
+		klog.Error("batch check follow err", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.RPCSocialityErr.WithMessage("batch check follow err"))
+		return resp, nil
+	}
+
+	resp.Users = pkg.PackUsers(users, followerCnt, followingCnt, isFollow)
+	resp.BaseResp = tools.BuildBaseResp(nil)
+	return
 }

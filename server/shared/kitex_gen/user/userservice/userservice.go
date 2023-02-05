@@ -19,9 +19,10 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	serviceName := "UserService"
 	handlerType := (*user.UserService)(nil)
 	methods := map[string]kitex.MethodInfo{
-		"Register":    kitex.NewMethodInfo(registerHandler, newUserServiceRegisterArgs, newUserServiceRegisterResult, false),
-		"Login":       kitex.NewMethodInfo(loginHandler, newUserServiceLoginArgs, newUserServiceLoginResult, false),
-		"GetUserInfo": kitex.NewMethodInfo(getUserInfoHandler, newUserServiceGetUserInfoArgs, newUserServiceGetUserInfoResult, false),
+		"Register":         kitex.NewMethodInfo(registerHandler, newUserServiceRegisterArgs, newUserServiceRegisterResult, false),
+		"Login":            kitex.NewMethodInfo(loginHandler, newUserServiceLoginArgs, newUserServiceLoginResult, false),
+		"GetUserInfo":      kitex.NewMethodInfo(getUserInfoHandler, newUserServiceGetUserInfoArgs, newUserServiceGetUserInfoResult, false),
+		"BatchGetUserInfo": kitex.NewMethodInfo(batchGetUserInfoHandler, newUserServiceBatchGetUserInfoArgs, newUserServiceBatchGetUserInfoResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName": "user",
@@ -91,6 +92,24 @@ func newUserServiceGetUserInfoResult() interface{} {
 	return user.NewUserServiceGetUserInfoResult()
 }
 
+func batchGetUserInfoHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceBatchGetUserInfoArgs)
+	realResult := result.(*user.UserServiceBatchGetUserInfoResult)
+	success, err := handler.(user.UserService).BatchGetUserInfo(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newUserServiceBatchGetUserInfoArgs() interface{} {
+	return user.NewUserServiceBatchGetUserInfoArgs()
+}
+
+func newUserServiceBatchGetUserInfoResult() interface{} {
+	return user.NewUserServiceBatchGetUserInfoResult()
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -121,11 +140,21 @@ func (p *kClient) Login(ctx context.Context, req *user.DouyinUserLoginRequest) (
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetUserInfo(ctx context.Context, req *user.DouyinUserRequest) (r *user.DouyinUserResponse, err error) {
+func (p *kClient) GetUserInfo(ctx context.Context, req *user.DouyinGetUserRequest) (r *user.DouyinGetUserResponse, err error) {
 	var _args user.UserServiceGetUserInfoArgs
 	_args.Req = req
 	var _result user.UserServiceGetUserInfoResult
 	if err = p.c.Call(ctx, "GetUserInfo", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) BatchGetUserInfo(ctx context.Context, req *user.DouyinBatchGetUserRequest) (r *user.DouyinBatchGetUserResonse, err error) {
+	var _args user.UserServiceBatchGetUserInfoArgs
+	_args.Req = req
+	var _result user.UserServiceBatchGetUserInfoResult
+	if err = p.c.Call(ctx, "BatchGetUserInfo", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

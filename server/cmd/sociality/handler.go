@@ -90,9 +90,9 @@ func (s *SocialityServiceImpl) Action(ctx context.Context, req *sociality.Douyin
 	return resp, nil
 }
 
-// FollowingList implements the SocialityServiceImpl interface.
-func (s *SocialityServiceImpl) FollowingList(ctx context.Context, req *sociality.DouyinRelationFollowListRequest) (resp *sociality.DouyinRelationFollowListResponse, err error) {
-	resp = new(sociality.DouyinRelationFollowListResponse)
+// GetFollowingList implements the SocialityServiceImpl interface.
+func (s *SocialityServiceImpl) GetFollowingList(ctx context.Context, req *sociality.DouyinGetRelationFollowListRequest) (resp *sociality.DouyinGetRelationFollowListResponse, err error) {
+	resp = new(sociality.DouyinGetRelationFollowListResponse)
 	list, err := s.RedisManager.List(ctx, req.OwnerId, consts.FollowingList)
 	if err != nil {
 		klog.Error("get following list by redis error", err)
@@ -114,9 +114,9 @@ func (s *SocialityServiceImpl) FollowingList(ctx context.Context, req *sociality
 	return resp, nil
 }
 
-// FollowerList implements the SocialityServiceImpl interface.
-func (s *SocialityServiceImpl) FollowerList(ctx context.Context, req *sociality.DouyinRelationFollowerListRequest) (resp *sociality.DouyinRelationFollowerListResponse, err error) {
-	resp = new(sociality.DouyinRelationFollowerListResponse)
+// GetFollowerList implements the SocialityServiceImpl interface.
+func (s *SocialityServiceImpl) GetFollowerList(ctx context.Context, req *sociality.DouyinGetRelationFollowerListRequest) (resp *sociality.DouyinGetRelationFollowerListResponse, err error) {
+	resp = new(sociality.DouyinGetRelationFollowerListResponse)
 	list, err := s.RedisManager.List(ctx, req.OwnerId, consts.FollowerList)
 	if err != nil {
 		klog.Error("get follower list by redis error", err)
@@ -138,9 +138,9 @@ func (s *SocialityServiceImpl) FollowerList(ctx context.Context, req *sociality.
 	return resp, nil
 }
 
-// FriendList implements the SocialityServiceImpl interface.
-func (s *SocialityServiceImpl) FriendList(ctx context.Context, req *sociality.DouyinRelationFriendListRequest) (resp *sociality.DouyinRelationFriendListResponse, err error) {
-	resp = new(sociality.DouyinRelationFriendListResponse)
+// GetFriendList implements the SocialityServiceImpl interface.
+func (s *SocialityServiceImpl) GetFriendList(ctx context.Context, req *sociality.DouyinGetRelationFriendListRequest) (resp *sociality.DouyinGetRelationFriendListResponse, err error) {
+	resp = new(sociality.DouyinGetRelationFriendListResponse)
 	list, err := s.RedisManager.List(ctx, req.OwnerId, consts.FriendsList)
 	if err != nil {
 		klog.Error("get friends list by redis error", err)
@@ -231,4 +231,22 @@ func (s *SocialityServiceImpl) GetFollowingCount(ctx context.Context, req *socia
 	resp.Count = count
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
+}
+
+// BatchCheckFollow implements the SocialityServiceImpl interface.
+func (s *SocialityServiceImpl) BatchCheckFollow(ctx context.Context, req *sociality.DouyinBatchCheckFollowRequest) (resp *sociality.DouyinBatchCheckFollowResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// BatchGetFollowerCount implements the SocialityServiceImpl interface.
+func (s *SocialityServiceImpl) BatchGetFollowerCount(ctx context.Context, req *sociality.DouyinBatchGetFollowerCountRequest) (resp *sociality.DouyinBatchGetFollowerCountResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// BatchGetFollowingCount implements the SocialityServiceImpl interface.
+func (s *SocialityServiceImpl) BatchGetFollowingCount(ctx context.Context, req *sociality.DouyinBatchGetFollowingCountRequest) (resp *sociality.DouyinBatchGetFollowingCountResponse, err error) {
+	// TODO: Your code here...
+	return
 }

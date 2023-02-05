@@ -19,9 +19,10 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	serviceName := "ChatService"
 	handlerType := (*chat.ChatService)(nil)
 	methods := map[string]kitex.MethodInfo{
-		"ChatHistory":   kitex.NewMethodInfo(chatHistoryHandler, newChatServiceChatHistoryArgs, newChatServiceChatHistoryResult, false),
-		"SentMessage":   kitex.NewMethodInfo(sentMessageHandler, newChatServiceSentMessageArgs, newChatServiceSentMessageResult, false),
-		"LatestMessage": kitex.NewMethodInfo(latestMessageHandler, newChatServiceLatestMessageArgs, newChatServiceLatestMessageResult, false),
+		"GetChatHistory":        kitex.NewMethodInfo(getChatHistoryHandler, newChatServiceGetChatHistoryArgs, newChatServiceGetChatHistoryResult, false),
+		"SentMessage":           kitex.NewMethodInfo(sentMessageHandler, newChatServiceSentMessageArgs, newChatServiceSentMessageResult, false),
+		"GetLatestMessage":      kitex.NewMethodInfo(getLatestMessageHandler, newChatServiceGetLatestMessageArgs, newChatServiceGetLatestMessageResult, false),
+		"BatchGetLatestMessage": kitex.NewMethodInfo(batchGetLatestMessageHandler, newChatServiceBatchGetLatestMessageArgs, newChatServiceBatchGetLatestMessageResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName": "chat",
@@ -37,22 +38,22 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	return svcInfo
 }
 
-func chatHistoryHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*chat.ChatServiceChatHistoryArgs)
-	realResult := result.(*chat.ChatServiceChatHistoryResult)
-	success, err := handler.(chat.ChatService).ChatHistory(ctx, realArg.Req)
+func getChatHistoryHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*chat.ChatServiceGetChatHistoryArgs)
+	realResult := result.(*chat.ChatServiceGetChatHistoryResult)
+	success, err := handler.(chat.ChatService).GetChatHistory(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
 	realResult.Success = success
 	return nil
 }
-func newChatServiceChatHistoryArgs() interface{} {
-	return chat.NewChatServiceChatHistoryArgs()
+func newChatServiceGetChatHistoryArgs() interface{} {
+	return chat.NewChatServiceGetChatHistoryArgs()
 }
 
-func newChatServiceChatHistoryResult() interface{} {
-	return chat.NewChatServiceChatHistoryResult()
+func newChatServiceGetChatHistoryResult() interface{} {
+	return chat.NewChatServiceGetChatHistoryResult()
 }
 
 func sentMessageHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
@@ -73,22 +74,40 @@ func newChatServiceSentMessageResult() interface{} {
 	return chat.NewChatServiceSentMessageResult()
 }
 
-func latestMessageHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*chat.ChatServiceLatestMessageArgs)
-	realResult := result.(*chat.ChatServiceLatestMessageResult)
-	success, err := handler.(chat.ChatService).LatestMessage(ctx, realArg.Req)
+func getLatestMessageHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*chat.ChatServiceGetLatestMessageArgs)
+	realResult := result.(*chat.ChatServiceGetLatestMessageResult)
+	success, err := handler.(chat.ChatService).GetLatestMessage(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
 	realResult.Success = success
 	return nil
 }
-func newChatServiceLatestMessageArgs() interface{} {
-	return chat.NewChatServiceLatestMessageArgs()
+func newChatServiceGetLatestMessageArgs() interface{} {
+	return chat.NewChatServiceGetLatestMessageArgs()
 }
 
-func newChatServiceLatestMessageResult() interface{} {
-	return chat.NewChatServiceLatestMessageResult()
+func newChatServiceGetLatestMessageResult() interface{} {
+	return chat.NewChatServiceGetLatestMessageResult()
+}
+
+func batchGetLatestMessageHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*chat.ChatServiceBatchGetLatestMessageArgs)
+	realResult := result.(*chat.ChatServiceBatchGetLatestMessageResult)
+	success, err := handler.(chat.ChatService).BatchGetLatestMessage(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newChatServiceBatchGetLatestMessageArgs() interface{} {
+	return chat.NewChatServiceBatchGetLatestMessageArgs()
+}
+
+func newChatServiceBatchGetLatestMessageResult() interface{} {
+	return chat.NewChatServiceBatchGetLatestMessageResult()
 }
 
 type kClient struct {
@@ -101,11 +120,11 @@ func newServiceClient(c client.Client) *kClient {
 	}
 }
 
-func (p *kClient) ChatHistory(ctx context.Context, req *chat.DouyinMessageChatRequest) (r *chat.DouyinMessageChatResponse, err error) {
-	var _args chat.ChatServiceChatHistoryArgs
+func (p *kClient) GetChatHistory(ctx context.Context, req *chat.DouyinMessageGetChatHistoryRequest) (r *chat.DouyinMessageGetChatHistoryResponse, err error) {
+	var _args chat.ChatServiceGetChatHistoryArgs
 	_args.Req = req
-	var _result chat.ChatServiceChatHistoryResult
-	if err = p.c.Call(ctx, "ChatHistory", &_args, &_result); err != nil {
+	var _result chat.ChatServiceGetChatHistoryResult
+	if err = p.c.Call(ctx, "GetChatHistory", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
@@ -121,11 +140,21 @@ func (p *kClient) SentMessage(ctx context.Context, req *chat.DouyinMessageAction
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) LatestMessage(ctx context.Context, req *chat.DouyinMessageLatestRequest) (r *chat.DouyinMessageLatestResponse, err error) {
-	var _args chat.ChatServiceLatestMessageArgs
+func (p *kClient) GetLatestMessage(ctx context.Context, req *chat.DouyinMessageGetLatestRequest) (r *chat.DouyinMessageGetLatestResponse, err error) {
+	var _args chat.ChatServiceGetLatestMessageArgs
 	_args.Req = req
-	var _result chat.ChatServiceLatestMessageResult
-	if err = p.c.Call(ctx, "LatestMessage", &_args, &_result); err != nil {
+	var _result chat.ChatServiceGetLatestMessageResult
+	if err = p.c.Call(ctx, "GetLatestMessage", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) BatchGetLatestMessage(ctx context.Context, req *chat.DouyinMessageBatchGetLatestRequest) (r *chat.DouyinMessageBatchGetLatestResponse, err error) {
+	var _args chat.ChatServiceBatchGetLatestMessageArgs
+	_args.Req = req
+	var _result chat.ChatServiceBatchGetLatestMessageResult
+	if err = p.c.Call(ctx, "BatchGetLatestMessage", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

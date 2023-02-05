@@ -45,8 +45,13 @@ type ServerConfig struct {
 	RabbitMqInfo  RabbitMqConfig `mapstructure:"rabbitmq" json:"rabbitmq"`
 	OtelInfo      OtelConfig     `mapstructure:"otel" json:"otel"`
 	UserSrvConfig UserSrvConfig  `mapstructure:"user_srv" json:"user_srv"`
+	ChatSrvConfig ChatSrvConfig  `mapstructure:"chat_srv" json:"chat_srv"`
 }
 
 type UserSrvConfig struct {
+	Name string `mapstructure:"name" json:"name"`
+}
+
+type ChatSrvConfig struct {
 	Name string `mapstructure:"name" json:"name"`
 }

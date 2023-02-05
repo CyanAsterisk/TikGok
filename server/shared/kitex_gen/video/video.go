@@ -1135,39 +1135,39 @@ func (p *DouyinPublishActionResponse) Field1DeepEqual(src *base.DouyinBaseRespon
 	return true
 }
 
-type DouyinPublishListRequest struct {
+type DouyinGetPublishedListRequest struct {
 	ViewerId int64 `thrift:"viewer_id,1,required" frugal:"1,required,i64" json:"viewer_id"`
 	OwnerId  int64 `thrift:"owner_id,2,required" frugal:"2,required,i64" json:"owner_id"`
 }
 
-func NewDouyinPublishListRequest() *DouyinPublishListRequest {
-	return &DouyinPublishListRequest{}
+func NewDouyinGetPublishedListRequest() *DouyinGetPublishedListRequest {
+	return &DouyinGetPublishedListRequest{}
 }
 
-func (p *DouyinPublishListRequest) InitDefault() {
-	*p = DouyinPublishListRequest{}
+func (p *DouyinGetPublishedListRequest) InitDefault() {
+	*p = DouyinGetPublishedListRequest{}
 }
 
-func (p *DouyinPublishListRequest) GetViewerId() (v int64) {
+func (p *DouyinGetPublishedListRequest) GetViewerId() (v int64) {
 	return p.ViewerId
 }
 
-func (p *DouyinPublishListRequest) GetOwnerId() (v int64) {
+func (p *DouyinGetPublishedListRequest) GetOwnerId() (v int64) {
 	return p.OwnerId
 }
-func (p *DouyinPublishListRequest) SetViewerId(val int64) {
+func (p *DouyinGetPublishedListRequest) SetViewerId(val int64) {
 	p.ViewerId = val
 }
-func (p *DouyinPublishListRequest) SetOwnerId(val int64) {
+func (p *DouyinGetPublishedListRequest) SetOwnerId(val int64) {
 	p.OwnerId = val
 }
 
-var fieldIDToName_DouyinPublishListRequest = map[int16]string{
+var fieldIDToName_DouyinGetPublishedListRequest = map[int16]string{
 	1: "viewer_id",
 	2: "owner_id",
 }
 
-func (p *DouyinPublishListRequest) Read(iprot thrift.TProtocol) (err error) {
+func (p *DouyinGetPublishedListRequest) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -1239,7 +1239,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinPublishListRequest[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinGetPublishedListRequest[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -1248,10 +1248,10 @@ ReadFieldEndError:
 ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 RequiredFieldNotSetError:
-	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinPublishListRequest[fieldId]))
+	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinGetPublishedListRequest[fieldId]))
 }
 
-func (p *DouyinPublishListRequest) ReadField1(iprot thrift.TProtocol) error {
+func (p *DouyinGetPublishedListRequest) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
@@ -1260,7 +1260,7 @@ func (p *DouyinPublishListRequest) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *DouyinPublishListRequest) ReadField2(iprot thrift.TProtocol) error {
+func (p *DouyinGetPublishedListRequest) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
@@ -1269,9 +1269,9 @@ func (p *DouyinPublishListRequest) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *DouyinPublishListRequest) Write(oprot thrift.TProtocol) (err error) {
+func (p *DouyinGetPublishedListRequest) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("douyin_publish_list_request"); err != nil {
+	if err = oprot.WriteStructBegin("douyin_get_published_list_request"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -1302,7 +1302,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *DouyinPublishListRequest) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *DouyinGetPublishedListRequest) writeField1(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("viewer_id", thrift.I64, 1); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -1319,7 +1319,7 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *DouyinPublishListRequest) writeField2(oprot thrift.TProtocol) (err error) {
+func (p *DouyinGetPublishedListRequest) writeField2(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("owner_id", thrift.I64, 2); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -1336,14 +1336,14 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
-func (p *DouyinPublishListRequest) String() string {
+func (p *DouyinGetPublishedListRequest) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("DouyinPublishListRequest(%+v)", *p)
+	return fmt.Sprintf("DouyinGetPublishedListRequest(%+v)", *p)
 }
 
-func (p *DouyinPublishListRequest) DeepEqual(ano *DouyinPublishListRequest) bool {
+func (p *DouyinGetPublishedListRequest) DeepEqual(ano *DouyinGetPublishedListRequest) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -1358,14 +1358,14 @@ func (p *DouyinPublishListRequest) DeepEqual(ano *DouyinPublishListRequest) bool
 	return true
 }
 
-func (p *DouyinPublishListRequest) Field1DeepEqual(src int64) bool {
+func (p *DouyinGetPublishedListRequest) Field1DeepEqual(src int64) bool {
 
 	if p.ViewerId != src {
 		return false
 	}
 	return true
 }
-func (p *DouyinPublishListRequest) Field2DeepEqual(src int64) bool {
+func (p *DouyinGetPublishedListRequest) Field2DeepEqual(src int64) bool {
 
 	if p.OwnerId != src {
 		return false
@@ -1373,48 +1373,48 @@ func (p *DouyinPublishListRequest) Field2DeepEqual(src int64) bool {
 	return true
 }
 
-type DouyinPublishListResponse struct {
+type DouyinGetPublishedListResponse struct {
 	BaseResp  *base.DouyinBaseResponse `thrift:"base_resp,1,required" frugal:"1,required,base.DouyinBaseResponse" json:"base_resp"`
 	VideoList []*base.Video            `thrift:"video_list,2,required" frugal:"2,required,list<base.Video>" json:"video_list"`
 }
 
-func NewDouyinPublishListResponse() *DouyinPublishListResponse {
-	return &DouyinPublishListResponse{}
+func NewDouyinGetPublishedListResponse() *DouyinGetPublishedListResponse {
+	return &DouyinGetPublishedListResponse{}
 }
 
-func (p *DouyinPublishListResponse) InitDefault() {
-	*p = DouyinPublishListResponse{}
+func (p *DouyinGetPublishedListResponse) InitDefault() {
+	*p = DouyinGetPublishedListResponse{}
 }
 
-var DouyinPublishListResponse_BaseResp_DEFAULT *base.DouyinBaseResponse
+var DouyinGetPublishedListResponse_BaseResp_DEFAULT *base.DouyinBaseResponse
 
-func (p *DouyinPublishListResponse) GetBaseResp() (v *base.DouyinBaseResponse) {
+func (p *DouyinGetPublishedListResponse) GetBaseResp() (v *base.DouyinBaseResponse) {
 	if !p.IsSetBaseResp() {
-		return DouyinPublishListResponse_BaseResp_DEFAULT
+		return DouyinGetPublishedListResponse_BaseResp_DEFAULT
 	}
 	return p.BaseResp
 }
 
-func (p *DouyinPublishListResponse) GetVideoList() (v []*base.Video) {
+func (p *DouyinGetPublishedListResponse) GetVideoList() (v []*base.Video) {
 	return p.VideoList
 }
-func (p *DouyinPublishListResponse) SetBaseResp(val *base.DouyinBaseResponse) {
+func (p *DouyinGetPublishedListResponse) SetBaseResp(val *base.DouyinBaseResponse) {
 	p.BaseResp = val
 }
-func (p *DouyinPublishListResponse) SetVideoList(val []*base.Video) {
+func (p *DouyinGetPublishedListResponse) SetVideoList(val []*base.Video) {
 	p.VideoList = val
 }
 
-var fieldIDToName_DouyinPublishListResponse = map[int16]string{
+var fieldIDToName_DouyinGetPublishedListResponse = map[int16]string{
 	1: "base_resp",
 	2: "video_list",
 }
 
-func (p *DouyinPublishListResponse) IsSetBaseResp() bool {
+func (p *DouyinGetPublishedListResponse) IsSetBaseResp() bool {
 	return p.BaseResp != nil
 }
 
-func (p *DouyinPublishListResponse) Read(iprot thrift.TProtocol) (err error) {
+func (p *DouyinGetPublishedListResponse) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -1486,7 +1486,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinPublishListResponse[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinGetPublishedListResponse[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -1495,10 +1495,10 @@ ReadFieldEndError:
 ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 RequiredFieldNotSetError:
-	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinPublishListResponse[fieldId]))
+	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinGetPublishedListResponse[fieldId]))
 }
 
-func (p *DouyinPublishListResponse) ReadField1(iprot thrift.TProtocol) error {
+func (p *DouyinGetPublishedListResponse) ReadField1(iprot thrift.TProtocol) error {
 	p.BaseResp = base.NewDouyinBaseResponse()
 	if err := p.BaseResp.Read(iprot); err != nil {
 		return err
@@ -1506,7 +1506,7 @@ func (p *DouyinPublishListResponse) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *DouyinPublishListResponse) ReadField2(iprot thrift.TProtocol) error {
+func (p *DouyinGetPublishedListResponse) ReadField2(iprot thrift.TProtocol) error {
 	_, size, err := iprot.ReadListBegin()
 	if err != nil {
 		return err
@@ -1526,9 +1526,9 @@ func (p *DouyinPublishListResponse) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *DouyinPublishListResponse) Write(oprot thrift.TProtocol) (err error) {
+func (p *DouyinGetPublishedListResponse) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("douyin_publish_list_response"); err != nil {
+	if err = oprot.WriteStructBegin("douyin_get_published_list_response"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -1559,7 +1559,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *DouyinPublishListResponse) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *DouyinGetPublishedListResponse) writeField1(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("base_resp", thrift.STRUCT, 1); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -1576,7 +1576,7 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *DouyinPublishListResponse) writeField2(oprot thrift.TProtocol) (err error) {
+func (p *DouyinGetPublishedListResponse) writeField2(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("video_list", thrift.LIST, 2); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -1601,14 +1601,14 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
-func (p *DouyinPublishListResponse) String() string {
+func (p *DouyinGetPublishedListResponse) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("DouyinPublishListResponse(%+v)", *p)
+	return fmt.Sprintf("DouyinGetPublishedListResponse(%+v)", *p)
 }
 
-func (p *DouyinPublishListResponse) DeepEqual(ano *DouyinPublishListResponse) bool {
+func (p *DouyinGetPublishedListResponse) DeepEqual(ano *DouyinGetPublishedListResponse) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -1623,14 +1623,14 @@ func (p *DouyinPublishListResponse) DeepEqual(ano *DouyinPublishListResponse) bo
 	return true
 }
 
-func (p *DouyinPublishListResponse) Field1DeepEqual(src *base.DouyinBaseResponse) bool {
+func (p *DouyinGetPublishedListResponse) Field1DeepEqual(src *base.DouyinBaseResponse) bool {
 
 	if !p.BaseResp.DeepEqual(src) {
 		return false
 	}
 	return true
 }
-func (p *DouyinPublishListResponse) Field2DeepEqual(src []*base.Video) bool {
+func (p *DouyinGetPublishedListResponse) Field2DeepEqual(src []*base.Video) bool {
 
 	if len(p.VideoList) != len(src) {
 		return false
@@ -1644,44 +1644,44 @@ func (p *DouyinPublishListResponse) Field2DeepEqual(src []*base.Video) bool {
 	return true
 }
 
-type DouyinGetVideoRequest struct {
-	VideoId  int64 `thrift:"video_id,1,required" frugal:"1,required,i64" json:"video_id"`
-	ViewerId int64 `thrift:"viewer_id,2,required" frugal:"2,required,i64" json:"viewer_id"`
+type DouyinGetFavoriteListRequest struct {
+	ViewerId int64 `thrift:"viewer_id,1,required" frugal:"1,required,i64" json:"viewer_id"`
+	OwnerId  int64 `thrift:"owner_id,2,required" frugal:"2,required,i64" json:"owner_id"`
 }
 
-func NewDouyinGetVideoRequest() *DouyinGetVideoRequest {
-	return &DouyinGetVideoRequest{}
+func NewDouyinGetFavoriteListRequest() *DouyinGetFavoriteListRequest {
+	return &DouyinGetFavoriteListRequest{}
 }
 
-func (p *DouyinGetVideoRequest) InitDefault() {
-	*p = DouyinGetVideoRequest{}
+func (p *DouyinGetFavoriteListRequest) InitDefault() {
+	*p = DouyinGetFavoriteListRequest{}
 }
 
-func (p *DouyinGetVideoRequest) GetVideoId() (v int64) {
-	return p.VideoId
-}
-
-func (p *DouyinGetVideoRequest) GetViewerId() (v int64) {
+func (p *DouyinGetFavoriteListRequest) GetViewerId() (v int64) {
 	return p.ViewerId
 }
-func (p *DouyinGetVideoRequest) SetVideoId(val int64) {
-	p.VideoId = val
+
+func (p *DouyinGetFavoriteListRequest) GetOwnerId() (v int64) {
+	return p.OwnerId
 }
-func (p *DouyinGetVideoRequest) SetViewerId(val int64) {
+func (p *DouyinGetFavoriteListRequest) SetViewerId(val int64) {
 	p.ViewerId = val
 }
-
-var fieldIDToName_DouyinGetVideoRequest = map[int16]string{
-	1: "video_id",
-	2: "viewer_id",
+func (p *DouyinGetFavoriteListRequest) SetOwnerId(val int64) {
+	p.OwnerId = val
 }
 
-func (p *DouyinGetVideoRequest) Read(iprot thrift.TProtocol) (err error) {
+var fieldIDToName_DouyinGetFavoriteListRequest = map[int16]string{
+	1: "viewer_id",
+	2: "owner_id",
+}
+
+func (p *DouyinGetFavoriteListRequest) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
-	var issetVideoId bool = false
 	var issetViewerId bool = false
+	var issetOwnerId bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -1702,7 +1702,7 @@ func (p *DouyinGetVideoRequest) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetVideoId = true
+				issetViewerId = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -1713,7 +1713,7 @@ func (p *DouyinGetVideoRequest) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetViewerId = true
+				issetOwnerId = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -1733,12 +1733,12 @@ func (p *DouyinGetVideoRequest) Read(iprot thrift.TProtocol) (err error) {
 		goto ReadStructEndError
 	}
 
-	if !issetVideoId {
+	if !issetViewerId {
 		fieldId = 1
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetViewerId {
+	if !issetOwnerId {
 		fieldId = 2
 		goto RequiredFieldNotSetError
 	}
@@ -1748,7 +1748,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinGetVideoRequest[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinGetFavoriteListRequest[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -1757,19 +1757,10 @@ ReadFieldEndError:
 ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 RequiredFieldNotSetError:
-	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinGetVideoRequest[fieldId]))
+	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinGetFavoriteListRequest[fieldId]))
 }
 
-func (p *DouyinGetVideoRequest) ReadField1(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadI64(); err != nil {
-		return err
-	} else {
-		p.VideoId = v
-	}
-	return nil
-}
-
-func (p *DouyinGetVideoRequest) ReadField2(iprot thrift.TProtocol) error {
+func (p *DouyinGetFavoriteListRequest) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
@@ -1778,9 +1769,18 @@ func (p *DouyinGetVideoRequest) ReadField2(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *DouyinGetVideoRequest) Write(oprot thrift.TProtocol) (err error) {
+func (p *DouyinGetFavoriteListRequest) ReadField2(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		p.OwnerId = v
+	}
+	return nil
+}
+
+func (p *DouyinGetFavoriteListRequest) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("douyin_get_video_request"); err != nil {
+	if err = oprot.WriteStructBegin("douyin_get_favorite_list_request"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -1811,11 +1811,11 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *DouyinGetVideoRequest) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("video_id", thrift.I64, 1); err != nil {
+func (p *DouyinGetFavoriteListRequest) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("viewer_id", thrift.I64, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.VideoId); err != nil {
+	if err := oprot.WriteI64(p.ViewerId); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1828,11 +1828,11 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *DouyinGetVideoRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("viewer_id", thrift.I64, 2); err != nil {
+func (p *DouyinGetFavoriteListRequest) writeField2(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("owner_id", thrift.I64, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteI64(p.ViewerId); err != nil {
+	if err := oprot.WriteI64(p.OwnerId); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -1845,99 +1845,90 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
-func (p *DouyinGetVideoRequest) String() string {
+func (p *DouyinGetFavoriteListRequest) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("DouyinGetVideoRequest(%+v)", *p)
+	return fmt.Sprintf("DouyinGetFavoriteListRequest(%+v)", *p)
 }
 
-func (p *DouyinGetVideoRequest) DeepEqual(ano *DouyinGetVideoRequest) bool {
+func (p *DouyinGetFavoriteListRequest) DeepEqual(ano *DouyinGetFavoriteListRequest) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.VideoId) {
+	if !p.Field1DeepEqual(ano.ViewerId) {
 		return false
 	}
-	if !p.Field2DeepEqual(ano.ViewerId) {
+	if !p.Field2DeepEqual(ano.OwnerId) {
 		return false
 	}
 	return true
 }
 
-func (p *DouyinGetVideoRequest) Field1DeepEqual(src int64) bool {
-
-	if p.VideoId != src {
-		return false
-	}
-	return true
-}
-func (p *DouyinGetVideoRequest) Field2DeepEqual(src int64) bool {
+func (p *DouyinGetFavoriteListRequest) Field1DeepEqual(src int64) bool {
 
 	if p.ViewerId != src {
 		return false
 	}
 	return true
 }
+func (p *DouyinGetFavoriteListRequest) Field2DeepEqual(src int64) bool {
 
-type DouyinGetVideoResponse struct {
-	BaseResp *base.DouyinBaseResponse `thrift:"base_resp,1,required" frugal:"1,required,base.DouyinBaseResponse" json:"base_resp"`
-	Video    *base.Video              `thrift:"video,2,required" frugal:"2,required,base.Video" json:"video"`
+	if p.OwnerId != src {
+		return false
+	}
+	return true
 }
 
-func NewDouyinGetVideoResponse() *DouyinGetVideoResponse {
-	return &DouyinGetVideoResponse{}
+type DouyinGetFavoriteListResponse struct {
+	BaseResp  *base.DouyinBaseResponse `thrift:"base_resp,1,required" frugal:"1,required,base.DouyinBaseResponse" json:"base_resp"`
+	VideoList []*base.Video            `thrift:"video_list,2,required" frugal:"2,required,list<base.Video>" json:"video_list"`
 }
 
-func (p *DouyinGetVideoResponse) InitDefault() {
-	*p = DouyinGetVideoResponse{}
+func NewDouyinGetFavoriteListResponse() *DouyinGetFavoriteListResponse {
+	return &DouyinGetFavoriteListResponse{}
 }
 
-var DouyinGetVideoResponse_BaseResp_DEFAULT *base.DouyinBaseResponse
+func (p *DouyinGetFavoriteListResponse) InitDefault() {
+	*p = DouyinGetFavoriteListResponse{}
+}
 
-func (p *DouyinGetVideoResponse) GetBaseResp() (v *base.DouyinBaseResponse) {
+var DouyinGetFavoriteListResponse_BaseResp_DEFAULT *base.DouyinBaseResponse
+
+func (p *DouyinGetFavoriteListResponse) GetBaseResp() (v *base.DouyinBaseResponse) {
 	if !p.IsSetBaseResp() {
-		return DouyinGetVideoResponse_BaseResp_DEFAULT
+		return DouyinGetFavoriteListResponse_BaseResp_DEFAULT
 	}
 	return p.BaseResp
 }
 
-var DouyinGetVideoResponse_Video_DEFAULT *base.Video
-
-func (p *DouyinGetVideoResponse) GetVideo() (v *base.Video) {
-	if !p.IsSetVideo() {
-		return DouyinGetVideoResponse_Video_DEFAULT
-	}
-	return p.Video
+func (p *DouyinGetFavoriteListResponse) GetVideoList() (v []*base.Video) {
+	return p.VideoList
 }
-func (p *DouyinGetVideoResponse) SetBaseResp(val *base.DouyinBaseResponse) {
+func (p *DouyinGetFavoriteListResponse) SetBaseResp(val *base.DouyinBaseResponse) {
 	p.BaseResp = val
 }
-func (p *DouyinGetVideoResponse) SetVideo(val *base.Video) {
-	p.Video = val
+func (p *DouyinGetFavoriteListResponse) SetVideoList(val []*base.Video) {
+	p.VideoList = val
 }
 
-var fieldIDToName_DouyinGetVideoResponse = map[int16]string{
+var fieldIDToName_DouyinGetFavoriteListResponse = map[int16]string{
 	1: "base_resp",
-	2: "video",
+	2: "video_list",
 }
 
-func (p *DouyinGetVideoResponse) IsSetBaseResp() bool {
+func (p *DouyinGetFavoriteListResponse) IsSetBaseResp() bool {
 	return p.BaseResp != nil
 }
 
-func (p *DouyinGetVideoResponse) IsSetVideo() bool {
-	return p.Video != nil
-}
-
-func (p *DouyinGetVideoResponse) Read(iprot thrift.TProtocol) (err error) {
+func (p *DouyinGetFavoriteListResponse) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
 	var issetBaseResp bool = false
-	var issetVideo bool = false
+	var issetVideoList bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -1965,11 +1956,11 @@ func (p *DouyinGetVideoResponse) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 2:
-			if fieldTypeId == thrift.STRUCT {
+			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetVideo = true
+				issetVideoList = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -1994,7 +1985,7 @@ func (p *DouyinGetVideoResponse) Read(iprot thrift.TProtocol) (err error) {
 		goto RequiredFieldNotSetError
 	}
 
-	if !issetVideo {
+	if !issetVideoList {
 		fieldId = 2
 		goto RequiredFieldNotSetError
 	}
@@ -2004,7 +1995,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinGetVideoResponse[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinGetFavoriteListResponse[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -2013,10 +2004,10 @@ ReadFieldEndError:
 ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 RequiredFieldNotSetError:
-	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinGetVideoResponse[fieldId]))
+	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinGetFavoriteListResponse[fieldId]))
 }
 
-func (p *DouyinGetVideoResponse) ReadField1(iprot thrift.TProtocol) error {
+func (p *DouyinGetFavoriteListResponse) ReadField1(iprot thrift.TProtocol) error {
 	p.BaseResp = base.NewDouyinBaseResponse()
 	if err := p.BaseResp.Read(iprot); err != nil {
 		return err
@@ -2024,17 +2015,29 @@ func (p *DouyinGetVideoResponse) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *DouyinGetVideoResponse) ReadField2(iprot thrift.TProtocol) error {
-	p.Video = base.NewVideo()
-	if err := p.Video.Read(iprot); err != nil {
+func (p *DouyinGetFavoriteListResponse) ReadField2(iprot thrift.TProtocol) error {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
+		return err
+	}
+	p.VideoList = make([]*base.Video, 0, size)
+	for i := 0; i < size; i++ {
+		_elem := base.NewVideo()
+		if err := _elem.Read(iprot); err != nil {
+			return err
+		}
+
+		p.VideoList = append(p.VideoList, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (p *DouyinGetVideoResponse) Write(oprot thrift.TProtocol) (err error) {
+func (p *DouyinGetFavoriteListResponse) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("douyin_get_video_response"); err != nil {
+	if err = oprot.WriteStructBegin("douyin_get_favorite_list_response"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -2065,7 +2068,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *DouyinGetVideoResponse) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *DouyinGetFavoriteListResponse) writeField1(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("base_resp", thrift.STRUCT, 1); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -2082,11 +2085,19 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *DouyinGetVideoResponse) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("video", thrift.STRUCT, 2); err != nil {
+func (p *DouyinGetFavoriteListResponse) writeField2(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("video_list", thrift.LIST, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := p.Video.Write(oprot); err != nil {
+	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.VideoList)); err != nil {
+		return err
+	}
+	for _, v := range p.VideoList {
+		if err := v.Write(oprot); err != nil {
+			return err
+		}
+	}
+	if err := oprot.WriteListEnd(); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -2099,14 +2110,14 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
-func (p *DouyinGetVideoResponse) String() string {
+func (p *DouyinGetFavoriteListResponse) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("DouyinGetVideoResponse(%+v)", *p)
+	return fmt.Sprintf("DouyinGetFavoriteListResponse(%+v)", *p)
 }
 
-func (p *DouyinGetVideoResponse) DeepEqual(ano *DouyinGetVideoResponse) bool {
+func (p *DouyinGetFavoriteListResponse) DeepEqual(ano *DouyinGetFavoriteListResponse) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -2115,23 +2126,29 @@ func (p *DouyinGetVideoResponse) DeepEqual(ano *DouyinGetVideoResponse) bool {
 	if !p.Field1DeepEqual(ano.BaseResp) {
 		return false
 	}
-	if !p.Field2DeepEqual(ano.Video) {
+	if !p.Field2DeepEqual(ano.VideoList) {
 		return false
 	}
 	return true
 }
 
-func (p *DouyinGetVideoResponse) Field1DeepEqual(src *base.DouyinBaseResponse) bool {
+func (p *DouyinGetFavoriteListResponse) Field1DeepEqual(src *base.DouyinBaseResponse) bool {
 
 	if !p.BaseResp.DeepEqual(src) {
 		return false
 	}
 	return true
 }
-func (p *DouyinGetVideoResponse) Field2DeepEqual(src *base.Video) bool {
+func (p *DouyinGetFavoriteListResponse) Field2DeepEqual(src []*base.Video) bool {
 
-	if !p.Video.DeepEqual(src) {
+	if len(p.VideoList) != len(src) {
 		return false
+	}
+	for i, v := range p.VideoList {
+		_src := src[i]
+		if !v.DeepEqual(_src) {
+			return false
+		}
 	}
 	return true
 }
@@ -2141,9 +2158,9 @@ type VideoService interface {
 
 	PublishVideo(ctx context.Context, req *DouyinPublishActionRequest) (r *DouyinPublishActionResponse, err error)
 
-	VideoList(ctx context.Context, req *DouyinPublishListRequest) (r *DouyinPublishListResponse, err error)
+	GetPublishedVideoList(ctx context.Context, req *DouyinGetPublishedListRequest) (r *DouyinGetPublishedListResponse, err error)
 
-	GetVideo(ctx context.Context, req *DouyinGetVideoRequest) (r *DouyinGetVideoResponse, err error)
+	GetFavoriteVideoList(ctx context.Context, req *DouyinGetFavoriteListRequest) (r *DouyinGetFavoriteListResponse, err error)
 }
 
 type VideoServiceClient struct {
@@ -2190,20 +2207,20 @@ func (p *VideoServiceClient) PublishVideo(ctx context.Context, req *DouyinPublis
 	}
 	return _result.GetSuccess(), nil
 }
-func (p *VideoServiceClient) VideoList(ctx context.Context, req *DouyinPublishListRequest) (r *DouyinPublishListResponse, err error) {
-	var _args VideoServiceVideoListArgs
+func (p *VideoServiceClient) GetPublishedVideoList(ctx context.Context, req *DouyinGetPublishedListRequest) (r *DouyinGetPublishedListResponse, err error) {
+	var _args VideoServiceGetPublishedVideoListArgs
 	_args.Req = req
-	var _result VideoServiceVideoListResult
-	if err = p.Client_().Call(ctx, "VideoList", &_args, &_result); err != nil {
+	var _result VideoServiceGetPublishedVideoListResult
+	if err = p.Client_().Call(ctx, "GetPublishedVideoList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
-func (p *VideoServiceClient) GetVideo(ctx context.Context, req *DouyinGetVideoRequest) (r *DouyinGetVideoResponse, err error) {
-	var _args VideoServiceGetVideoArgs
+func (p *VideoServiceClient) GetFavoriteVideoList(ctx context.Context, req *DouyinGetFavoriteListRequest) (r *DouyinGetFavoriteListResponse, err error) {
+	var _args VideoServiceGetFavoriteVideoListArgs
 	_args.Req = req
-	var _result VideoServiceGetVideoResult
-	if err = p.Client_().Call(ctx, "GetVideo", &_args, &_result); err != nil {
+	var _result VideoServiceGetFavoriteVideoListResult
+	if err = p.Client_().Call(ctx, "GetFavoriteVideoList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
@@ -2231,8 +2248,8 @@ func NewVideoServiceProcessor(handler VideoService) *VideoServiceProcessor {
 	self := &VideoServiceProcessor{handler: handler, processorMap: make(map[string]thrift.TProcessorFunction)}
 	self.AddToProcessorMap("Feed", &videoServiceProcessorFeed{handler: handler})
 	self.AddToProcessorMap("PublishVideo", &videoServiceProcessorPublishVideo{handler: handler})
-	self.AddToProcessorMap("VideoList", &videoServiceProcessorVideoList{handler: handler})
-	self.AddToProcessorMap("GetVideo", &videoServiceProcessorGetVideo{handler: handler})
+	self.AddToProcessorMap("GetPublishedVideoList", &videoServiceProcessorGetPublishedVideoList{handler: handler})
+	self.AddToProcessorMap("GetFavoriteVideoList", &videoServiceProcessorGetFavoriteVideoList{handler: handler})
 	return self
 }
 func (p *VideoServiceProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -2349,16 +2366,16 @@ func (p *videoServiceProcessorPublishVideo) Process(ctx context.Context, seqId i
 	return true, err
 }
 
-type videoServiceProcessorVideoList struct {
+type videoServiceProcessorGetPublishedVideoList struct {
 	handler VideoService
 }
 
-func (p *videoServiceProcessorVideoList) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := VideoServiceVideoListArgs{}
+func (p *videoServiceProcessorGetPublishedVideoList) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := VideoServiceGetPublishedVideoListArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("VideoList", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("GetPublishedVideoList", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush(ctx)
@@ -2367,11 +2384,11 @@ func (p *videoServiceProcessorVideoList) Process(ctx context.Context, seqId int3
 
 	iprot.ReadMessageEnd()
 	var err2 error
-	result := VideoServiceVideoListResult{}
-	var retval *DouyinPublishListResponse
-	if retval, err2 = p.handler.VideoList(ctx, args.Req); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing VideoList: "+err2.Error())
-		oprot.WriteMessageBegin("VideoList", thrift.EXCEPTION, seqId)
+	result := VideoServiceGetPublishedVideoListResult{}
+	var retval *DouyinGetPublishedListResponse
+	if retval, err2 = p.handler.GetPublishedVideoList(ctx, args.Req); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing GetPublishedVideoList: "+err2.Error())
+		oprot.WriteMessageBegin("GetPublishedVideoList", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush(ctx)
@@ -2379,7 +2396,7 @@ func (p *videoServiceProcessorVideoList) Process(ctx context.Context, seqId int3
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("VideoList", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("GetPublishedVideoList", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -2397,16 +2414,16 @@ func (p *videoServiceProcessorVideoList) Process(ctx context.Context, seqId int3
 	return true, err
 }
 
-type videoServiceProcessorGetVideo struct {
+type videoServiceProcessorGetFavoriteVideoList struct {
 	handler VideoService
 }
 
-func (p *videoServiceProcessorGetVideo) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := VideoServiceGetVideoArgs{}
+func (p *videoServiceProcessorGetFavoriteVideoList) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := VideoServiceGetFavoriteVideoListArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("GetVideo", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("GetFavoriteVideoList", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush(ctx)
@@ -2415,11 +2432,11 @@ func (p *videoServiceProcessorGetVideo) Process(ctx context.Context, seqId int32
 
 	iprot.ReadMessageEnd()
 	var err2 error
-	result := VideoServiceGetVideoResult{}
-	var retval *DouyinGetVideoResponse
-	if retval, err2 = p.handler.GetVideo(ctx, args.Req); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing GetVideo: "+err2.Error())
-		oprot.WriteMessageBegin("GetVideo", thrift.EXCEPTION, seqId)
+	result := VideoServiceGetFavoriteVideoListResult{}
+	var retval *DouyinGetFavoriteListResponse
+	if retval, err2 = p.handler.GetFavoriteVideoList(ctx, args.Req); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing GetFavoriteVideoList: "+err2.Error())
+		oprot.WriteMessageBegin("GetFavoriteVideoList", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush(ctx)
@@ -2427,7 +2444,7 @@ func (p *videoServiceProcessorGetVideo) Process(ctx context.Context, seqId int32
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("GetVideo", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("GetFavoriteVideoList", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -3137,39 +3154,39 @@ func (p *VideoServicePublishVideoResult) Field0DeepEqual(src *DouyinPublishActio
 	return true
 }
 
-type VideoServiceVideoListArgs struct {
-	Req *DouyinPublishListRequest `thrift:"req,1" frugal:"1,default,DouyinPublishListRequest" json:"req"`
+type VideoServiceGetPublishedVideoListArgs struct {
+	Req *DouyinGetPublishedListRequest `thrift:"req,1" frugal:"1,default,DouyinGetPublishedListRequest" json:"req"`
 }
 
-func NewVideoServiceVideoListArgs() *VideoServiceVideoListArgs {
-	return &VideoServiceVideoListArgs{}
+func NewVideoServiceGetPublishedVideoListArgs() *VideoServiceGetPublishedVideoListArgs {
+	return &VideoServiceGetPublishedVideoListArgs{}
 }
 
-func (p *VideoServiceVideoListArgs) InitDefault() {
-	*p = VideoServiceVideoListArgs{}
+func (p *VideoServiceGetPublishedVideoListArgs) InitDefault() {
+	*p = VideoServiceGetPublishedVideoListArgs{}
 }
 
-var VideoServiceVideoListArgs_Req_DEFAULT *DouyinPublishListRequest
+var VideoServiceGetPublishedVideoListArgs_Req_DEFAULT *DouyinGetPublishedListRequest
 
-func (p *VideoServiceVideoListArgs) GetReq() (v *DouyinPublishListRequest) {
+func (p *VideoServiceGetPublishedVideoListArgs) GetReq() (v *DouyinGetPublishedListRequest) {
 	if !p.IsSetReq() {
-		return VideoServiceVideoListArgs_Req_DEFAULT
+		return VideoServiceGetPublishedVideoListArgs_Req_DEFAULT
 	}
 	return p.Req
 }
-func (p *VideoServiceVideoListArgs) SetReq(val *DouyinPublishListRequest) {
+func (p *VideoServiceGetPublishedVideoListArgs) SetReq(val *DouyinGetPublishedListRequest) {
 	p.Req = val
 }
 
-var fieldIDToName_VideoServiceVideoListArgs = map[int16]string{
+var fieldIDToName_VideoServiceGetPublishedVideoListArgs = map[int16]string{
 	1: "req",
 }
 
-func (p *VideoServiceVideoListArgs) IsSetReq() bool {
+func (p *VideoServiceGetPublishedVideoListArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-func (p *VideoServiceVideoListArgs) Read(iprot thrift.TProtocol) (err error) {
+func (p *VideoServiceGetPublishedVideoListArgs) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -3218,7 +3235,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_VideoServiceVideoListArgs[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_VideoServiceGetPublishedVideoListArgs[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -3228,17 +3245,17 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *VideoServiceVideoListArgs) ReadField1(iprot thrift.TProtocol) error {
-	p.Req = NewDouyinPublishListRequest()
+func (p *VideoServiceGetPublishedVideoListArgs) ReadField1(iprot thrift.TProtocol) error {
+	p.Req = NewDouyinGetPublishedListRequest()
 	if err := p.Req.Read(iprot); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (p *VideoServiceVideoListArgs) Write(oprot thrift.TProtocol) (err error) {
+func (p *VideoServiceGetPublishedVideoListArgs) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("VideoList_args"); err != nil {
+	if err = oprot.WriteStructBegin("GetPublishedVideoList_args"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -3265,7 +3282,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *VideoServiceVideoListArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *VideoServiceGetPublishedVideoListArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -3282,14 +3299,14 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *VideoServiceVideoListArgs) String() string {
+func (p *VideoServiceGetPublishedVideoListArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("VideoServiceVideoListArgs(%+v)", *p)
+	return fmt.Sprintf("VideoServiceGetPublishedVideoListArgs(%+v)", *p)
 }
 
-func (p *VideoServiceVideoListArgs) DeepEqual(ano *VideoServiceVideoListArgs) bool {
+func (p *VideoServiceGetPublishedVideoListArgs) DeepEqual(ano *VideoServiceGetPublishedVideoListArgs) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -3301,7 +3318,7 @@ func (p *VideoServiceVideoListArgs) DeepEqual(ano *VideoServiceVideoListArgs) bo
 	return true
 }
 
-func (p *VideoServiceVideoListArgs) Field1DeepEqual(src *DouyinPublishListRequest) bool {
+func (p *VideoServiceGetPublishedVideoListArgs) Field1DeepEqual(src *DouyinGetPublishedListRequest) bool {
 
 	if !p.Req.DeepEqual(src) {
 		return false
@@ -3309,39 +3326,39 @@ func (p *VideoServiceVideoListArgs) Field1DeepEqual(src *DouyinPublishListReques
 	return true
 }
 
-type VideoServiceVideoListResult struct {
-	Success *DouyinPublishListResponse `thrift:"success,0,optional" frugal:"0,optional,DouyinPublishListResponse" json:"success,omitempty"`
+type VideoServiceGetPublishedVideoListResult struct {
+	Success *DouyinGetPublishedListResponse `thrift:"success,0,optional" frugal:"0,optional,DouyinGetPublishedListResponse" json:"success,omitempty"`
 }
 
-func NewVideoServiceVideoListResult() *VideoServiceVideoListResult {
-	return &VideoServiceVideoListResult{}
+func NewVideoServiceGetPublishedVideoListResult() *VideoServiceGetPublishedVideoListResult {
+	return &VideoServiceGetPublishedVideoListResult{}
 }
 
-func (p *VideoServiceVideoListResult) InitDefault() {
-	*p = VideoServiceVideoListResult{}
+func (p *VideoServiceGetPublishedVideoListResult) InitDefault() {
+	*p = VideoServiceGetPublishedVideoListResult{}
 }
 
-var VideoServiceVideoListResult_Success_DEFAULT *DouyinPublishListResponse
+var VideoServiceGetPublishedVideoListResult_Success_DEFAULT *DouyinGetPublishedListResponse
 
-func (p *VideoServiceVideoListResult) GetSuccess() (v *DouyinPublishListResponse) {
+func (p *VideoServiceGetPublishedVideoListResult) GetSuccess() (v *DouyinGetPublishedListResponse) {
 	if !p.IsSetSuccess() {
-		return VideoServiceVideoListResult_Success_DEFAULT
+		return VideoServiceGetPublishedVideoListResult_Success_DEFAULT
 	}
 	return p.Success
 }
-func (p *VideoServiceVideoListResult) SetSuccess(x interface{}) {
-	p.Success = x.(*DouyinPublishListResponse)
+func (p *VideoServiceGetPublishedVideoListResult) SetSuccess(x interface{}) {
+	p.Success = x.(*DouyinGetPublishedListResponse)
 }
 
-var fieldIDToName_VideoServiceVideoListResult = map[int16]string{
+var fieldIDToName_VideoServiceGetPublishedVideoListResult = map[int16]string{
 	0: "success",
 }
 
-func (p *VideoServiceVideoListResult) IsSetSuccess() bool {
+func (p *VideoServiceGetPublishedVideoListResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *VideoServiceVideoListResult) Read(iprot thrift.TProtocol) (err error) {
+func (p *VideoServiceGetPublishedVideoListResult) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -3390,7 +3407,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_VideoServiceVideoListResult[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_VideoServiceGetPublishedVideoListResult[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -3400,17 +3417,17 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *VideoServiceVideoListResult) ReadField0(iprot thrift.TProtocol) error {
-	p.Success = NewDouyinPublishListResponse()
+func (p *VideoServiceGetPublishedVideoListResult) ReadField0(iprot thrift.TProtocol) error {
+	p.Success = NewDouyinGetPublishedListResponse()
 	if err := p.Success.Read(iprot); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (p *VideoServiceVideoListResult) Write(oprot thrift.TProtocol) (err error) {
+func (p *VideoServiceGetPublishedVideoListResult) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("VideoList_result"); err != nil {
+	if err = oprot.WriteStructBegin("GetPublishedVideoList_result"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -3437,7 +3454,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *VideoServiceVideoListResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *VideoServiceGetPublishedVideoListResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err = oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
 			goto WriteFieldBeginError
@@ -3456,14 +3473,14 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
 }
 
-func (p *VideoServiceVideoListResult) String() string {
+func (p *VideoServiceGetPublishedVideoListResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("VideoServiceVideoListResult(%+v)", *p)
+	return fmt.Sprintf("VideoServiceGetPublishedVideoListResult(%+v)", *p)
 }
 
-func (p *VideoServiceVideoListResult) DeepEqual(ano *VideoServiceVideoListResult) bool {
+func (p *VideoServiceGetPublishedVideoListResult) DeepEqual(ano *VideoServiceGetPublishedVideoListResult) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -3475,7 +3492,7 @@ func (p *VideoServiceVideoListResult) DeepEqual(ano *VideoServiceVideoListResult
 	return true
 }
 
-func (p *VideoServiceVideoListResult) Field0DeepEqual(src *DouyinPublishListResponse) bool {
+func (p *VideoServiceGetPublishedVideoListResult) Field0DeepEqual(src *DouyinGetPublishedListResponse) bool {
 
 	if !p.Success.DeepEqual(src) {
 		return false
@@ -3483,39 +3500,39 @@ func (p *VideoServiceVideoListResult) Field0DeepEqual(src *DouyinPublishListResp
 	return true
 }
 
-type VideoServiceGetVideoArgs struct {
-	Req *DouyinGetVideoRequest `thrift:"req,1" frugal:"1,default,DouyinGetVideoRequest" json:"req"`
+type VideoServiceGetFavoriteVideoListArgs struct {
+	Req *DouyinGetFavoriteListRequest `thrift:"req,1" frugal:"1,default,DouyinGetFavoriteListRequest" json:"req"`
 }
 
-func NewVideoServiceGetVideoArgs() *VideoServiceGetVideoArgs {
-	return &VideoServiceGetVideoArgs{}
+func NewVideoServiceGetFavoriteVideoListArgs() *VideoServiceGetFavoriteVideoListArgs {
+	return &VideoServiceGetFavoriteVideoListArgs{}
 }
 
-func (p *VideoServiceGetVideoArgs) InitDefault() {
-	*p = VideoServiceGetVideoArgs{}
+func (p *VideoServiceGetFavoriteVideoListArgs) InitDefault() {
+	*p = VideoServiceGetFavoriteVideoListArgs{}
 }
 
-var VideoServiceGetVideoArgs_Req_DEFAULT *DouyinGetVideoRequest
+var VideoServiceGetFavoriteVideoListArgs_Req_DEFAULT *DouyinGetFavoriteListRequest
 
-func (p *VideoServiceGetVideoArgs) GetReq() (v *DouyinGetVideoRequest) {
+func (p *VideoServiceGetFavoriteVideoListArgs) GetReq() (v *DouyinGetFavoriteListRequest) {
 	if !p.IsSetReq() {
-		return VideoServiceGetVideoArgs_Req_DEFAULT
+		return VideoServiceGetFavoriteVideoListArgs_Req_DEFAULT
 	}
 	return p.Req
 }
-func (p *VideoServiceGetVideoArgs) SetReq(val *DouyinGetVideoRequest) {
+func (p *VideoServiceGetFavoriteVideoListArgs) SetReq(val *DouyinGetFavoriteListRequest) {
 	p.Req = val
 }
 
-var fieldIDToName_VideoServiceGetVideoArgs = map[int16]string{
+var fieldIDToName_VideoServiceGetFavoriteVideoListArgs = map[int16]string{
 	1: "req",
 }
 
-func (p *VideoServiceGetVideoArgs) IsSetReq() bool {
+func (p *VideoServiceGetFavoriteVideoListArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-func (p *VideoServiceGetVideoArgs) Read(iprot thrift.TProtocol) (err error) {
+func (p *VideoServiceGetFavoriteVideoListArgs) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -3564,7 +3581,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_VideoServiceGetVideoArgs[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_VideoServiceGetFavoriteVideoListArgs[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -3574,17 +3591,17 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *VideoServiceGetVideoArgs) ReadField1(iprot thrift.TProtocol) error {
-	p.Req = NewDouyinGetVideoRequest()
+func (p *VideoServiceGetFavoriteVideoListArgs) ReadField1(iprot thrift.TProtocol) error {
+	p.Req = NewDouyinGetFavoriteListRequest()
 	if err := p.Req.Read(iprot); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (p *VideoServiceGetVideoArgs) Write(oprot thrift.TProtocol) (err error) {
+func (p *VideoServiceGetFavoriteVideoListArgs) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("GetVideo_args"); err != nil {
+	if err = oprot.WriteStructBegin("GetFavoriteVideoList_args"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -3611,7 +3628,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *VideoServiceGetVideoArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *VideoServiceGetFavoriteVideoListArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -3628,14 +3645,14 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *VideoServiceGetVideoArgs) String() string {
+func (p *VideoServiceGetFavoriteVideoListArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("VideoServiceGetVideoArgs(%+v)", *p)
+	return fmt.Sprintf("VideoServiceGetFavoriteVideoListArgs(%+v)", *p)
 }
 
-func (p *VideoServiceGetVideoArgs) DeepEqual(ano *VideoServiceGetVideoArgs) bool {
+func (p *VideoServiceGetFavoriteVideoListArgs) DeepEqual(ano *VideoServiceGetFavoriteVideoListArgs) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -3647,7 +3664,7 @@ func (p *VideoServiceGetVideoArgs) DeepEqual(ano *VideoServiceGetVideoArgs) bool
 	return true
 }
 
-func (p *VideoServiceGetVideoArgs) Field1DeepEqual(src *DouyinGetVideoRequest) bool {
+func (p *VideoServiceGetFavoriteVideoListArgs) Field1DeepEqual(src *DouyinGetFavoriteListRequest) bool {
 
 	if !p.Req.DeepEqual(src) {
 		return false
@@ -3655,39 +3672,39 @@ func (p *VideoServiceGetVideoArgs) Field1DeepEqual(src *DouyinGetVideoRequest) b
 	return true
 }
 
-type VideoServiceGetVideoResult struct {
-	Success *DouyinGetVideoResponse `thrift:"success,0,optional" frugal:"0,optional,DouyinGetVideoResponse" json:"success,omitempty"`
+type VideoServiceGetFavoriteVideoListResult struct {
+	Success *DouyinGetFavoriteListResponse `thrift:"success,0,optional" frugal:"0,optional,DouyinGetFavoriteListResponse" json:"success,omitempty"`
 }
 
-func NewVideoServiceGetVideoResult() *VideoServiceGetVideoResult {
-	return &VideoServiceGetVideoResult{}
+func NewVideoServiceGetFavoriteVideoListResult() *VideoServiceGetFavoriteVideoListResult {
+	return &VideoServiceGetFavoriteVideoListResult{}
 }
 
-func (p *VideoServiceGetVideoResult) InitDefault() {
-	*p = VideoServiceGetVideoResult{}
+func (p *VideoServiceGetFavoriteVideoListResult) InitDefault() {
+	*p = VideoServiceGetFavoriteVideoListResult{}
 }
 
-var VideoServiceGetVideoResult_Success_DEFAULT *DouyinGetVideoResponse
+var VideoServiceGetFavoriteVideoListResult_Success_DEFAULT *DouyinGetFavoriteListResponse
 
-func (p *VideoServiceGetVideoResult) GetSuccess() (v *DouyinGetVideoResponse) {
+func (p *VideoServiceGetFavoriteVideoListResult) GetSuccess() (v *DouyinGetFavoriteListResponse) {
 	if !p.IsSetSuccess() {
-		return VideoServiceGetVideoResult_Success_DEFAULT
+		return VideoServiceGetFavoriteVideoListResult_Success_DEFAULT
 	}
 	return p.Success
 }
-func (p *VideoServiceGetVideoResult) SetSuccess(x interface{}) {
-	p.Success = x.(*DouyinGetVideoResponse)
+func (p *VideoServiceGetFavoriteVideoListResult) SetSuccess(x interface{}) {
+	p.Success = x.(*DouyinGetFavoriteListResponse)
 }
 
-var fieldIDToName_VideoServiceGetVideoResult = map[int16]string{
+var fieldIDToName_VideoServiceGetFavoriteVideoListResult = map[int16]string{
 	0: "success",
 }
 
-func (p *VideoServiceGetVideoResult) IsSetSuccess() bool {
+func (p *VideoServiceGetFavoriteVideoListResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *VideoServiceGetVideoResult) Read(iprot thrift.TProtocol) (err error) {
+func (p *VideoServiceGetFavoriteVideoListResult) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -3736,7 +3753,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_VideoServiceGetVideoResult[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_VideoServiceGetFavoriteVideoListResult[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -3746,17 +3763,17 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *VideoServiceGetVideoResult) ReadField0(iprot thrift.TProtocol) error {
-	p.Success = NewDouyinGetVideoResponse()
+func (p *VideoServiceGetFavoriteVideoListResult) ReadField0(iprot thrift.TProtocol) error {
+	p.Success = NewDouyinGetFavoriteListResponse()
 	if err := p.Success.Read(iprot); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (p *VideoServiceGetVideoResult) Write(oprot thrift.TProtocol) (err error) {
+func (p *VideoServiceGetFavoriteVideoListResult) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("GetVideo_result"); err != nil {
+	if err = oprot.WriteStructBegin("GetFavoriteVideoList_result"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -3783,7 +3800,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *VideoServiceGetVideoResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *VideoServiceGetFavoriteVideoListResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err = oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
 			goto WriteFieldBeginError
@@ -3802,14 +3819,14 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
 }
 
-func (p *VideoServiceGetVideoResult) String() string {
+func (p *VideoServiceGetFavoriteVideoListResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("VideoServiceGetVideoResult(%+v)", *p)
+	return fmt.Sprintf("VideoServiceGetFavoriteVideoListResult(%+v)", *p)
 }
 
-func (p *VideoServiceGetVideoResult) DeepEqual(ano *VideoServiceGetVideoResult) bool {
+func (p *VideoServiceGetFavoriteVideoListResult) DeepEqual(ano *VideoServiceGetFavoriteVideoListResult) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -3821,7 +3838,7 @@ func (p *VideoServiceGetVideoResult) DeepEqual(ano *VideoServiceGetVideoResult) 
 	return true
 }
 
-func (p *VideoServiceGetVideoResult) Field0DeepEqual(src *DouyinGetVideoResponse) bool {
+func (p *VideoServiceGetFavoriteVideoListResult) Field0DeepEqual(src *DouyinGetFavoriteListResponse) bool {
 
 	if !p.Success.DeepEqual(src) {
 		return false

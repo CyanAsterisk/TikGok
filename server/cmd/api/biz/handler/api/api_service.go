@@ -99,7 +99,7 @@ func GetUserInfo(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.UserClient.GetUserInfo(ctx, &user.DouyinUserRequest{
+	res, err := global.UserClient.GetUserInfo(ctx, &user.DouyinGetUserRequest{
 		ViewerId: aid.(int64),
 		OwnerId:  req.UserID,
 	})
@@ -227,9 +227,9 @@ func VideoList(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.VideoClient.VideoList(ctx, &video.DouyinPublishListRequest{
-		ViewerId: req.UserID,
-		OwnerId:  aid.(int64),
+	res, err := global.VideoClient.GetPublishedVideoList(ctx, &video.DouyinGetPublishedListRequest{
+		ViewerId: aid.(int64),
+		OwnerId:  req.UserID,
 	})
 	if err != nil {
 		resp.StatusCode = int32(errno.RPCVideoErr.ErrCode)
@@ -301,9 +301,9 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.InteractionClient.FavoriteList(ctx, &interaction.DouyinFavoriteListRequest{
-		OwnerId:  req.UserID,
+	res, err := global.VideoClient.GetFavoriteVideoList(ctx, &video.DouyinGetFavoriteListRequest{
 		ViewerId: aid.(int64),
+		OwnerId:  req.UserID,
 	})
 	if err != nil {
 		resp.StatusCode = int32(errno.RPCInteractionErr.ErrCode)
@@ -372,7 +372,7 @@ func CommentList(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.InteractionClient.CommentList(ctx, &interaction.DouyinCommentListRequest{
+	res, err := global.InteractionClient.GetCommentList(ctx, &interaction.DouyinGetCommentListRequest{
 		VideoId: req.VideoID,
 	})
 	if err != nil {
@@ -444,7 +444,7 @@ func FollowingList(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.SocialClient.FollowingList(ctx, &sociality.DouyinRelationFollowListRequest{
+	res, err := global.SocialClient.GetFollowingList(ctx, &sociality.DouyinGetRelationFollowListRequest{
 		OwnerId:  req.UserID,
 		ViewerId: aid.(int64),
 	})
@@ -480,7 +480,7 @@ func FollowerList(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.SocialClient.FollowerList(ctx, &sociality.DouyinRelationFollowerListRequest{
+	res, err := global.SocialClient.GetFollowerList(ctx, &sociality.DouyinGetRelationFollowerListRequest{
 		OwnerId:  req.UserID,
 		ViewerId: aid.(int64),
 	})
@@ -516,7 +516,7 @@ func FriendList(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.SocialClient.FriendList(ctx, &sociality.DouyinRelationFriendListRequest{
+	res, err := global.SocialClient.GetFriendList(ctx, &sociality.DouyinGetRelationFriendListRequest{
 		OwnerId:  req.UserID,
 		ViewerId: aid.(int64),
 	})
@@ -553,7 +553,7 @@ func ChatHistory(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	res, err := global.ChatClient.ChatHistory(ctx, &chat.DouyinMessageChatRequest{
+	res, err := global.ChatClient.GetChatHistory(ctx, &chat.DouyinMessageGetChatHistoryRequest{
 		UserId:   aid.(int64),
 		ToUserId: req.ToUserID,
 	})

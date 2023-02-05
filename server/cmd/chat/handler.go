@@ -36,9 +36,9 @@ type Subscriber interface {
 	Subscribe(context.Context) (ch chan *chat.DouyinMessageActionRequest, cleanUp func(), err error)
 }
 
-// ChatHistory implements the ChatServiceImpl interface.
-func (s *ChatServiceImpl) ChatHistory(_ context.Context, req *chat.DouyinMessageChatRequest) (resp *chat.DouyinMessageChatResponse, err error) {
-	resp = new(chat.DouyinMessageChatResponse)
+// GetChatHistory implements the ChatServiceImpl interface.
+func (s *ChatServiceImpl) GetChatHistory(_ context.Context, req *chat.DouyinMessageGetChatHistoryRequest) (resp *chat.DouyinMessageGetChatHistoryResponse, err error) {
+	resp = new(chat.DouyinMessageGetChatHistoryResponse)
 	msgs, err := s.RedisManager.GetMessages(req.UserId, req.ToUserId)
 	if err != nil {
 		klog.Error("get chat history by redis error", err)
@@ -87,9 +87,15 @@ func (s *ChatServiceImpl) SentMessage(ctx context.Context, req *chat.DouyinMessa
 	return resp, nil
 }
 
-// LatestMessage implements the ChatServiceImpl interface.
-func (s *ChatServiceImpl) LatestMessage(_ context.Context, req *chat.DouyinMessageLatestRequest) (resp *chat.DouyinMessageLatestResponse, err error) {
-	resp = new(chat.DouyinMessageLatestResponse)
+// BatchGetLatestMessage implements the ChatServiceImpl interface.
+func (s *ChatServiceImpl) BatchGetLatestMessage(ctx context.Context, req *chat.DouyinMessageBatchGetLatestRequest) (resp *chat.DouyinMessageBatchGetLatestResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// GetLatestMessage implements the ChatServiceImpl interface.
+func (s *ChatServiceImpl) GetLatestMessage(_ context.Context, req *chat.DouyinMessageGetLatestRequest) (resp *chat.DouyinMessageGetLatestResponse, err error) {
+	resp = new(chat.DouyinMessageGetLatestResponse)
 	msg, err := s.RedisManager.GetLatestMessage(req.UserId, req.ToUserId)
 	if err != nil {
 		klog.Error("get latest message by redis error", err)

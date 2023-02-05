@@ -6,7 +6,6 @@ import (
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/model"
-	"github.com/CyanAsterisk/TikGok/server/cmd/video/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/video"
@@ -35,6 +34,10 @@ type InteractionManager interface {
 	GetCommentCount(ctx context.Context, videoId int64) (int64, error)
 	CheckFavorite(ctx context.Context, userId int64, videoId int64) (bool, error)
 	GetFavoriteCount(ctx context.Context, videoId int64) (int64, error)
+	GetFavoriteVideoIdList(ctx context.Context, userId int64) ([]int64, error)
+	BatchCheckFavorite(ctx context.Context, userId int64, videoIdList []int64) ([]bool, error)
+	BatchGetCommentCount(ctx context.Context, videoIdList []int64) ([]int64, error)
+	BatchGetFavoriteCount(ctx context.Context, videoId []int64) ([]int64, error)
 }
 
 // Publisher defines the publisher video interface.
@@ -108,9 +111,9 @@ func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *video.DouyinPu
 	//return
 }
 
-// VideoList implements the VideoServiceImpl interface.
-func (s *VideoServiceImpl) VideoList(ctx context.Context, req *video.DouyinPublishListRequest) (resp *video.DouyinPublishListResponse, err error) {
-	resp = new(video.DouyinPublishListResponse)
+// GetPublishedVideoList implements the VideoServiceImpl interface.
+func (s *VideoServiceImpl) GetPublishedVideoList(ctx context.Context, req *video.DouyinGetPublishedListRequest) (resp *video.DouyinGetPublishedListResponse, err error) {
+	resp = new(video.DouyinGetPublishedListResponse)
 	vs, err := dao.GetVideosByUserId(req.OwnerId)
 	if err != nil {
 		klog.Error("get published video list err", err)
@@ -127,50 +130,38 @@ func (s *VideoServiceImpl) VideoList(ctx context.Context, req *video.DouyinPubli
 	return
 }
 
-// GetVideo implements the VideoServiceImpl interface.
-func (s *VideoServiceImpl) GetVideo(ctx context.Context, req *video.DouyinGetVideoRequest) (resp *video.DouyinGetVideoResponse, err error) {
-	resp = new(video.DouyinGetVideoResponse)
-	v, err := dao.GetVideoByVideoId(req.VideoId)
+// GetFavoriteVideoList implements the VideoServiceImpl interface.
+func (s *VideoServiceImpl) GetFavoriteVideoList(ctx context.Context, req *video.DouyinGetFavoriteListRequest) (resp *video.DouyinGetFavoriteListResponse, err error) {
+	resp = new(video.DouyinGetFavoriteListResponse)
+
+	idList, err := s.InteractionManager.GetFavoriteVideoIdList(ctx, req.OwnerId)
 	if err != nil {
-		klog.Error("get video err", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("get video err"))
-		return
+		klog.Error("get favorite video id list err", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.RPCInteractionErr)
+		return resp, nil
 	}
-	resp.Video, err = s.packVideo(ctx, v, req.VideoId)
+
+	videos := make([]*model.Video, 0)
+	for _, vid := range idList {
+		v, err := dao.GetVideoByVideoId(vid)
+		if err != nil {
+			klog.Error("get video by id err", err)
+			resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr)
+			return resp, nil
+		}
+		videos = append(videos, v)
+	}
+	resp.VideoList, err = s.packVideos(ctx, videos, req.ViewerId)
 	if err != nil {
-		klog.Error("pack video err", err.Error())
-		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr.WithMessage("pack video err"))
-		return
+		klog.Error("pack video err", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr)
+		return resp, nil
 	}
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return
 }
 
-func (s *VideoServiceImpl) packVideo(ctx context.Context, mv *model.Video, uid int64) (bv *base.Video, err error) {
-	bv = pkg.Video(mv)
-	if bv.Author, err = s.GetUser(ctx, uid, mv.Uid); err != nil {
-		return nil, err
-	}
-	if bv.IsFavorite, err = s.CheckFavorite(ctx, uid, bv.Id); err != nil {
-		return nil, err
-	}
-	if bv.CommentCount, err = s.GetCommentCount(ctx, bv.Id); err != nil {
-		return nil, err
-	}
-	if bv.FavoriteCount, err = s.GetFavoriteCount(ctx, bv.Id); err != nil {
-		return nil, err
-	}
-	return
-}
-
 func (s *VideoServiceImpl) packVideos(ctx context.Context, mvs []*model.Video, uid int64) (bvs []*base.Video, err error) {
-	bvs = make([]*base.Video, 0)
-	for _, mv := range mvs {
-		bv, err := s.packVideo(ctx, mv, uid)
-		if err != nil {
-			return nil, err
-		}
-		bvs = append(bvs, bv)
-	}
-	return bvs, nil
+
+	return nil, nil
 }

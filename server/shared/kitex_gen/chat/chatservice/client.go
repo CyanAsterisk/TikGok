@@ -11,9 +11,10 @@ import (
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
-	ChatHistory(ctx context.Context, req *chat.DouyinMessageChatRequest, callOptions ...callopt.Option) (r *chat.DouyinMessageChatResponse, err error)
+	GetChatHistory(ctx context.Context, req *chat.DouyinMessageGetChatHistoryRequest, callOptions ...callopt.Option) (r *chat.DouyinMessageGetChatHistoryResponse, err error)
 	SentMessage(ctx context.Context, req *chat.DouyinMessageActionRequest, callOptions ...callopt.Option) (r *chat.DouyinMessageActionResponse, err error)
-	LatestMessage(ctx context.Context, req *chat.DouyinMessageLatestRequest, callOptions ...callopt.Option) (r *chat.DouyinMessageLatestResponse, err error)
+	GetLatestMessage(ctx context.Context, req *chat.DouyinMessageGetLatestRequest, callOptions ...callopt.Option) (r *chat.DouyinMessageGetLatestResponse, err error)
+	BatchGetLatestMessage(ctx context.Context, req *chat.DouyinMessageBatchGetLatestRequest, callOptions ...callopt.Option) (r *chat.DouyinMessageBatchGetLatestResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -45,9 +46,9 @@ type kChatServiceClient struct {
 	*kClient
 }
 
-func (p *kChatServiceClient) ChatHistory(ctx context.Context, req *chat.DouyinMessageChatRequest, callOptions ...callopt.Option) (r *chat.DouyinMessageChatResponse, err error) {
+func (p *kChatServiceClient) GetChatHistory(ctx context.Context, req *chat.DouyinMessageGetChatHistoryRequest, callOptions ...callopt.Option) (r *chat.DouyinMessageGetChatHistoryResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.ChatHistory(ctx, req)
+	return p.kClient.GetChatHistory(ctx, req)
 }
 
 func (p *kChatServiceClient) SentMessage(ctx context.Context, req *chat.DouyinMessageActionRequest, callOptions ...callopt.Option) (r *chat.DouyinMessageActionResponse, err error) {
@@ -55,7 +56,12 @@ func (p *kChatServiceClient) SentMessage(ctx context.Context, req *chat.DouyinMe
 	return p.kClient.SentMessage(ctx, req)
 }
 
-func (p *kChatServiceClient) LatestMessage(ctx context.Context, req *chat.DouyinMessageLatestRequest, callOptions ...callopt.Option) (r *chat.DouyinMessageLatestResponse, err error) {
+func (p *kChatServiceClient) GetLatestMessage(ctx context.Context, req *chat.DouyinMessageGetLatestRequest, callOptions ...callopt.Option) (r *chat.DouyinMessageGetLatestResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.LatestMessage(ctx, req)
+	return p.kClient.GetLatestMessage(ctx, req)
+}
+
+func (p *kChatServiceClient) BatchGetLatestMessage(ctx context.Context, req *chat.DouyinMessageBatchGetLatestRequest, callOptions ...callopt.Option) (r *chat.DouyinMessageBatchGetLatestResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.BatchGetLatestMessage(ctx, req)
 }

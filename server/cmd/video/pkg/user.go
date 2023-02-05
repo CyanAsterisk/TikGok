@@ -14,20 +14,22 @@ type UserManager struct {
 
 // GetUsers gets users info by list.
 func (m *UserManager) GetUsers(ctx context.Context, list []int64, viewerId int64) ([]*base.User, error) {
-	var users []*base.User
-	for _, oid := range list {
-		u, err := m.UserService.GetUserInfo(ctx, &user.DouyinUserRequest{ViewerId: viewerId, OwnerId: oid})
-		if err != nil {
-			return nil, err
-		}
-		users = append(users, u.User)
+	res, err := m.UserService.BatchGetUserInfo(ctx, &user.DouyinBatchGetUserRequest{
+		ViewerId: viewerId,
+		OwnerIds: list,
+	})
+	if err != nil {
+		return nil, err
 	}
-	return users, nil
+	if res.BaseResp.StatusCode != int32(errno.Success.ErrCode) {
+		return nil, errno.UserServerErr.WithMessage(res.BaseResp.StatusMsg)
+	}
+	return res.Users, nil
 }
 
 // GetUser gets user info.
 func (m *UserManager) GetUser(ctx context.Context, viewerId, ownerId int64) (*base.User, error) {
-	resp, err := m.UserService.GetUserInfo(ctx, &user.DouyinUserRequest{ViewerId: viewerId, OwnerId: ownerId})
+	resp, err := m.UserService.GetUserInfo(ctx, &user.DouyinGetUserRequest{ViewerId: viewerId, OwnerId: ownerId})
 	if err != nil {
 		return nil, err
 	}

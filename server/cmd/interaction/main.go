@@ -32,13 +32,9 @@ func main() {
 	)
 	defer p.Shutdown(context.Background())
 	initialize.InitMq()
-	initialize.InitVideo()
 
 	impl := &InteractionServerImpl{
 		CommentManager: &pkg.CommentManager{},
-		VideoManager: &pkg.VideoManager{
-			VideoService: global.VideoClient,
-		},
 	}
 	// Create new server.
 	srv := interaction.NewServer(impl,

@@ -13,7 +13,8 @@ import (
 type Client interface {
 	Register(ctx context.Context, req *user.DouyinUserRegisterRequest, callOptions ...callopt.Option) (r *user.DouyinUserRegisterResponse, err error)
 	Login(ctx context.Context, req *user.DouyinUserLoginRequest, callOptions ...callopt.Option) (r *user.DouyinUserLoginResponse, err error)
-	GetUserInfo(ctx context.Context, req *user.DouyinUserRequest, callOptions ...callopt.Option) (r *user.DouyinUserResponse, err error)
+	GetUserInfo(ctx context.Context, req *user.DouyinGetUserRequest, callOptions ...callopt.Option) (r *user.DouyinGetUserResponse, err error)
+	BatchGetUserInfo(ctx context.Context, req *user.DouyinBatchGetUserRequest, callOptions ...callopt.Option) (r *user.DouyinBatchGetUserResonse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -55,7 +56,12 @@ func (p *kUserServiceClient) Login(ctx context.Context, req *user.DouyinUserLogi
 	return p.kClient.Login(ctx, req)
 }
 
-func (p *kUserServiceClient) GetUserInfo(ctx context.Context, req *user.DouyinUserRequest, callOptions ...callopt.Option) (r *user.DouyinUserResponse, err error) {
+func (p *kUserServiceClient) GetUserInfo(ctx context.Context, req *user.DouyinGetUserRequest, callOptions ...callopt.Option) (r *user.DouyinGetUserResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.GetUserInfo(ctx, req)
+}
+
+func (p *kUserServiceClient) BatchGetUserInfo(ctx context.Context, req *user.DouyinBatchGetUserRequest, callOptions ...callopt.Option) (r *user.DouyinBatchGetUserResonse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.BatchGetUserInfo(ctx, req)
 }

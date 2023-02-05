@@ -24,29 +24,31 @@ struct douyin_publish_action_response {
     1: required base.douyin_base_response base_resp,
 }
 
-struct douyin_publish_list_request {
+struct douyin_get_published_list_request {
     1: required i64 viewer_id, // User id of viewer,set to zero when unclear
     2: required i64 owner_id,  // User id of owner
 }
 
-struct douyin_publish_list_response {
+struct douyin_get_published_list_response {
     1: required base.douyin_base_response base_resp,
     2: required list<base.Video> video_list,         // List of videos posted by the user
 }
 
-struct douyin_get_video_request {
-    1: required i64 video_id,  // Video id
-    2: required i64 viewer_id, // User id of viewer,set to zero when unclear
+
+
+struct douyin_get_favorite_list_request {
+    1: required i64 viewer_id, // User id of viewer,set to zero when unclear
+    2: required i64 owner_id,  // User id of owner.
 }
 
-struct douyin_get_video_response {
+struct douyin_get_favorite_list_response {
     1: required base.douyin_base_response base_resp,
-    2: required base.Video video,
+    2: required list<base.Video> video_list,         // List of videos posted by the user
 }
 
 service VideoService {
     douyin_feed_response Feed(1: douyin_feed_request req),
     douyin_publish_action_response PublishVideo(1: douyin_publish_action_request req),
-    douyin_publish_list_response VideoList(1: douyin_publish_list_request req),
-    douyin_get_video_response GetVideo(1: douyin_get_video_request req),
+    douyin_get_published_list_response GetPublishedVideoList(1: douyin_get_published_list_request req),
+    douyin_get_favorite_list_response GetFavoriteVideoList(1: douyin_get_favorite_list_request req),
 }

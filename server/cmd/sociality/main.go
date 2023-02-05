@@ -34,6 +34,7 @@ func main() {
 	)
 	defer p.Shutdown(context.Background())
 	initialize.InitUser()
+	initialize.InitChat()
 
 	Publisher, err := pkg.NewPublisher(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
 	if err != nil {

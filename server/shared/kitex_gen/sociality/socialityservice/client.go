@@ -12,12 +12,15 @@ import (
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
 	Action(ctx context.Context, req *sociality.DouyinRelationActionRequest, callOptions ...callopt.Option) (r *sociality.DouyinRelationActionResponse, err error)
-	FollowingList(ctx context.Context, req *sociality.DouyinRelationFollowListRequest, callOptions ...callopt.Option) (r *sociality.DouyinRelationFollowListResponse, err error)
-	FollowerList(ctx context.Context, req *sociality.DouyinRelationFollowerListRequest, callOptions ...callopt.Option) (r *sociality.DouyinRelationFollowerListResponse, err error)
-	FriendList(ctx context.Context, req *sociality.DouyinRelationFriendListRequest, callOptions ...callopt.Option) (r *sociality.DouyinRelationFriendListResponse, err error)
+	GetFollowingList(ctx context.Context, req *sociality.DouyinGetRelationFollowListRequest, callOptions ...callopt.Option) (r *sociality.DouyinGetRelationFollowListResponse, err error)
+	GetFollowerList(ctx context.Context, req *sociality.DouyinGetRelationFollowerListRequest, callOptions ...callopt.Option) (r *sociality.DouyinGetRelationFollowerListResponse, err error)
+	GetFriendList(ctx context.Context, req *sociality.DouyinGetRelationFriendListRequest, callOptions ...callopt.Option) (r *sociality.DouyinGetRelationFriendListResponse, err error)
 	CheckFollow(ctx context.Context, req *sociality.DouyinCheckFollowRequest, callOptions ...callopt.Option) (r *sociality.DouyinCheckFollowResponse, err error)
 	GetFollowerCount(ctx context.Context, req *sociality.DouyinGetFollowerCountRequest, callOptions ...callopt.Option) (r *sociality.DouyinGetFollowerCountResponse, err error)
 	GetFollowingCount(ctx context.Context, req *sociality.DouyinGetFollowingCountRequest, callOptions ...callopt.Option) (r *sociality.DouyinGetFollowingCountResponse, err error)
+	BatchCheckFollow(ctx context.Context, req *sociality.DouyinBatchCheckFollowRequest, callOptions ...callopt.Option) (r *sociality.DouyinBatchCheckFollowResponse, err error)
+	BatchGetFollowerCount(ctx context.Context, req *sociality.DouyinBatchGetFollowerCountRequest, callOptions ...callopt.Option) (r *sociality.DouyinBatchGetFollowerCountResponse, err error)
+	BatchGetFollowingCount(ctx context.Context, req *sociality.DouyinBatchGetFollowingCountRequest, callOptions ...callopt.Option) (r *sociality.DouyinBatchGetFollowingCountResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -54,19 +57,19 @@ func (p *kSocialityServiceClient) Action(ctx context.Context, req *sociality.Dou
 	return p.kClient.Action(ctx, req)
 }
 
-func (p *kSocialityServiceClient) FollowingList(ctx context.Context, req *sociality.DouyinRelationFollowListRequest, callOptions ...callopt.Option) (r *sociality.DouyinRelationFollowListResponse, err error) {
+func (p *kSocialityServiceClient) GetFollowingList(ctx context.Context, req *sociality.DouyinGetRelationFollowListRequest, callOptions ...callopt.Option) (r *sociality.DouyinGetRelationFollowListResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.FollowingList(ctx, req)
+	return p.kClient.GetFollowingList(ctx, req)
 }
 
-func (p *kSocialityServiceClient) FollowerList(ctx context.Context, req *sociality.DouyinRelationFollowerListRequest, callOptions ...callopt.Option) (r *sociality.DouyinRelationFollowerListResponse, err error) {
+func (p *kSocialityServiceClient) GetFollowerList(ctx context.Context, req *sociality.DouyinGetRelationFollowerListRequest, callOptions ...callopt.Option) (r *sociality.DouyinGetRelationFollowerListResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.FollowerList(ctx, req)
+	return p.kClient.GetFollowerList(ctx, req)
 }
 
-func (p *kSocialityServiceClient) FriendList(ctx context.Context, req *sociality.DouyinRelationFriendListRequest, callOptions ...callopt.Option) (r *sociality.DouyinRelationFriendListResponse, err error) {
+func (p *kSocialityServiceClient) GetFriendList(ctx context.Context, req *sociality.DouyinGetRelationFriendListRequest, callOptions ...callopt.Option) (r *sociality.DouyinGetRelationFriendListResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.FriendList(ctx, req)
+	return p.kClient.GetFriendList(ctx, req)
 }
 
 func (p *kSocialityServiceClient) CheckFollow(ctx context.Context, req *sociality.DouyinCheckFollowRequest, callOptions ...callopt.Option) (r *sociality.DouyinCheckFollowResponse, err error) {
@@ -82,4 +85,19 @@ func (p *kSocialityServiceClient) GetFollowerCount(ctx context.Context, req *soc
 func (p *kSocialityServiceClient) GetFollowingCount(ctx context.Context, req *sociality.DouyinGetFollowingCountRequest, callOptions ...callopt.Option) (r *sociality.DouyinGetFollowingCountResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.GetFollowingCount(ctx, req)
+}
+
+func (p *kSocialityServiceClient) BatchCheckFollow(ctx context.Context, req *sociality.DouyinBatchCheckFollowRequest, callOptions ...callopt.Option) (r *sociality.DouyinBatchCheckFollowResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.BatchCheckFollow(ctx, req)
+}
+
+func (p *kSocialityServiceClient) BatchGetFollowerCount(ctx context.Context, req *sociality.DouyinBatchGetFollowerCountRequest, callOptions ...callopt.Option) (r *sociality.DouyinBatchGetFollowerCountResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.BatchGetFollowerCount(ctx, req)
+}
+
+func (p *kSocialityServiceClient) BatchGetFollowingCount(ctx context.Context, req *sociality.DouyinBatchGetFollowingCountRequest, callOptions ...callopt.Option) (r *sociality.DouyinBatchGetFollowingCountResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.BatchGetFollowingCount(ctx, req)
 }

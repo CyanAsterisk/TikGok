@@ -7,7 +7,6 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
-	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction"
 	"github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -16,7 +15,6 @@ import (
 // InteractionServerImpl implements the last service interface defined in the IDL.
 type InteractionServerImpl struct {
 	CommentManager
-	VideoManager
 
 	CommentPublisher
 	CommentSubscriber
@@ -27,12 +25,6 @@ type InteractionServerImpl struct {
 // CommentManager manage comment status.
 type CommentManager interface {
 	GetResp(req *interaction.DouyinCommentActionRequest) (comment *model.Comment, err error)
-}
-
-// VideoManager defines the Anti Corruption Layer
-// for get video logic.
-type VideoManager interface {
-	GetVideos(ctx context.Context, list []int64, viewerId int64) ([]*base.Video, error)
 }
 
 // CommentPublisher defines the comment action publisher interface.
@@ -97,29 +89,21 @@ func (s *InteractionServerImpl) Favorite(ctx context.Context, req *interaction.D
 	//return resp, nil
 }
 
-// FavoriteList implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) FavoriteList(ctx context.Context, req *interaction.DouyinFavoriteListRequest) (resp *interaction.DouyinFavoriteListResponse, err error) {
-	resp = new(interaction.DouyinFavoriteListResponse)
-	list, err := dao.GetFavoriteVideoIdListByUserId(req.OwnerId)
+// GetFavoriteVideoIdList implements the InteractionServerImpl interface.
+func (s *InteractionServerImpl) GetFavoriteVideoIdList(ctx context.Context, req *interaction.DouyinGetFavoriteVideoIdListRequest) (resp *interaction.DouyinGetFavoriteVideoIdListResponse, err error) {
+	resp = new(interaction.DouyinGetFavoriteVideoIdListResponse)
+	resp.VideoList, err = dao.GetFavoriteVideoIdListByUserId(req.UserId)
 	if err != nil {
 		klog.Error("get user favorite video list error", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get user favorite video list error"))
+		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get user favorite video id list error"))
 		return resp, nil
 	}
-	videos, err := s.VideoManager.GetVideos(ctx, list, req.ViewerId)
-	if err != nil {
-		klog.Error("get videos by video manager error", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.RPCVideoErr.WithMessage("get user favorite video list error"))
-		return resp, nil
-	}
-	resp.VideoList = videos
-	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 }
 
-// FavoriteCount implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) FavoriteCount(_ context.Context, req *interaction.DouyinFavoriteCountRequest) (resp *interaction.DouyinFavoriteCountResponse, err error) {
-	resp = new(interaction.DouyinFavoriteCountResponse)
+// GetFavoriteCount implements the InteractionServerImpl interface.
+func (s *InteractionServerImpl) GetFavoriteCount(_ context.Context, req *interaction.DouyinGetFavoriteCountRequest) (resp *interaction.DouyinGetFavoriteCountResponse, err error) {
+	resp = new(interaction.DouyinGetFavoriteCountResponse)
 	count, err := dao.FavoriteCountByVideoId(req.VideoId)
 	if err != nil {
 		klog.Error("get favorite count error", err)
@@ -175,9 +159,9 @@ func (s *InteractionServerImpl) Comment(ctx context.Context, req *interaction.Do
 	//return resp, nil
 }
 
-// CommentList implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) CommentList(_ context.Context, req *interaction.DouyinCommentListRequest) (resp *interaction.DouyinCommentListResponse, err error) {
-	resp = new(interaction.DouyinCommentListResponse)
+// GetCommentList implements the InteractionServerImpl interface.
+func (s *InteractionServerImpl) GetCommentList(_ context.Context, req *interaction.DouyinGetCommentListRequest) (resp *interaction.DouyinGetCommentListResponse, err error) {
+	resp = new(interaction.DouyinGetCommentListResponse)
 	list, err := dao.GetCommentListByVideoId(req.VideoId)
 	if err != nil {
 		klog.Error("get comment list by video id error", err)
@@ -189,9 +173,9 @@ func (s *InteractionServerImpl) CommentList(_ context.Context, req *interaction.
 	return resp, nil
 }
 
-// CommentCount implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) CommentCount(_ context.Context, req *interaction.DouyinCommentCountRequest) (resp *interaction.DouyinCommentCountResponse, err error) {
-	resp = new(interaction.DouyinCommentCountResponse)
+// GetCommentCount implements the InteractionServerImpl interface.
+func (s *InteractionServerImpl) GetCommentCount(_ context.Context, req *interaction.DouyinGetCommentCountRequest) (resp *interaction.DouyinGetCommentCountResponse, err error) {
+	resp = new(interaction.DouyinGetCommentCountResponse)
 	count, err := dao.CommentCountByVideoId(req.VideoId)
 	if err != nil {
 		klog.Error("get comment count error", err)
@@ -201,4 +185,22 @@ func (s *InteractionServerImpl) CommentCount(_ context.Context, req *interaction
 	resp.Count = count
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
+}
+
+// BatchGetFavoriteCount implements the InteractionServerImpl interface.
+func (s *InteractionServerImpl) BatchGetFavoriteCount(ctx context.Context, req *interaction.DouyinBatchGetFavoriteCountRequest) (resp *interaction.DouyinBatchGetFavoriteCountResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// BatchGetCommentCount implements the InteractionServerImpl interface.
+func (s *InteractionServerImpl) BatchGetCommentCount(ctx context.Context, req *interaction.DouyinBatchGetCommentCountRequest) (resp *interaction.DouyinBatchGetCommentCountResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// BatchCheckFavorite implements the InteractionServerImpl interface.
+func (s *InteractionServerImpl) BatchCheckFavorite(ctx context.Context, req *interaction.DouyinBatchCheckFavoriteRequest) (resp *interaction.DouyinBatchCheckFavoriteResponse, err error) {
+	// TODO: Your code here...
+	return
 }

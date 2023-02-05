@@ -19,13 +19,16 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	serviceName := "InteractionServer"
 	handlerType := (*interaction.InteractionServer)(nil)
 	methods := map[string]kitex.MethodInfo{
-		"Favorite":      kitex.NewMethodInfo(favoriteHandler, newInteractionServerFavoriteArgs, newInteractionServerFavoriteResult, false),
-		"FavoriteList":  kitex.NewMethodInfo(favoriteListHandler, newInteractionServerFavoriteListArgs, newInteractionServerFavoriteListResult, false),
-		"FavoriteCount": kitex.NewMethodInfo(favoriteCountHandler, newInteractionServerFavoriteCountArgs, newInteractionServerFavoriteCountResult, false),
-		"Comment":       kitex.NewMethodInfo(commentHandler, newInteractionServerCommentArgs, newInteractionServerCommentResult, false),
-		"CommentList":   kitex.NewMethodInfo(commentListHandler, newInteractionServerCommentListArgs, newInteractionServerCommentListResult, false),
-		"CommentCount":  kitex.NewMethodInfo(commentCountHandler, newInteractionServerCommentCountArgs, newInteractionServerCommentCountResult, false),
-		"CheckFavorite": kitex.NewMethodInfo(checkFavoriteHandler, newInteractionServerCheckFavoriteArgs, newInteractionServerCheckFavoriteResult, false),
+		"Favorite":               kitex.NewMethodInfo(favoriteHandler, newInteractionServerFavoriteArgs, newInteractionServerFavoriteResult, false),
+		"GetFavoriteVideoIdList": kitex.NewMethodInfo(getFavoriteVideoIdListHandler, newInteractionServerGetFavoriteVideoIdListArgs, newInteractionServerGetFavoriteVideoIdListResult, false),
+		"GetFavoriteCount":       kitex.NewMethodInfo(getFavoriteCountHandler, newInteractionServerGetFavoriteCountArgs, newInteractionServerGetFavoriteCountResult, false),
+		"BatchGetFavoriteCount":  kitex.NewMethodInfo(batchGetFavoriteCountHandler, newInteractionServerBatchGetFavoriteCountArgs, newInteractionServerBatchGetFavoriteCountResult, false),
+		"Comment":                kitex.NewMethodInfo(commentHandler, newInteractionServerCommentArgs, newInteractionServerCommentResult, false),
+		"GetCommentList":         kitex.NewMethodInfo(getCommentListHandler, newInteractionServerGetCommentListArgs, newInteractionServerGetCommentListResult, false),
+		"GetCommentCount":        kitex.NewMethodInfo(getCommentCountHandler, newInteractionServerGetCommentCountArgs, newInteractionServerGetCommentCountResult, false),
+		"CheckFavorite":          kitex.NewMethodInfo(checkFavoriteHandler, newInteractionServerCheckFavoriteArgs, newInteractionServerCheckFavoriteResult, false),
+		"BatchGetCommentCount":   kitex.NewMethodInfo(batchGetCommentCountHandler, newInteractionServerBatchGetCommentCountArgs, newInteractionServerBatchGetCommentCountResult, false),
+		"BatchCheckFavorite":     kitex.NewMethodInfo(batchCheckFavoriteHandler, newInteractionServerBatchCheckFavoriteArgs, newInteractionServerBatchCheckFavoriteResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName": "interaction",
@@ -59,40 +62,58 @@ func newInteractionServerFavoriteResult() interface{} {
 	return interaction.NewInteractionServerFavoriteResult()
 }
 
-func favoriteListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*interaction.InteractionServerFavoriteListArgs)
-	realResult := result.(*interaction.InteractionServerFavoriteListResult)
-	success, err := handler.(interaction.InteractionServer).FavoriteList(ctx, realArg.Req)
+func getFavoriteVideoIdListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*interaction.InteractionServerGetFavoriteVideoIdListArgs)
+	realResult := result.(*interaction.InteractionServerGetFavoriteVideoIdListResult)
+	success, err := handler.(interaction.InteractionServer).GetFavoriteVideoIdList(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
 	realResult.Success = success
 	return nil
 }
-func newInteractionServerFavoriteListArgs() interface{} {
-	return interaction.NewInteractionServerFavoriteListArgs()
+func newInteractionServerGetFavoriteVideoIdListArgs() interface{} {
+	return interaction.NewInteractionServerGetFavoriteVideoIdListArgs()
 }
 
-func newInteractionServerFavoriteListResult() interface{} {
-	return interaction.NewInteractionServerFavoriteListResult()
+func newInteractionServerGetFavoriteVideoIdListResult() interface{} {
+	return interaction.NewInteractionServerGetFavoriteVideoIdListResult()
 }
 
-func favoriteCountHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*interaction.InteractionServerFavoriteCountArgs)
-	realResult := result.(*interaction.InteractionServerFavoriteCountResult)
-	success, err := handler.(interaction.InteractionServer).FavoriteCount(ctx, realArg.Req)
+func getFavoriteCountHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*interaction.InteractionServerGetFavoriteCountArgs)
+	realResult := result.(*interaction.InteractionServerGetFavoriteCountResult)
+	success, err := handler.(interaction.InteractionServer).GetFavoriteCount(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
 	realResult.Success = success
 	return nil
 }
-func newInteractionServerFavoriteCountArgs() interface{} {
-	return interaction.NewInteractionServerFavoriteCountArgs()
+func newInteractionServerGetFavoriteCountArgs() interface{} {
+	return interaction.NewInteractionServerGetFavoriteCountArgs()
 }
 
-func newInteractionServerFavoriteCountResult() interface{} {
-	return interaction.NewInteractionServerFavoriteCountResult()
+func newInteractionServerGetFavoriteCountResult() interface{} {
+	return interaction.NewInteractionServerGetFavoriteCountResult()
+}
+
+func batchGetFavoriteCountHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*interaction.InteractionServerBatchGetFavoriteCountArgs)
+	realResult := result.(*interaction.InteractionServerBatchGetFavoriteCountResult)
+	success, err := handler.(interaction.InteractionServer).BatchGetFavoriteCount(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newInteractionServerBatchGetFavoriteCountArgs() interface{} {
+	return interaction.NewInteractionServerBatchGetFavoriteCountArgs()
+}
+
+func newInteractionServerBatchGetFavoriteCountResult() interface{} {
+	return interaction.NewInteractionServerBatchGetFavoriteCountResult()
 }
 
 func commentHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
@@ -113,40 +134,40 @@ func newInteractionServerCommentResult() interface{} {
 	return interaction.NewInteractionServerCommentResult()
 }
 
-func commentListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*interaction.InteractionServerCommentListArgs)
-	realResult := result.(*interaction.InteractionServerCommentListResult)
-	success, err := handler.(interaction.InteractionServer).CommentList(ctx, realArg.Req)
+func getCommentListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*interaction.InteractionServerGetCommentListArgs)
+	realResult := result.(*interaction.InteractionServerGetCommentListResult)
+	success, err := handler.(interaction.InteractionServer).GetCommentList(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
 	realResult.Success = success
 	return nil
 }
-func newInteractionServerCommentListArgs() interface{} {
-	return interaction.NewInteractionServerCommentListArgs()
+func newInteractionServerGetCommentListArgs() interface{} {
+	return interaction.NewInteractionServerGetCommentListArgs()
 }
 
-func newInteractionServerCommentListResult() interface{} {
-	return interaction.NewInteractionServerCommentListResult()
+func newInteractionServerGetCommentListResult() interface{} {
+	return interaction.NewInteractionServerGetCommentListResult()
 }
 
-func commentCountHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*interaction.InteractionServerCommentCountArgs)
-	realResult := result.(*interaction.InteractionServerCommentCountResult)
-	success, err := handler.(interaction.InteractionServer).CommentCount(ctx, realArg.Req)
+func getCommentCountHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*interaction.InteractionServerGetCommentCountArgs)
+	realResult := result.(*interaction.InteractionServerGetCommentCountResult)
+	success, err := handler.(interaction.InteractionServer).GetCommentCount(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
 	realResult.Success = success
 	return nil
 }
-func newInteractionServerCommentCountArgs() interface{} {
-	return interaction.NewInteractionServerCommentCountArgs()
+func newInteractionServerGetCommentCountArgs() interface{} {
+	return interaction.NewInteractionServerGetCommentCountArgs()
 }
 
-func newInteractionServerCommentCountResult() interface{} {
-	return interaction.NewInteractionServerCommentCountResult()
+func newInteractionServerGetCommentCountResult() interface{} {
+	return interaction.NewInteractionServerGetCommentCountResult()
 }
 
 func checkFavoriteHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
@@ -165,6 +186,42 @@ func newInteractionServerCheckFavoriteArgs() interface{} {
 
 func newInteractionServerCheckFavoriteResult() interface{} {
 	return interaction.NewInteractionServerCheckFavoriteResult()
+}
+
+func batchGetCommentCountHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*interaction.InteractionServerBatchGetCommentCountArgs)
+	realResult := result.(*interaction.InteractionServerBatchGetCommentCountResult)
+	success, err := handler.(interaction.InteractionServer).BatchGetCommentCount(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newInteractionServerBatchGetCommentCountArgs() interface{} {
+	return interaction.NewInteractionServerBatchGetCommentCountArgs()
+}
+
+func newInteractionServerBatchGetCommentCountResult() interface{} {
+	return interaction.NewInteractionServerBatchGetCommentCountResult()
+}
+
+func batchCheckFavoriteHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*interaction.InteractionServerBatchCheckFavoriteArgs)
+	realResult := result.(*interaction.InteractionServerBatchCheckFavoriteResult)
+	success, err := handler.(interaction.InteractionServer).BatchCheckFavorite(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newInteractionServerBatchCheckFavoriteArgs() interface{} {
+	return interaction.NewInteractionServerBatchCheckFavoriteArgs()
+}
+
+func newInteractionServerBatchCheckFavoriteResult() interface{} {
+	return interaction.NewInteractionServerBatchCheckFavoriteResult()
 }
 
 type kClient struct {
@@ -187,21 +244,31 @@ func (p *kClient) Favorite(ctx context.Context, req *interaction.DouyinFavoriteA
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) FavoriteList(ctx context.Context, req *interaction.DouyinFavoriteListRequest) (r *interaction.DouyinFavoriteListResponse, err error) {
-	var _args interaction.InteractionServerFavoriteListArgs
+func (p *kClient) GetFavoriteVideoIdList(ctx context.Context, req *interaction.DouyinGetFavoriteVideoIdListRequest) (r *interaction.DouyinGetFavoriteVideoIdListResponse, err error) {
+	var _args interaction.InteractionServerGetFavoriteVideoIdListArgs
 	_args.Req = req
-	var _result interaction.InteractionServerFavoriteListResult
-	if err = p.c.Call(ctx, "FavoriteList", &_args, &_result); err != nil {
+	var _result interaction.InteractionServerGetFavoriteVideoIdListResult
+	if err = p.c.Call(ctx, "GetFavoriteVideoIdList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) FavoriteCount(ctx context.Context, req *interaction.DouyinFavoriteCountRequest) (r *interaction.DouyinFavoriteCountResponse, err error) {
-	var _args interaction.InteractionServerFavoriteCountArgs
+func (p *kClient) GetFavoriteCount(ctx context.Context, req *interaction.DouyinGetFavoriteCountRequest) (r *interaction.DouyinGetFavoriteCountResponse, err error) {
+	var _args interaction.InteractionServerGetFavoriteCountArgs
 	_args.Req = req
-	var _result interaction.InteractionServerFavoriteCountResult
-	if err = p.c.Call(ctx, "FavoriteCount", &_args, &_result); err != nil {
+	var _result interaction.InteractionServerGetFavoriteCountResult
+	if err = p.c.Call(ctx, "GetFavoriteCount", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) BatchGetFavoriteCount(ctx context.Context, req *interaction.DouyinBatchGetFavoriteCountRequest) (r *interaction.DouyinBatchGetFavoriteCountResponse, err error) {
+	var _args interaction.InteractionServerBatchGetFavoriteCountArgs
+	_args.Req = req
+	var _result interaction.InteractionServerBatchGetFavoriteCountResult
+	if err = p.c.Call(ctx, "BatchGetFavoriteCount", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
@@ -217,21 +284,21 @@ func (p *kClient) Comment(ctx context.Context, req *interaction.DouyinCommentAct
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) CommentList(ctx context.Context, req *interaction.DouyinCommentListRequest) (r *interaction.DouyinCommentListResponse, err error) {
-	var _args interaction.InteractionServerCommentListArgs
+func (p *kClient) GetCommentList(ctx context.Context, req *interaction.DouyinGetCommentListRequest) (r *interaction.DouyinGetCommentListResponse, err error) {
+	var _args interaction.InteractionServerGetCommentListArgs
 	_args.Req = req
-	var _result interaction.InteractionServerCommentListResult
-	if err = p.c.Call(ctx, "CommentList", &_args, &_result); err != nil {
+	var _result interaction.InteractionServerGetCommentListResult
+	if err = p.c.Call(ctx, "GetCommentList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) CommentCount(ctx context.Context, req *interaction.DouyinCommentCountRequest) (r *interaction.DouyinCommentCountResponse, err error) {
-	var _args interaction.InteractionServerCommentCountArgs
+func (p *kClient) GetCommentCount(ctx context.Context, req *interaction.DouyinGetCommentCountRequest) (r *interaction.DouyinGetCommentCountResponse, err error) {
+	var _args interaction.InteractionServerGetCommentCountArgs
 	_args.Req = req
-	var _result interaction.InteractionServerCommentCountResult
-	if err = p.c.Call(ctx, "CommentCount", &_args, &_result); err != nil {
+	var _result interaction.InteractionServerGetCommentCountResult
+	if err = p.c.Call(ctx, "GetCommentCount", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
@@ -242,6 +309,26 @@ func (p *kClient) CheckFavorite(ctx context.Context, req *interaction.DouyinChec
 	_args.Req = req
 	var _result interaction.InteractionServerCheckFavoriteResult
 	if err = p.c.Call(ctx, "CheckFavorite", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) BatchGetCommentCount(ctx context.Context, req *interaction.DouyinBatchGetCommentCountRequest) (r *interaction.DouyinBatchGetCommentCountResponse, err error) {
+	var _args interaction.InteractionServerBatchGetCommentCountArgs
+	_args.Req = req
+	var _result interaction.InteractionServerBatchGetCommentCountResult
+	if err = p.c.Call(ctx, "BatchGetCommentCount", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) BatchCheckFavorite(ctx context.Context, req *interaction.DouyinBatchCheckFavoriteRequest) (r *interaction.DouyinBatchCheckFavoriteResponse, err error) {
+	var _args interaction.InteractionServerBatchCheckFavoriteArgs
+	_args.Req = req
+	var _result interaction.InteractionServerBatchCheckFavoriteResult
+	if err = p.c.Call(ctx, "BatchCheckFavorite", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

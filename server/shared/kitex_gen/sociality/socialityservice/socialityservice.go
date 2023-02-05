@@ -19,13 +19,16 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	serviceName := "SocialityService"
 	handlerType := (*sociality.SocialityService)(nil)
 	methods := map[string]kitex.MethodInfo{
-		"Action":            kitex.NewMethodInfo(actionHandler, newSocialityServiceActionArgs, newSocialityServiceActionResult, false),
-		"FollowingList":     kitex.NewMethodInfo(followingListHandler, newSocialityServiceFollowingListArgs, newSocialityServiceFollowingListResult, false),
-		"FollowerList":      kitex.NewMethodInfo(followerListHandler, newSocialityServiceFollowerListArgs, newSocialityServiceFollowerListResult, false),
-		"FriendList":        kitex.NewMethodInfo(friendListHandler, newSocialityServiceFriendListArgs, newSocialityServiceFriendListResult, false),
-		"CheckFollow":       kitex.NewMethodInfo(checkFollowHandler, newSocialityServiceCheckFollowArgs, newSocialityServiceCheckFollowResult, false),
-		"GetFollowerCount":  kitex.NewMethodInfo(getFollowerCountHandler, newSocialityServiceGetFollowerCountArgs, newSocialityServiceGetFollowerCountResult, false),
-		"GetFollowingCount": kitex.NewMethodInfo(getFollowingCountHandler, newSocialityServiceGetFollowingCountArgs, newSocialityServiceGetFollowingCountResult, false),
+		"Action":                 kitex.NewMethodInfo(actionHandler, newSocialityServiceActionArgs, newSocialityServiceActionResult, false),
+		"GetFollowingList":       kitex.NewMethodInfo(getFollowingListHandler, newSocialityServiceGetFollowingListArgs, newSocialityServiceGetFollowingListResult, false),
+		"GetFollowerList":        kitex.NewMethodInfo(getFollowerListHandler, newSocialityServiceGetFollowerListArgs, newSocialityServiceGetFollowerListResult, false),
+		"GetFriendList":          kitex.NewMethodInfo(getFriendListHandler, newSocialityServiceGetFriendListArgs, newSocialityServiceGetFriendListResult, false),
+		"CheckFollow":            kitex.NewMethodInfo(checkFollowHandler, newSocialityServiceCheckFollowArgs, newSocialityServiceCheckFollowResult, false),
+		"GetFollowerCount":       kitex.NewMethodInfo(getFollowerCountHandler, newSocialityServiceGetFollowerCountArgs, newSocialityServiceGetFollowerCountResult, false),
+		"GetFollowingCount":      kitex.NewMethodInfo(getFollowingCountHandler, newSocialityServiceGetFollowingCountArgs, newSocialityServiceGetFollowingCountResult, false),
+		"BatchCheckFollow":       kitex.NewMethodInfo(batchCheckFollowHandler, newSocialityServiceBatchCheckFollowArgs, newSocialityServiceBatchCheckFollowResult, false),
+		"BatchGetFollowerCount":  kitex.NewMethodInfo(batchGetFollowerCountHandler, newSocialityServiceBatchGetFollowerCountArgs, newSocialityServiceBatchGetFollowerCountResult, false),
+		"BatchGetFollowingCount": kitex.NewMethodInfo(batchGetFollowingCountHandler, newSocialityServiceBatchGetFollowingCountArgs, newSocialityServiceBatchGetFollowingCountResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName": "sociality",
@@ -59,58 +62,58 @@ func newSocialityServiceActionResult() interface{} {
 	return sociality.NewSocialityServiceActionResult()
 }
 
-func followingListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*sociality.SocialityServiceFollowingListArgs)
-	realResult := result.(*sociality.SocialityServiceFollowingListResult)
-	success, err := handler.(sociality.SocialityService).FollowingList(ctx, realArg.Req)
+func getFollowingListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*sociality.SocialityServiceGetFollowingListArgs)
+	realResult := result.(*sociality.SocialityServiceGetFollowingListResult)
+	success, err := handler.(sociality.SocialityService).GetFollowingList(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
 	realResult.Success = success
 	return nil
 }
-func newSocialityServiceFollowingListArgs() interface{} {
-	return sociality.NewSocialityServiceFollowingListArgs()
+func newSocialityServiceGetFollowingListArgs() interface{} {
+	return sociality.NewSocialityServiceGetFollowingListArgs()
 }
 
-func newSocialityServiceFollowingListResult() interface{} {
-	return sociality.NewSocialityServiceFollowingListResult()
+func newSocialityServiceGetFollowingListResult() interface{} {
+	return sociality.NewSocialityServiceGetFollowingListResult()
 }
 
-func followerListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*sociality.SocialityServiceFollowerListArgs)
-	realResult := result.(*sociality.SocialityServiceFollowerListResult)
-	success, err := handler.(sociality.SocialityService).FollowerList(ctx, realArg.Req)
+func getFollowerListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*sociality.SocialityServiceGetFollowerListArgs)
+	realResult := result.(*sociality.SocialityServiceGetFollowerListResult)
+	success, err := handler.(sociality.SocialityService).GetFollowerList(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
 	realResult.Success = success
 	return nil
 }
-func newSocialityServiceFollowerListArgs() interface{} {
-	return sociality.NewSocialityServiceFollowerListArgs()
+func newSocialityServiceGetFollowerListArgs() interface{} {
+	return sociality.NewSocialityServiceGetFollowerListArgs()
 }
 
-func newSocialityServiceFollowerListResult() interface{} {
-	return sociality.NewSocialityServiceFollowerListResult()
+func newSocialityServiceGetFollowerListResult() interface{} {
+	return sociality.NewSocialityServiceGetFollowerListResult()
 }
 
-func friendListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*sociality.SocialityServiceFriendListArgs)
-	realResult := result.(*sociality.SocialityServiceFriendListResult)
-	success, err := handler.(sociality.SocialityService).FriendList(ctx, realArg.Req)
+func getFriendListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*sociality.SocialityServiceGetFriendListArgs)
+	realResult := result.(*sociality.SocialityServiceGetFriendListResult)
+	success, err := handler.(sociality.SocialityService).GetFriendList(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
 	realResult.Success = success
 	return nil
 }
-func newSocialityServiceFriendListArgs() interface{} {
-	return sociality.NewSocialityServiceFriendListArgs()
+func newSocialityServiceGetFriendListArgs() interface{} {
+	return sociality.NewSocialityServiceGetFriendListArgs()
 }
 
-func newSocialityServiceFriendListResult() interface{} {
-	return sociality.NewSocialityServiceFriendListResult()
+func newSocialityServiceGetFriendListResult() interface{} {
+	return sociality.NewSocialityServiceGetFriendListResult()
 }
 
 func checkFollowHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
@@ -167,6 +170,60 @@ func newSocialityServiceGetFollowingCountResult() interface{} {
 	return sociality.NewSocialityServiceGetFollowingCountResult()
 }
 
+func batchCheckFollowHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*sociality.SocialityServiceBatchCheckFollowArgs)
+	realResult := result.(*sociality.SocialityServiceBatchCheckFollowResult)
+	success, err := handler.(sociality.SocialityService).BatchCheckFollow(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newSocialityServiceBatchCheckFollowArgs() interface{} {
+	return sociality.NewSocialityServiceBatchCheckFollowArgs()
+}
+
+func newSocialityServiceBatchCheckFollowResult() interface{} {
+	return sociality.NewSocialityServiceBatchCheckFollowResult()
+}
+
+func batchGetFollowerCountHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*sociality.SocialityServiceBatchGetFollowerCountArgs)
+	realResult := result.(*sociality.SocialityServiceBatchGetFollowerCountResult)
+	success, err := handler.(sociality.SocialityService).BatchGetFollowerCount(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newSocialityServiceBatchGetFollowerCountArgs() interface{} {
+	return sociality.NewSocialityServiceBatchGetFollowerCountArgs()
+}
+
+func newSocialityServiceBatchGetFollowerCountResult() interface{} {
+	return sociality.NewSocialityServiceBatchGetFollowerCountResult()
+}
+
+func batchGetFollowingCountHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*sociality.SocialityServiceBatchGetFollowingCountArgs)
+	realResult := result.(*sociality.SocialityServiceBatchGetFollowingCountResult)
+	success, err := handler.(sociality.SocialityService).BatchGetFollowingCount(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newSocialityServiceBatchGetFollowingCountArgs() interface{} {
+	return sociality.NewSocialityServiceBatchGetFollowingCountArgs()
+}
+
+func newSocialityServiceBatchGetFollowingCountResult() interface{} {
+	return sociality.NewSocialityServiceBatchGetFollowingCountResult()
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -187,31 +244,31 @@ func (p *kClient) Action(ctx context.Context, req *sociality.DouyinRelationActio
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) FollowingList(ctx context.Context, req *sociality.DouyinRelationFollowListRequest) (r *sociality.DouyinRelationFollowListResponse, err error) {
-	var _args sociality.SocialityServiceFollowingListArgs
+func (p *kClient) GetFollowingList(ctx context.Context, req *sociality.DouyinGetRelationFollowListRequest) (r *sociality.DouyinGetRelationFollowListResponse, err error) {
+	var _args sociality.SocialityServiceGetFollowingListArgs
 	_args.Req = req
-	var _result sociality.SocialityServiceFollowingListResult
-	if err = p.c.Call(ctx, "FollowingList", &_args, &_result); err != nil {
+	var _result sociality.SocialityServiceGetFollowingListResult
+	if err = p.c.Call(ctx, "GetFollowingList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) FollowerList(ctx context.Context, req *sociality.DouyinRelationFollowerListRequest) (r *sociality.DouyinRelationFollowerListResponse, err error) {
-	var _args sociality.SocialityServiceFollowerListArgs
+func (p *kClient) GetFollowerList(ctx context.Context, req *sociality.DouyinGetRelationFollowerListRequest) (r *sociality.DouyinGetRelationFollowerListResponse, err error) {
+	var _args sociality.SocialityServiceGetFollowerListArgs
 	_args.Req = req
-	var _result sociality.SocialityServiceFollowerListResult
-	if err = p.c.Call(ctx, "FollowerList", &_args, &_result); err != nil {
+	var _result sociality.SocialityServiceGetFollowerListResult
+	if err = p.c.Call(ctx, "GetFollowerList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) FriendList(ctx context.Context, req *sociality.DouyinRelationFriendListRequest) (r *sociality.DouyinRelationFriendListResponse, err error) {
-	var _args sociality.SocialityServiceFriendListArgs
+func (p *kClient) GetFriendList(ctx context.Context, req *sociality.DouyinGetRelationFriendListRequest) (r *sociality.DouyinGetRelationFriendListResponse, err error) {
+	var _args sociality.SocialityServiceGetFriendListArgs
 	_args.Req = req
-	var _result sociality.SocialityServiceFriendListResult
-	if err = p.c.Call(ctx, "FriendList", &_args, &_result); err != nil {
+	var _result sociality.SocialityServiceGetFriendListResult
+	if err = p.c.Call(ctx, "GetFriendList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
@@ -242,6 +299,36 @@ func (p *kClient) GetFollowingCount(ctx context.Context, req *sociality.DouyinGe
 	_args.Req = req
 	var _result sociality.SocialityServiceGetFollowingCountResult
 	if err = p.c.Call(ctx, "GetFollowingCount", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) BatchCheckFollow(ctx context.Context, req *sociality.DouyinBatchCheckFollowRequest) (r *sociality.DouyinBatchCheckFollowResponse, err error) {
+	var _args sociality.SocialityServiceBatchCheckFollowArgs
+	_args.Req = req
+	var _result sociality.SocialityServiceBatchCheckFollowResult
+	if err = p.c.Call(ctx, "BatchCheckFollow", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) BatchGetFollowerCount(ctx context.Context, req *sociality.DouyinBatchGetFollowerCountRequest) (r *sociality.DouyinBatchGetFollowerCountResponse, err error) {
+	var _args sociality.SocialityServiceBatchGetFollowerCountArgs
+	_args.Req = req
+	var _result sociality.SocialityServiceBatchGetFollowerCountResult
+	if err = p.c.Call(ctx, "BatchGetFollowerCount", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) BatchGetFollowingCount(ctx context.Context, req *sociality.DouyinBatchGetFollowingCountRequest) (r *sociality.DouyinBatchGetFollowingCountResponse, err error) {
+	var _args sociality.SocialityServiceBatchGetFollowingCountArgs
+	_args.Req = req
+	var _result sociality.SocialityServiceBatchGetFollowingCountResult
+	if err = p.c.Call(ctx, "BatchGetFollowingCount", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
