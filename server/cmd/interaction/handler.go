@@ -5,7 +5,9 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/pkg"
+	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction"
 	"github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -137,13 +139,48 @@ func (s *InteractionServerImpl) GetCommentList(_ context.Context, req *interacti
 }
 
 // GetInteractInfo implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) GetInteractInfo(ctx context.Context, req *interaction.DouyinGetInteractInfoRequest) (resp *interaction.DouyinGetInteractInfoResponse, err error) {
-	// TODO: Your code here...
-	return
+func (s *InteractionServerImpl) GetInteractInfo(_ context.Context, req *interaction.DouyinGetInteractInfoRequest) (resp *interaction.DouyinGetInteractInfoResponse, err error) {
+	resp = new(interaction.DouyinGetInteractInfoResponse)
+	if resp.InteractInfo, err = s.getInteractInfo(req.VideoId, req.ViewerId); err != nil {
+		klog.Error("get interact info err", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr)
+		return resp, nil
+	}
+	resp.BaseResp = tools.BuildBaseResp(nil)
+	return resp, nil
 }
 
 // BatchGetInteractInfo implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) BatchGetInteractInfo(ctx context.Context, req *interaction.DouyinBatchGetInteractInfoRequest) (resp *interaction.DouyinBatchGetInteractInfoResponse, err error) {
-	// TODO: Your code here...
-	return
+	resp = new(interaction.DouyinBatchGetInteractInfoResponse)
+	for _, vid := range req.VideoIdList {
+		info, err := s.getInteractInfo(vid, req.ViewerId)
+		if err != nil {
+			klog.Error("get interact info err", err)
+			resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr)
+			return resp, nil
+		}
+		resp.InteractInfoList = append(resp.InteractInfoList, info)
+	}
+	return resp, nil
+}
+
+func (s *InteractionServerImpl) getInteractInfo(videoId int64, viewerId int64) (info *base.InteractInfo, err error) {
+	info = new(base.InteractInfo)
+	if info.CommentCount, err = dao.CommentCountByVideoId(videoId); err != nil {
+		return nil, err
+	}
+	if info.FavoriteCount, err = dao.FavoriteCountByVideoId(videoId); err != nil {
+		return nil, err
+	}
+	fav, err := dao.GetFavoriteInfo(viewerId, videoId)
+	if err != nil {
+		return nil, err
+	}
+	if fav != nil && fav.ActionType == consts.IsLike {
+		info.IsFavorite = true
+	} else {
+		info.IsFavorite = false
+	}
+	return info, nil
 }
