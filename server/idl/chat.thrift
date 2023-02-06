@@ -1,10 +1,6 @@
 namespace go chat
 include "base.thrift"
 
-struct LatestMsg{
-     1: string message // Latest chat messages with this friend
-     2: i64 msgType // message type, 0 => the message received by the current requesting user, 1 => the message sent by the current requesting user
-}
 
 struct douyin_message_get_chat_history_request {
     1: i64 user_id // User Id
@@ -34,7 +30,7 @@ struct douyin_message_get_latest_request {
 
 struct douyin_message_get_latest_response {
     1: base.douyin_base_response base_resp
-    2: LatestMsg latest_msg
+    2: base.LatestMsg latest_msg
 }
 
 struct douyin_message_batch_get_latest_request {
@@ -44,7 +40,7 @@ struct douyin_message_batch_get_latest_request {
 
 struct douyin_message_batch_get_latest_response {
     1: base.douyin_base_response base_resp
-    2: list<LatestMsg> latest_msg_list
+    2: list<base.LatestMsg> latest_msg_list
 }
 
 service ChatService {

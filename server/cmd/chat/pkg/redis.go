@@ -27,3 +27,8 @@ func (r *RedisManager) GetLatestMessage(uid int64, toUid int64) (*model.Message,
 	//TODO implement me
 	panic("implement me")
 }
+
+func (r *RedisManager) BatchGetLatestMessage(uid int64, toUid []int64) ([]*model.Message, error) {
+	//TODO implement me
+	panic("implement me")
+}

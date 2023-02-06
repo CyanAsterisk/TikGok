@@ -3,7 +3,6 @@ package pkg
 import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
-	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/chat"
 )
 
 func PackUser(user *model.User, info *base.SocialInfo) *base.User {
@@ -31,7 +30,7 @@ func PackUsers(userList []*model.User, infoList []*base.SocialInfo) []*base.User
 	return res
 }
 
-func PackFriendUser(user *model.User, info *base.SocialInfo, msg *chat.LatestMsg) *base.FriendUser {
+func PackFriendUser(user *model.User, info *base.SocialInfo, msg *base.LatestMsg) *base.FriendUser {
 	if user == nil {
 		return nil
 	}
@@ -46,7 +45,7 @@ func PackFriendUser(user *model.User, info *base.SocialInfo, msg *chat.LatestMsg
 	}
 }
 
-func PackFriendUsers(userList []*model.User, infoList []*base.SocialInfo, msgList []*chat.LatestMsg) []*base.FriendUser {
+func PackFriendUsers(userList []*model.User, infoList []*base.SocialInfo, msgList []*base.LatestMsg) []*base.FriendUser {
 	if userList == nil {
 		return nil
 	}

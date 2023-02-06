@@ -35,3 +35,15 @@ func GetLatestMessage(uId int64, toUId int64) (*model.Message, error) {
 	}
 	return message, nil
 }
+
+func BatchGetLatestMessage(uId int64, toUIdList []int64) ([]*model.Message, error) {
+	msgList := make([]*model.Message, 0)
+	for _, toUid := range toUIdList {
+		msg, err := GetLatestMessage(uId, toUid)
+		if err != nil {
+			return nil, err
+		}
+		msgList = append(msgList, msg)
+	}
+	return msgList, nil
+}

@@ -5,7 +5,6 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/model"
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/pkg"
-	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/chat"
 	"github.com/CyanAsterisk/TikGok/server/shared/tools"
@@ -24,6 +23,7 @@ type RedisManager interface {
 	Action(context.Context, *chat.DouyinMessageActionRequest) error
 	GetMessages(uid int64, toUid int64) ([]*model.Message, error)
 	GetLatestMessage(uid int64, toUid int64) (*model.Message, error)
+	BatchGetLatestMessage(uid int64, toUid []int64) ([]*model.Message, error)
 }
 
 // Publisher defines the publisher interface.
@@ -89,7 +89,19 @@ func (s *ChatServiceImpl) SentMessage(ctx context.Context, req *chat.DouyinMessa
 
 // BatchGetLatestMessage implements the ChatServiceImpl interface.
 func (s *ChatServiceImpl) BatchGetLatestMessage(ctx context.Context, req *chat.DouyinMessageBatchGetLatestRequest) (resp *chat.DouyinMessageBatchGetLatestResponse, err error) {
-	// TODO: Your code here...
+	resp = new(chat.DouyinMessageBatchGetLatestResponse)
+	msgList, err := s.RedisManager.BatchGetLatestMessage(req.UserId, req.ToUserIdList)
+	if err != nil {
+		klog.Error("batch get latest message by redis error", err)
+		msgList, err = dao.BatchGetLatestMessage(req.UserId, req.ToUserIdList)
+		if err != nil {
+			klog.Error("batch get latest message by mysql error", err)
+			resp.BaseResp = tools.BuildBaseResp(errno.ChatServerErr.WithMessage("get latest message error"))
+			return resp, nil
+		}
+	}
+	resp.LatestMsgList = pkg.LatestMsgs(msgList, req.UserId)
+	resp.BaseResp = tools.BuildBaseResp(nil)
 	return
 }
 
@@ -106,12 +118,7 @@ func (s *ChatServiceImpl) GetLatestMessage(_ context.Context, req *chat.DouyinMe
 			return resp, nil
 		}
 	}
-	if msg.FromUserId == req.UserId {
-		resp.LatestMsg.MsgType = consts.SentMessage
-	} else {
-		resp.LatestMsg.MsgType = consts.ReceiveMessage
-	}
-	resp.LatestMsg.Message = msg.Content
+	resp.LatestMsg = pkg.LatestMsg(msg, req.UserId)
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 }

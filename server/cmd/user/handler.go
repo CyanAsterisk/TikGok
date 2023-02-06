@@ -12,7 +12,6 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
-	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/chat"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/user"
 	"github.com/CyanAsterisk/TikGok/server/shared/middleware"
 	"github.com/CyanAsterisk/TikGok/server/shared/tools"
@@ -38,7 +37,7 @@ type SocialManager interface {
 // ChatManager defines the Anti Corruption Layer
 // for get chat logic.
 type ChatManager interface {
-	BatchGetLatestMessage(ctx context.Context, userId int64, toUserIdList []int64) ([]*chat.LatestMsg, error)
+	BatchGetLatestMessage(ctx context.Context, userId int64, toUserIdList []int64) ([]*base.LatestMsg, error)
 }
 
 // Register implements the UserServiceImpl interface.

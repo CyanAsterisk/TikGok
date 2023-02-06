@@ -10,229 +10,6 @@ import (
 	"strings"
 )
 
-type LatestMsg struct {
-	Message string `thrift:"message,1" frugal:"1,default,string" json:"message"`
-	MsgType int64  `thrift:"msgType,2" frugal:"2,default,i64" json:"msgType"`
-}
-
-func NewLatestMsg() *LatestMsg {
-	return &LatestMsg{}
-}
-
-func (p *LatestMsg) InitDefault() {
-	*p = LatestMsg{}
-}
-
-func (p *LatestMsg) GetMessage() (v string) {
-	return p.Message
-}
-
-func (p *LatestMsg) GetMsgType() (v int64) {
-	return p.MsgType
-}
-func (p *LatestMsg) SetMessage(val string) {
-	p.Message = val
-}
-func (p *LatestMsg) SetMsgType(val int64) {
-	p.MsgType = val
-}
-
-var fieldIDToName_LatestMsg = map[int16]string{
-	1: "message",
-	2: "msgType",
-}
-
-func (p *LatestMsg) Read(iprot thrift.TProtocol) (err error) {
-
-	var fieldTypeId thrift.TType
-	var fieldId int16
-
-	if _, err = iprot.ReadStructBegin(); err != nil {
-		goto ReadStructBeginError
-	}
-
-	for {
-		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
-		if err != nil {
-			goto ReadFieldBeginError
-		}
-		if fieldTypeId == thrift.STOP {
-			break
-		}
-
-		switch fieldId {
-		case 1:
-			if fieldTypeId == thrift.STRING {
-				if err = p.ReadField1(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				if err = iprot.Skip(fieldTypeId); err != nil {
-					goto SkipFieldError
-				}
-			}
-		case 2:
-			if fieldTypeId == thrift.I64 {
-				if err = p.ReadField2(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				if err = iprot.Skip(fieldTypeId); err != nil {
-					goto SkipFieldError
-				}
-			}
-		default:
-			if err = iprot.Skip(fieldTypeId); err != nil {
-				goto SkipFieldError
-			}
-		}
-
-		if err = iprot.ReadFieldEnd(); err != nil {
-			goto ReadFieldEndError
-		}
-	}
-	if err = iprot.ReadStructEnd(); err != nil {
-		goto ReadStructEndError
-	}
-
-	return nil
-ReadStructBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
-ReadFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
-ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_LatestMsg[fieldId]), err)
-SkipFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
-
-ReadFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
-ReadStructEndError:
-	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-}
-
-func (p *LatestMsg) ReadField1(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadString(); err != nil {
-		return err
-	} else {
-		p.Message = v
-	}
-	return nil
-}
-
-func (p *LatestMsg) ReadField2(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadI64(); err != nil {
-		return err
-	} else {
-		p.MsgType = v
-	}
-	return nil
-}
-
-func (p *LatestMsg) Write(oprot thrift.TProtocol) (err error) {
-	var fieldId int16
-	if err = oprot.WriteStructBegin("LatestMsg"); err != nil {
-		goto WriteStructBeginError
-	}
-	if p != nil {
-		if err = p.writeField1(oprot); err != nil {
-			fieldId = 1
-			goto WriteFieldError
-		}
-		if err = p.writeField2(oprot); err != nil {
-			fieldId = 2
-			goto WriteFieldError
-		}
-
-	}
-	if err = oprot.WriteFieldStop(); err != nil {
-		goto WriteFieldStopError
-	}
-	if err = oprot.WriteStructEnd(); err != nil {
-		goto WriteStructEndError
-	}
-	return nil
-WriteStructBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
-WriteFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
-WriteFieldStopError:
-	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
-WriteStructEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
-}
-
-func (p *LatestMsg) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("message", thrift.STRING, 1); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteString(p.Message); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
-}
-
-func (p *LatestMsg) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("msgType", thrift.I64, 2); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteI64(p.MsgType); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
-}
-
-func (p *LatestMsg) String() string {
-	if p == nil {
-		return "<nil>"
-	}
-	return fmt.Sprintf("LatestMsg(%+v)", *p)
-}
-
-func (p *LatestMsg) DeepEqual(ano *LatestMsg) bool {
-	if p == ano {
-		return true
-	} else if p == nil || ano == nil {
-		return false
-	}
-	if !p.Field1DeepEqual(ano.Message) {
-		return false
-	}
-	if !p.Field2DeepEqual(ano.MsgType) {
-		return false
-	}
-	return true
-}
-
-func (p *LatestMsg) Field1DeepEqual(src string) bool {
-
-	if strings.Compare(p.Message, src) != 0 {
-		return false
-	}
-	return true
-}
-func (p *LatestMsg) Field2DeepEqual(src int64) bool {
-
-	if p.MsgType != src {
-		return false
-	}
-	return true
-}
-
 type DouyinMessageGetChatHistoryRequest struct {
 	UserId   int64 `thrift:"user_id,1" frugal:"1,default,i64" json:"user_id"`
 	ToUserId int64 `thrift:"to_user_id,2" frugal:"2,default,i64" json:"to_user_id"`
@@ -1450,7 +1227,7 @@ func (p *DouyinMessageGetLatestRequest) Field2DeepEqual(src int64) bool {
 
 type DouyinMessageGetLatestResponse struct {
 	BaseResp  *base.DouyinBaseResponse `thrift:"base_resp,1" frugal:"1,default,base.DouyinBaseResponse" json:"base_resp"`
-	LatestMsg *LatestMsg               `thrift:"latest_msg,2" frugal:"2,default,LatestMsg" json:"latest_msg"`
+	LatestMsg *base.LatestMsg          `thrift:"latest_msg,2" frugal:"2,default,base.LatestMsg" json:"latest_msg"`
 }
 
 func NewDouyinMessageGetLatestResponse() *DouyinMessageGetLatestResponse {
@@ -1470,9 +1247,9 @@ func (p *DouyinMessageGetLatestResponse) GetBaseResp() (v *base.DouyinBaseRespon
 	return p.BaseResp
 }
 
-var DouyinMessageGetLatestResponse_LatestMsg_DEFAULT *LatestMsg
+var DouyinMessageGetLatestResponse_LatestMsg_DEFAULT *base.LatestMsg
 
-func (p *DouyinMessageGetLatestResponse) GetLatestMsg() (v *LatestMsg) {
+func (p *DouyinMessageGetLatestResponse) GetLatestMsg() (v *base.LatestMsg) {
 	if !p.IsSetLatestMsg() {
 		return DouyinMessageGetLatestResponse_LatestMsg_DEFAULT
 	}
@@ -1481,7 +1258,7 @@ func (p *DouyinMessageGetLatestResponse) GetLatestMsg() (v *LatestMsg) {
 func (p *DouyinMessageGetLatestResponse) SetBaseResp(val *base.DouyinBaseResponse) {
 	p.BaseResp = val
 }
-func (p *DouyinMessageGetLatestResponse) SetLatestMsg(val *LatestMsg) {
+func (p *DouyinMessageGetLatestResponse) SetLatestMsg(val *base.LatestMsg) {
 	p.LatestMsg = val
 }
 
@@ -1576,7 +1353,7 @@ func (p *DouyinMessageGetLatestResponse) ReadField1(iprot thrift.TProtocol) erro
 }
 
 func (p *DouyinMessageGetLatestResponse) ReadField2(iprot thrift.TProtocol) error {
-	p.LatestMsg = NewLatestMsg()
+	p.LatestMsg = base.NewLatestMsg()
 	if err := p.LatestMsg.Read(iprot); err != nil {
 		return err
 	}
@@ -1679,7 +1456,7 @@ func (p *DouyinMessageGetLatestResponse) Field1DeepEqual(src *base.DouyinBaseRes
 	}
 	return true
 }
-func (p *DouyinMessageGetLatestResponse) Field2DeepEqual(src *LatestMsg) bool {
+func (p *DouyinMessageGetLatestResponse) Field2DeepEqual(src *base.LatestMsg) bool {
 
 	if !p.LatestMsg.DeepEqual(src) {
 		return false
@@ -1939,7 +1716,7 @@ func (p *DouyinMessageBatchGetLatestRequest) Field2DeepEqual(src []int64) bool {
 
 type DouyinMessageBatchGetLatestResponse struct {
 	BaseResp      *base.DouyinBaseResponse `thrift:"base_resp,1" frugal:"1,default,base.DouyinBaseResponse" json:"base_resp"`
-	LatestMsgList []*LatestMsg             `thrift:"latest_msg_list,2" frugal:"2,default,list<LatestMsg>" json:"latest_msg_list"`
+	LatestMsgList []*base.LatestMsg        `thrift:"latest_msg_list,2" frugal:"2,default,list<base.LatestMsg>" json:"latest_msg_list"`
 }
 
 func NewDouyinMessageBatchGetLatestResponse() *DouyinMessageBatchGetLatestResponse {
@@ -1959,13 +1736,13 @@ func (p *DouyinMessageBatchGetLatestResponse) GetBaseResp() (v *base.DouyinBaseR
 	return p.BaseResp
 }
 
-func (p *DouyinMessageBatchGetLatestResponse) GetLatestMsgList() (v []*LatestMsg) {
+func (p *DouyinMessageBatchGetLatestResponse) GetLatestMsgList() (v []*base.LatestMsg) {
 	return p.LatestMsgList
 }
 func (p *DouyinMessageBatchGetLatestResponse) SetBaseResp(val *base.DouyinBaseResponse) {
 	p.BaseResp = val
 }
-func (p *DouyinMessageBatchGetLatestResponse) SetLatestMsgList(val []*LatestMsg) {
+func (p *DouyinMessageBatchGetLatestResponse) SetLatestMsgList(val []*base.LatestMsg) {
 	p.LatestMsgList = val
 }
 
@@ -2060,9 +1837,9 @@ func (p *DouyinMessageBatchGetLatestResponse) ReadField2(iprot thrift.TProtocol)
 	if err != nil {
 		return err
 	}
-	p.LatestMsgList = make([]*LatestMsg, 0, size)
+	p.LatestMsgList = make([]*base.LatestMsg, 0, size)
 	for i := 0; i < size; i++ {
-		_elem := NewLatestMsg()
+		_elem := base.NewLatestMsg()
 		if err := _elem.Read(iprot); err != nil {
 			return err
 		}
@@ -2179,7 +1956,7 @@ func (p *DouyinMessageBatchGetLatestResponse) Field1DeepEqual(src *base.DouyinBa
 	}
 	return true
 }
-func (p *DouyinMessageBatchGetLatestResponse) Field2DeepEqual(src []*LatestMsg) bool {
+func (p *DouyinMessageBatchGetLatestResponse) Field2DeepEqual(src []*base.LatestMsg) bool {
 
 	if len(p.LatestMsgList) != len(src) {
 		return false

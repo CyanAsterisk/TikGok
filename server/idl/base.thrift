@@ -60,3 +60,8 @@ struct Message {
     4: string content // Message content
     5: string create_time // Message creation time
 }
+
+struct LatestMsg{
+     1: string message // Latest chat messages with this friend
+     2: i64 msgType // message type, 0 => the message received by the current requesting user, 1 => the message sent by the current requesting user
+}
