@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"time"
+
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/pkg"
@@ -11,7 +13,6 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction"
 	"github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"time"
 )
 
 // InteractionServerImpl implements the last service interface defined in the IDL.
@@ -254,6 +255,7 @@ func (s *InteractionServerImpl) BatchGetInteractInfo(ctx context.Context, req *i
 		}
 		resp.InteractInfoList = append(resp.InteractInfoList, info)
 	}
+	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 }
 
