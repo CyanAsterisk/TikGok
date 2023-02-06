@@ -45,3 +45,19 @@ func GetVideoByVideoId(vid int64) (*model.Video, error) {
 	}
 	return video, nil
 }
+
+// BatchGetVideoByVideoId gets video list by videoId list.
+func BatchGetVideoByVideoId(vidList []int64) ([]*model.Video, error) {
+	if vidList == nil {
+		return nil, nil
+	}
+	vl := make([]*model.Video, len(vidList))
+	for _, vid := range vidList {
+		v, err := GetVideoByVideoId(vid)
+		if err != nil {
+			return nil, err
+		}
+		vl = append(vl, v)
+	}
+	return vl, nil
+}

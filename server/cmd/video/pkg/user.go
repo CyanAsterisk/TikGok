@@ -12,8 +12,8 @@ type UserManager struct {
 	UserService userservice.Client
 }
 
-// GetUsers gets users info by list.
-func (m *UserManager) GetUsers(ctx context.Context, list []int64, viewerId int64) ([]*base.User, error) {
+// BatchGetUser gets users info by list.
+func (m *UserManager) BatchGetUser(ctx context.Context, list []int64, viewerId int64) ([]*base.User, error) {
 	res, err := m.UserService.BatchGetUserInfo(ctx, &user.DouyinBatchGetUserRequest{
 		ViewerId:    viewerId,
 		OwnerIdList: list,

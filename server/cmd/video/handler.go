@@ -20,12 +20,13 @@ type VideoServiceImpl struct {
 	InteractionManager
 	Publisher
 	Subscriber
+	RedisManager
 }
 
 // UserManager defines the Anti Corruption Layer
 // for get user logic.
 type UserManager interface {
-	GetUsers(ctx context.Context, list []int64, uid int64) ([]*base.User, error)
+	BatchGetUser(ctx context.Context, list []int64, uid int64) ([]*base.User, error)
 	GetUser(ctx context.Context, UserId, toUserId int64) (*base.User, error)
 }
 
@@ -46,24 +47,36 @@ type Subscriber interface {
 	Subscribe(context.Context) (ch chan *video.DouyinPublishActionRequest, cleanUp func(), err error)
 }
 
+// RedisManager defines the redis interface.
+type RedisManager interface {
+	CreateVideo(video *model.Video) error
+	GetVideosByLatestTime(latestTime int64) ([]*model.Video, error)
+	GetVideosByUserId(uid int64) ([]*model.Video, error)
+	GetVideoByVideoId(vid int64) (*model.Video, error)
+	BatchGetVideoByVideoId(vidList []int64) ([]*model.Video, error)
+}
+
 // Feed implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) Feed(ctx context.Context, req *video.DouyinFeedRequest) (resp *video.DouyinFeedResponse, err error) {
 	resp = new(video.DouyinFeedResponse)
 	if req.LatestTime <= 0 {
 		req.LatestTime = time.Now().UnixNano() / 1e6
 	}
-	vs, err := dao.GetVideosByLatestTime(req.LatestTime)
+	vs, err := s.RedisManager.GetVideosByLatestTime(req.LatestTime)
 	if err != nil {
 		klog.Error("get videos by latest time err", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("get videos error"))
-		return
+		vs, err = dao.GetVideosByLatestTime(req.LatestTime)
+		if err != nil {
+			klog.Error("get videos by latest time err", err)
+			resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("get videos error"))
+			return resp, nil
+		}
 	}
-
 	resp.VideoList, err = s.fillVideoList(ctx, vs, req.ViewerId)
 	if err != nil {
 		klog.Error("fill video list err", err.Error())
 		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr.WithMessage("fill video list err"))
-		return
+		return resp, nil
 	}
 	if len(vs) > 0 {
 		resp.NextTime = vs[len(vs)-1].UpdatedAt.UnixNano() / 1e6
@@ -83,47 +96,48 @@ func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *video.DouyinPu
 		resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("publish video action error"))
 		return resp, nil
 	}
+	v := &model.Video{
+		Uid:       req.UserId,
+		PlayUrl:   req.PlayUrl,
+		CoverUrl:  req.CoverUrl,
+		Title:     req.Title,
+		UpdatedAt: time.Now(),
+	}
+
+	if err = s.RedisManager.CreateVideo(v); err != nil {
+		err = dao.CreateVideo(v)
+		if err != nil {
+			klog.Error("create video by redis err", err)
+			resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("create video err"))
+			return resp, nil
+		}
+	}
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
-
-	//vid := model.Video{
-	//	Model: gorm.Model{
-	//		CreatedAt: time.Now(),
-	//		UpdatedAt: time.Now(),
-	//	},
-	//	Uid:      req.UserId,
-	//	PlayUrl:  req.PlayUrl,
-	//	CoverUrl: req.CoverUrl,
-	//	Title:    req.Title,
-	//}
-	//err = dao.CreateVideo(&vid)
-	//if err != nil {
-	//	klog.Errorf("create video err", err)
-	//	resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("create video err"))
-	//	return
-	//}
-	//
-	//resp.BaseResp = tools.BuildBaseResp(nil)
-	//return
 }
 
 // GetPublishedVideoList implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) GetPublishedVideoList(ctx context.Context, req *video.DouyinGetPublishedListRequest) (resp *video.DouyinGetPublishedListResponse, err error) {
 	resp = new(video.DouyinGetPublishedListResponse)
-	vs, err := dao.GetVideosByUserId(req.OwnerId)
+
+	vs, err := s.RedisManager.GetVideosByUserId(req.OwnerId)
 	if err != nil {
-		klog.Error("get published video list err", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("get published video list err"))
-		return
+		klog.Error("get published video by author id err", err)
+		vs, err = dao.GetVideosByUserId(req.OwnerId)
+		if err != nil {
+			klog.Error("get published video list err", err)
+			resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("get published video list err"))
+			return resp, nil
+		}
 	}
 	resp.VideoList, err = s.fillVideoList(ctx, vs, req.ViewerId)
 	if err != nil {
-		klog.Error("pack videos err", err.Error())
-		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr.WithMessage("pack videos err"))
-		return
+		klog.Error("fill video list err", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr.WithMessage("fill video list err"))
+		return resp, nil
 	}
 	resp.BaseResp = tools.BuildBaseResp(nil)
-	return
+	return resp, nil
 }
 
 // GetFavoriteVideoList implements the VideoServiceImpl interface.
@@ -137,19 +151,20 @@ func (s *VideoServiceImpl) GetFavoriteVideoList(ctx context.Context, req *video.
 		return resp, nil
 	}
 
-	videos := make([]*model.Video, 0)
-	for _, vid := range idList {
-		v, err := dao.GetVideoByVideoId(vid)
+	videoList, err := s.RedisManager.BatchGetVideoByVideoId(idList)
+	if err != nil {
+		klog.Error("batch get video list by if from redis err", err)
+		videoList, err = dao.BatchGetVideoByVideoId(idList)
 		if err != nil {
-			klog.Error("get video by id err", err)
-			resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr)
+			klog.Error("batch get video list by video id list err", err)
+			resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr)
 			return resp, nil
 		}
-		videos = append(videos, v)
 	}
-	resp.VideoList, err = s.fillVideoList(ctx, videos, req.ViewerId)
+
+	resp.VideoList, err = s.fillVideoList(ctx, videoList, req.ViewerId)
 	if err != nil {
-		klog.Error("pack video err", err)
+		klog.Error("fill video list err", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr)
 		return resp, nil
 	}
@@ -167,7 +182,7 @@ func (s *VideoServiceImpl) fillVideoList(ctx context.Context, videoList []*model
 		videoIdList = append(videoIdList, v.ID)
 		authorIdList = append(authorIdList, v.Uid)
 	}
-	authorList, err := s.UserManager.GetUsers(ctx, authorIdList, viewerId)
+	authorList, err := s.UserManager.BatchGetUser(ctx, authorIdList, viewerId)
 	if err != nil {
 		return nil, err
 	}
