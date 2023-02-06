@@ -7,7 +7,6 @@ import (
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/initialize"
-	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	interaction "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction/interactionserver"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -33,9 +32,7 @@ func main() {
 	defer p.Shutdown(context.Background())
 	initialize.InitMq()
 
-	impl := &InteractionServerImpl{
-		CommentManager: &pkg.CommentManager{},
-	}
+	impl := &InteractionServerImpl{}
 	// Create new server.
 	srv := interaction.NewServer(impl,
 		server.WithServiceAddr(utils.NewNetAddr(consts.TCP, net.JoinHostPort(IP, strconv.Itoa(Port)))),
