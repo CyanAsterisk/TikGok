@@ -131,7 +131,11 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinGetUs
 		return resp, nil
 	}
 	info, err := s.SocialManager.GetSocialInfo(ctx, req.ViewerId, req.OwnerId)
-
+	if err != nil {
+		klog.Error("get user social info err", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get user social info err"))
+		return resp, nil
+	}
 	resp.User = pkg.PackUser(usr, info)
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
