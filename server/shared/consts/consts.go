@@ -86,6 +86,6 @@ const (
 	FollowerList = 1
 	FriendsList  = 2
 
-	FollowingCount = 0
-	FollowerCount  = 1
+	FollowCount   = 0
+	FollowerCount = 1
 )

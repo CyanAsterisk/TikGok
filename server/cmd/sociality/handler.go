@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/dao"
+	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
@@ -88,159 +90,24 @@ func (s *SocialityServiceImpl) Action(ctx context.Context, req *sociality.Douyin
 	return resp, nil
 }
 
-//
-//// GetFollowingList implements the SocialityServiceImpl interface.
-//func (s *SocialityServiceImpl) GetFollowingList(ctx context.Context, req *sociality.DouyinGetRelationFollowListRequest) (resp *sociality.DouyinGetRelationFollowListResponse, err error) {
-//	resp = new(sociality.DouyinGetRelationFollowListResponse)
-//	list, err := s.RedisManager.List(ctx, req.OwnerId, consts.FollowingList)
-//	if err != nil {
-//		klog.Error("get following list by redis error", err)
-//		list, err = dao.GetFollowingIdList(req.OwnerId)
-//		if err != nil {
-//			klog.Error("get following list by mysql error", err)
-//			resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get following list error"))
-//			return resp, nil
-//		}
-//	}
-//	users, err := s.UserManager.GetUsers(ctx, list, req.ViewerId)
-//	if err != nil {
-//		klog.Error("get users by user manager error", err)
-//		resp.BaseResp = tools.BuildBaseResp(errno.RPCUserErr.WithMessage("get following list error"))
-//		return resp, nil
-//	}
-//	resp.UserList = users
-//	resp.BaseResp = tools.BuildBaseResp(nil)
-//	return resp, nil
-//}
-//
-//// GetFollowerList implements the SocialityServiceImpl interface.
-//func (s *SocialityServiceImpl) GetFollowerList(ctx context.Context, req *sociality.DouyinGetRelationFollowerListRequest) (resp *sociality.DouyinGetRelationFollowerListResponse, err error) {
-//	resp = new(sociality.DouyinGetRelationFollowerListResponse)
-//	list, err := s.RedisManager.List(ctx, req.OwnerId, consts.FollowerList)
-//	if err != nil {
-//		klog.Error("get follower list by redis error", err)
-//		list, err = dao.GetFollowerIdList(req.OwnerId)
-//		if err != nil {
-//			klog.Error("get follower list by mysql error", err)
-//			resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get follower list error"))
-//			return resp, nil
-//		}
-//	}
-//	users, err := s.UserManager.GetUsers(ctx, list, req.ViewerId)
-//	if err != nil {
-//		klog.Error("get users by user manager error", err)
-//		resp.BaseResp = tools.BuildBaseResp(errno.RPCUserErr.WithMessage("get follower list error"))
-//		return resp, nil
-//	}
-//	resp.UserList = users
-//	resp.BaseResp = tools.BuildBaseResp(nil)
-//	return resp, nil
-//}
-//
-//// GetFriendList implements the SocialityServiceImpl interface.
-//func (s *SocialityServiceImpl) GetFriendList(ctx context.Context, req *sociality.DouyinGetRelationFriendListRequest) (resp *sociality.DouyinGetRelationFriendListResponse, err error) {
-//	resp = new(sociality.DouyinGetRelationFriendListResponse)
-//	list, err := s.RedisManager.List(ctx, req.OwnerId, consts.FriendsList)
-//	if err != nil {
-//		klog.Error("get friends list by redis error", err)
-//		list, err = dao.GetFriendsList(req.OwnerId)
-//		if err != nil {
-//			klog.Error("get friends list by mysql error", err)
-//			resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get friends list error"))
-//			return resp, nil
-//		}
-//	}
-//	users, err := s.UserManager.GetFriendUsers(ctx, list, req.ViewerId)
-//	if err != nil {
-//		klog.Error("get users by user manager error", err)
-//		resp.BaseResp = tools.BuildBaseResp(errno.RPCUserErr.WithMessage("get friends list error"))
-//		return resp, nil
-//	}
-//	resp.UserList = users
-//	resp.BaseResp = tools.BuildBaseResp(nil)
-//	return resp, nil
-//}
-//
-//// CheckFollow implements the SocialityServiceImpl interface.
-//func (s *SocialityServiceImpl) CheckFollow(ctx context.Context, req *sociality.DouyinCheckFollowRequest) (resp *sociality.DouyinCheckFollowResponse, err error) {
-//	resp = new(sociality.DouyinCheckFollowResponse)
-//	flag, err := s.RedisManager.Check(ctx, req.UserId, req.ToUserId)
-//	if err != nil {
-//		klog.Error("check follow by redis error", err)
-//		info, err := dao.FindRecord(req.UserId, req.ToUserId)
-//		if err != nil {
-//			klog.Error("check follow by mysql error", err)
-//			resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("check follow error"))
-//			return resp, nil
-//		}
-//		if info == nil {
-//			resp.Check = false
-//		} else {
-//			if info.ActionType == consts.IsFollow {
-//				resp.Check = true
-//			} else {
-//				resp.Check = false
-//			}
-//		}
-//		resp.BaseResp = tools.BuildBaseResp(nil)
-//		return resp, nil
-//	}
-//	resp.Check = flag
-//	resp.BaseResp = tools.BuildBaseResp(nil)
-//	return resp, nil
-//}
-//
-//// GetFollowerCount implements the SocialityServiceImpl interface.
-//func (s *SocialityServiceImpl) GetFollowerCount(ctx context.Context, req *sociality.DouyinGetFollowerCountRequest) (resp *sociality.DouyinGetFollowerCountResponse, err error) {
-//	resp = new(sociality.DouyinGetFollowerCountResponse)
-//	count, err := s.RedisManager.Count(ctx, req.UserId, consts.FollowerCount)
-//	if err != nil {
-//		klog.Error("get follower num by redis error", err)
-//		count, err = dao.GetFollowerNumsByUserId(req.UserId)
-//		if err != nil {
-//			klog.Error("get follower num by mysql error", err)
-//			resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get follower num error"))
-//			return resp, nil
-//		}
-//		resp.Count = count
-//		resp.BaseResp = tools.BuildBaseResp(nil)
-//		return resp, nil
-//	}
-//	resp.Count = count
-//	resp.BaseResp = tools.BuildBaseResp(nil)
-//	return resp, nil
-//}
-//
-//// GetFollowingCount implements the SocialityServiceImpl interface.
-//func (s *SocialityServiceImpl) GetFollowingCount(ctx context.Context, req *sociality.DouyinGetFollowingCountRequest) (resp *sociality.DouyinGetFollowingCountResponse, err error) {
-//	resp = new(sociality.DouyinGetFollowingCountResponse)
-//	count, err := s.RedisManager.Count(ctx, req.UserId, consts.FollowingCount)
-//	if err != nil {
-//		klog.Error("get following num by redis error", err)
-//		count, err = dao.GetFollowingNumsByUserId(req.UserId)
-//		if err != nil {
-//			klog.Error("get following num error", err)
-//			resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get following num error"))
-//			return resp, nil
-//		}
-//		resp.Count = count
-//		resp.BaseResp = tools.BuildBaseResp(nil)
-//		return resp, nil
-//	}
-//	resp.Count = count
-//	resp.BaseResp = tools.BuildBaseResp(nil)
-//	return resp, nil
-//}
-
 // GetRelationIdList implements the SocialityServiceImpl interface.
 func (s *SocialityServiceImpl) GetRelationIdList(ctx context.Context, req *sociality.DouyinGetRelationIdListRequest) (resp *sociality.DouyinGetRelationIdListResponse, err error) {
 	resp = new(sociality.DouyinGetRelationIdListResponse)
 	resp.UserIdList, err = s.RedisManager.List(ctx, req.OwnerId, req.Option)
 	if err != nil {
 		klog.Error("get id list by redis error", err)
-		resp.UserIdList, err = dao.GetFollowingIdList(req.OwnerId)
+		if req.Option == consts.FollowList {
+			resp.UserIdList, err = dao.GetFollowIdList(req.OwnerId)
+		} else if req.Option == consts.FollowerList {
+			resp.UserIdList, err = dao.GetFollowerIdList(req.OwnerId)
+		} else if req.Option == consts.FriendsList {
+			resp.UserIdList, err = dao.GetFriendsList(req.OwnerId)
+		} else {
+			resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("wrong option"))
+			return resp, nil
+		}
 		if err != nil {
-			klog.Error("get id list by mysql error", err)
+			klog.Error("get relation id list error", err)
 			resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get id list error"))
 			return resp, nil
 		}
@@ -252,11 +119,58 @@ func (s *SocialityServiceImpl) GetRelationIdList(ctx context.Context, req *socia
 // GetSocialInfo implements the SocialityServiceImpl interface.
 func (s *SocialityServiceImpl) GetSocialInfo(ctx context.Context, req *sociality.DouyinGetSocialInfoRequest) (resp *sociality.DouyinGetSocialInfoResponse, err error) {
 	resp = new(sociality.DouyinGetSocialInfoResponse)
-	return
+	if resp.SocialInfo, err = s.getSocialInfo(ctx, req.ViewerId, req.OwnerId); err != nil {
+		klog.Error("get social info err", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get social info err"))
+		return resp, nil
+	}
+	resp.BaseResp = tools.BuildBaseResp(nil)
+	return resp, nil
 }
 
 // BatchGetSocialInfo implements the SocialityServiceImpl interface.
 func (s *SocialityServiceImpl) BatchGetSocialInfo(ctx context.Context, req *sociality.DouyinBatchGetSocialInfoRequest) (resp *sociality.DouyinBatchGetSocialInfoResponse, err error) {
-	// TODO: Your code here...
-	return
+	resp = new(sociality.DouyinBatchGetSocialInfoResponse)
+	for _, oid := range req.OwnerIdList {
+		info, err := s.getSocialInfo(ctx, oid, req.ViewerId)
+		if err != nil {
+			klog.Error("get social info err", err)
+			resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr)
+			return resp, nil
+		}
+		resp.SocialInfoList = append(resp.SocialInfoList, info)
+	}
+	resp.BaseResp = tools.BuildBaseResp(nil)
+	return resp, nil
+}
+
+func (s *SocialityServiceImpl) getSocialInfo(ctx context.Context, viewerId int64, ownerId int64) (info *base.SocialInfo, err error) {
+	info = new(base.SocialInfo)
+	if info.FollowCount, err = s.RedisManager.Count(ctx, ownerId, consts.FollowCount); err != nil {
+		klog.Error("get follow count by redis err", err)
+		info.FollowCount, err = dao.GetFollowingNumsByUserId(ownerId)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if info.FollowerCount, err = s.RedisManager.Count(ctx, ownerId, consts.FollowerCount); err != nil {
+		klog.Error("get follower count by redis err", err)
+		info.FollowCount, err = dao.GetFollowerNumsByUserId(ownerId)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if info.IsFollow, err = s.RedisManager.Check(ctx, viewerId, ownerId); err != nil {
+		klog.Error("check follow by redis err", err)
+		record, err := dao.FindRecord(ownerId, viewerId)
+		if err != nil {
+			return nil, err
+		}
+		if record != nil && record.ActionType == consts.IsFollow {
+			info.IsFollow = true
+		} else {
+			info.IsFollow = false
+		}
+	}
+	return info, err
 }

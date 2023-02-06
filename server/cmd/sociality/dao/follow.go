@@ -77,8 +77,8 @@ func GetFollowerIdList(userId int64) ([]int64, error) {
 	return list, nil
 }
 
-// GetFollowingIdList gets followingId list.
-func GetFollowingIdList(userId int64) ([]int64, error) {
+// GetFollowIdList gets followingId list.
+func GetFollowIdList(userId int64) ([]int64, error) {
 	var list []int64
 	err := global.DB.Model(model.Follow{}).
 		Where(&model.Follow{FollowerId: userId, ActionType: consts.IsFollow}).Pluck("user_id", &list).Error
