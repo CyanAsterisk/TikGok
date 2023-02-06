@@ -32,7 +32,6 @@ func (m *UserManager) GetUsers(ctx context.Context, list []int64, viewerId int64
 }
 
 func (m *UserManager) GetFriendUsers(ctx context.Context, list []int64, viewerId int64) ([]*base.FriendUser, error) {
-
 	resp, err := m.UserService.BatchGetUserInfo(ctx, &user.DouyinBatchGetUserRequest{
 		ViewerId:    viewerId,
 		OwnerIdList: list,
