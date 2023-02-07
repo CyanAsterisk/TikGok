@@ -44,6 +44,7 @@ func main() {
 	if err != nil {
 		klog.Fatal("cannot create subscriber", err.Error())
 	}
+	go pkg.SubscribeRoutine(Subscriber)
 
 	impl := &SocialityServiceImpl{
 		UserManager: &pkg.UserManager{

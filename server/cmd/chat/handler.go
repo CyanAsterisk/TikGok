@@ -50,17 +50,6 @@ func (s *ChatServiceImpl) SentMessage(ctx context.Context, req *chat.DouyinMessa
 		resp.BaseResp = tools.BuildBaseResp(errno.ChatServerErr.WithMessage("sent message error"))
 		return resp, nil
 	}
-	//err = dao.ChatAction(&model.Message{
-	//	ToUserId:   req.ToUserId,
-	//	FromUserId: req.UserId,
-	//	Content:    req.Content,
-	//	CreateDate: time.Now(),
-	//})
-	//if err != nil {
-	//	klog.Error("sent message error", err)
-	//	resp.BaseResp = tools.BuildBaseResp(errno.ChatServerErr.WithMessage("sent message error"))
-	//	return resp, nil
-	//}
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 }

@@ -60,32 +60,6 @@ func (s *SocialityServiceImpl) Action(ctx context.Context, req *sociality.Douyin
 		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("follow action error"))
 		return resp, nil
 	}
-	//fr, err := dao.FindRecord(req.ToUserId, req.UserId)
-	//if err == nil && fr == nil {
-	//	err = dao.CreateFollow(&model.Follow{
-	//		UserId:     req.ToUserId,
-	//		FollowerId: req.UserId,
-	//		ActionType: req.ActionType,
-	//	})
-	//	if err != nil {
-	//		klog.Error("follow action error", err)
-	//		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("follow action error"))
-	//		return resp, nil
-	//	}
-	//	resp.BaseResp = tools.BuildBaseResp(nil)
-	//	return resp, nil
-	//}
-	//if err != nil {
-	//	klog.Error("follow error", err)
-	//	resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("follow action error"))
-	//	return resp, nil
-	//}
-	//err = dao.UpdateFollow(req.ToUserId, req.UserId, req.ActionType)
-	//if err != nil {
-	//	klog.Error("follow error", err)
-	//	resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("follow action error"))
-	//	return resp, nil
-	//}
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 }

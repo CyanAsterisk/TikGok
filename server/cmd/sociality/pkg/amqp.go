@@ -3,7 +3,8 @@ package pkg
 import (
 	"context"
 	"fmt"
-
+	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/dao"
+	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
 	"github.com/bytedance/sonic"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -125,6 +126,34 @@ func (s *Subscriber) Subscribe(c context.Context) (chan *sociality.DouyinRelatio
 		close(carCh)
 	}()
 	return carCh, cleanUp, nil
+}
+
+func SubscribeRoutine(subscriber *Subscriber) {
+	msgs, cleanUp, err := subscriber.Subscribe(context.Background())
+	defer cleanUp()
+	if err != nil {
+		klog.Error("cannot subscribe", err)
+	}
+	for m := range msgs {
+		fr, err := dao.FindRecord(m.ToUserId, m.UserId)
+		if err == nil && fr == nil {
+			err = dao.CreateFollow(&model.Follow{
+				UserId:     m.ToUserId,
+				FollowerId: m.UserId,
+				ActionType: m.ActionType,
+			})
+			if err != nil {
+				klog.Error("follow action error", err)
+			}
+		}
+		if err != nil {
+			klog.Error("follow error", err)
+		}
+		err = dao.UpdateFollow(m.ToUserId, m.UserId, m.ActionType)
+		if err != nil {
+			klog.Error("follow error", err)
+		}
+	}
 }
 
 func declareExchange(ch *amqp.Channel, exchange string) error {
