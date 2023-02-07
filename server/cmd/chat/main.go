@@ -25,7 +25,6 @@ func main() {
 	IP, Port := initialize.InitFlag()
 	r, info := initialize.InitNacos(Port)
 	initialize.InitDB()
-	initialize.InitRedis()
 	initialize.InitMq()
 	p := provider.NewOpenTelemetryProvider(
 		provider.WithServiceName(global.ServerConfig.Name),
@@ -46,10 +45,6 @@ func main() {
 	impl := &ChatServiceImpl{
 		Publisher:  Publisher,
 		Subscriber: Subscriber,
-		RedisManager: &pkg.RedisManager{
-			RedisSentClient:    global.RedisSentClient,
-			RedisReceiveClient: global.RedisReceiveClient,
-		},
 	}
 	// Create new server.
 	srv := chat.NewServer(impl,

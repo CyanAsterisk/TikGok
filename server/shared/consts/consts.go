@@ -79,8 +79,6 @@ const (
 
 	RedisFollowingClientDB = 0
 	RedisFollowerClientDB  = 1
-	RedisSentClientDB      = 2
-	RedisReceiveClientDB   = 3
 
 	FollowList   = 0
 	FollowerList = 1
