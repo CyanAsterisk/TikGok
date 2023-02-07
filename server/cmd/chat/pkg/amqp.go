@@ -3,7 +3,10 @@ package pkg
 import (
 	"context"
 	"fmt"
+	"time"
 
+	"github.com/CyanAsterisk/TikGok/server/cmd/chat/dao"
+	"github.com/CyanAsterisk/TikGok/server/cmd/chat/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/chat"
 	"github.com/bytedance/sonic"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -125,6 +128,25 @@ func (s *Subscriber) Subscribe(c context.Context) (chan *chat.DouyinMessageActio
 		close(logicCh)
 	}()
 	return logicCh, cleanUp, nil
+}
+
+func SubscribeRoutine(subscriber *Subscriber) {
+	msgs, cleanUp, err := subscriber.Subscribe(context.Background())
+	defer cleanUp()
+	if err != nil {
+		klog.Error("cannot subscribe", err)
+	}
+	for m := range msgs {
+		err = dao.ChatAction(&model.Message{
+			ToUserId:   m.ToUserId,
+			FromUserId: m.UserId,
+			Content:    m.Content,
+			CreateDate: time.Now(),
+		})
+		if err != nil {
+			klog.Error("cannot chat action", err)
+		}
+	}
 }
 
 func declareExchange(ch *amqp.Channel, exchange string) error {
