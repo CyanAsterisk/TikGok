@@ -7,10 +7,12 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/model"
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/pkg"
+	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/video"
 	"github.com/CyanAsterisk/TikGok/server/shared/tools"
+	"github.com/bwmarrin/snowflake"
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
@@ -49,23 +51,23 @@ type Subscriber interface {
 
 // RedisManager defines the redis interface.
 type RedisManager interface {
-	CreateVideo(video *model.Video) error
-	GetVideosByLatestTime(latestTime int64) ([]*model.Video, error)
-	GetVideosByUserId(uid int64) ([]*model.Video, error)
-	GetVideoByVideoId(vid int64) (*model.Video, error)
-	BatchGetVideoByVideoId(vidList []int64) ([]*model.Video, error)
+	CreateVideo(ctx context.Context, video *model.Video) error
+	GetVideoListByLatestTime(ctx context.Context, latestTime int64) ([]*model.Video, error)
+	GetVideoListByAuthorId(ctx context.Context, authorId int64) ([]*model.Video, error)
+	GetVideoByVideoId(ctx context.Context, videoId int64) (*model.Video, error)
+	BatchGetVideoByVideoId(ctx context.Context, videoIdList []int64) ([]*model.Video, error)
 }
 
 // Feed implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) Feed(ctx context.Context, req *video.DouyinFeedRequest) (resp *video.DouyinFeedResponse, err error) {
 	resp = new(video.DouyinFeedResponse)
 	if req.LatestTime <= 0 {
-		req.LatestTime = time.Now().UnixNano() / 1e6
+		req.LatestTime = time.Now().UnixNano()
 	}
-	vs, err := s.RedisManager.GetVideosByLatestTime(req.LatestTime)
+	vs, err := s.RedisManager.GetVideoListByLatestTime(ctx, req.LatestTime)
 	if err != nil {
 		klog.Error("get videos by latest time err", err)
-		vs, err = dao.GetVideosByLatestTime(req.LatestTime)
+		vs, err = dao.GetVideoListByLatestTime(req.LatestTime)
 		if err != nil {
 			klog.Error("get videos by latest time err", err)
 			resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("get videos error"))
@@ -79,9 +81,9 @@ func (s *VideoServiceImpl) Feed(ctx context.Context, req *video.DouyinFeedReques
 		return resp, nil
 	}
 	if len(vs) > 0 {
-		resp.NextTime = vs[len(vs)-1].UpdatedAt.UnixNano() / 1e6
+		resp.NextTime = vs[len(vs)-1].CreateTime
 	} else {
-		resp.NextTime = time.Now().UnixNano() / 1e6
+		resp.NextTime = time.Now().UnixNano()
 	}
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return
@@ -90,27 +92,31 @@ func (s *VideoServiceImpl) Feed(ctx context.Context, req *video.DouyinFeedReques
 // PublishVideo implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *video.DouyinPublishActionRequest) (resp *video.DouyinPublishActionResponse, err error) {
 	resp = new(video.DouyinPublishActionResponse)
+	sf, err := snowflake.NewNode(consts.VideoSnowflakeNode)
+	if err != nil {
+		klog.Errorf("create snowflake node err", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr)
+		return resp, nil
+	}
+	videoRecord := &model.Video{
+		ID:         sf.Generate().Int64(),
+		AuthorId:   req.UserId,
+		PlayUrl:    req.PlayUrl,
+		CoverUrl:   req.CoverUrl,
+		Title:      req.Title,
+		CreateTime: time.Now().UnixNano(),
+	}
+	// TODO: publish video record instead of req
 	err = s.Publish(ctx, req)
 	if err != nil {
 		klog.Errorf("action publish error", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("publish video action error"))
 		return resp, nil
 	}
-	v := &model.Video{
-		Uid:       req.UserId,
-		PlayUrl:   req.PlayUrl,
-		CoverUrl:  req.CoverUrl,
-		Title:     req.Title,
-		UpdatedAt: time.Now(),
-	}
-
-	if err = s.RedisManager.CreateVideo(v); err != nil {
-		err = dao.CreateVideo(v)
-		if err != nil {
-			klog.Error("create video by redis err", err)
-			resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("create video err"))
-			return resp, nil
-		}
+	if err = s.RedisManager.CreateVideo(ctx, videoRecord); err != nil {
+		klog.Error("create video by redis err", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("create video err"))
+		return resp, nil
 	}
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
@@ -120,10 +126,10 @@ func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *video.DouyinPu
 func (s *VideoServiceImpl) GetPublishedVideoList(ctx context.Context, req *video.DouyinGetPublishedListRequest) (resp *video.DouyinGetPublishedListResponse, err error) {
 	resp = new(video.DouyinGetPublishedListResponse)
 
-	vs, err := s.RedisManager.GetVideosByUserId(req.OwnerId)
+	vs, err := s.RedisManager.GetVideoListByAuthorId(ctx, req.OwnerId)
 	if err != nil {
 		klog.Error("get published video by author id err", err)
-		vs, err = dao.GetVideosByUserId(req.OwnerId)
+		vs, err = dao.GetVideoListByAuthorId(req.OwnerId)
 		if err != nil {
 			klog.Error("get published video list err", err)
 			resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("get published video list err"))
@@ -151,7 +157,7 @@ func (s *VideoServiceImpl) GetFavoriteVideoList(ctx context.Context, req *video.
 		return resp, nil
 	}
 
-	videoList, err := s.RedisManager.BatchGetVideoByVideoId(idList)
+	videoList, err := s.RedisManager.BatchGetVideoByVideoId(ctx, idList)
 	if err != nil {
 		klog.Error("batch get video list by if from redis err", err)
 		videoList, err = dao.BatchGetVideoByVideoId(idList)
@@ -180,7 +186,7 @@ func (s *VideoServiceImpl) fillVideoList(ctx context.Context, videoList []*model
 	authorIdList := make([]int64, len(videoList))
 	for _, v := range videoList {
 		videoIdList = append(videoIdList, v.ID)
-		authorIdList = append(authorIdList, v.Uid)
+		authorIdList = append(authorIdList, v.AuthorId)
 	}
 	authorList, err := s.UserManager.BatchGetUser(ctx, authorIdList, viewerId)
 	if err != nil {

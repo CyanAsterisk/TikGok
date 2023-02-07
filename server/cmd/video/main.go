@@ -31,6 +31,7 @@ func main() {
 		provider.WithInsecure(),
 	)
 	defer p.Shutdown(context.Background())
+	initialize.InitRedis()
 	initialize.InitMq()
 	initialize.InitInteraction()
 	initialize.InitUser()
@@ -38,6 +39,7 @@ func main() {
 	impl := &VideoServiceImpl{
 		UserManager:        &pkg.UserManager{UserService: global.UserClient},
 		InteractionManager: &pkg.InteractionManager{InteractionService: global.InteractClient},
+		RedisManager:       &pkg.RedisManager{RedisClient: global.RedisClient},
 	}
 	// Create new server.
 	srv := video.NewServer(impl,

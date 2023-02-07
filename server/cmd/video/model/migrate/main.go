@@ -40,12 +40,13 @@ func main() {
 
 	for i := 0; i < 10; i++ {
 		video := model.Video{
-			Uid:      int64(10000000000 + i),
-			PlayUrl:  "fake-playUrl",
-			CoverUrl: "fake-playUrl",
-			Title:    fmt.Sprintf("fake-title-%d", i),
+			ID:         0,
+			AuthorId:   int64(10000000000 + i),
+			PlayUrl:    "fake-playUrl",
+			CoverUrl:   "fake-playUrl",
+			Title:      fmt.Sprintf("fake-title-%d", i),
+			CreateTime: time.Now().UnixNano(),
 		}
-
 		db.Save(&video)
 	}
 }
