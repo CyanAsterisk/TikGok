@@ -79,6 +79,7 @@ const (
 
 	RedisFollowingClientDB = 0
 	RedisFollowerClientDB  = 1
+	RedisVideoClientDB     = 2
 
 	FollowList   = 0
 	FollowerList = 1
