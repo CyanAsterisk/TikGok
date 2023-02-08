@@ -36,26 +36,24 @@ func main() {
 	initialize.InitUser()
 	initialize.InitChat()
 
-	Publisher, err := pkg.NewPublisher(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
+	publisher, err := pkg.NewPublisher(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
 	if err != nil {
 		klog.Fatal("cannot create publisher", err)
 	}
-	Subscriber, err := pkg.NewSubscriber(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
+	subscriber, err := pkg.NewSubscriber(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
 	if err != nil {
 		klog.Fatal("cannot create subscriber", err.Error())
 	}
-	go pkg.SubscribeRoutine(Subscriber)
+	go pkg.SubscribeRoutine(subscriber)
 
 	impl := &SocialityServiceImpl{
 		UserManager: &pkg.UserManager{
 			UserService: global.UserClient,
 			ChatService: global.ChatClient,
 		},
-		Publisher:  Publisher,
-		Subscriber: Subscriber,
-		RedisManager: &pkg.RedisManager{
-			RedisClient: global.RedisClient,
-		},
+		Publisher:    publisher,
+		Subscriber:   subscriber,
+		RedisManager: pkg.NewRedisManager(global.RedisClient),
 	}
 	// Create new server.
 	srv := sociality.NewServer(impl,

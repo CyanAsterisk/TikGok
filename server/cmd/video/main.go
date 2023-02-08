@@ -39,7 +39,7 @@ func main() {
 	impl := &VideoServiceImpl{
 		UserManager:        &pkg.UserManager{UserService: global.UserClient},
 		InteractionManager: &pkg.InteractionManager{InteractionService: global.InteractClient},
-		RedisManager:       &pkg.RedisManager{RedisClient: global.RedisClient},
+		RedisManager:       pkg.NewRedisManager(global.RedisClient),
 	}
 	// Create new server.
 	srv := video.NewServer(impl,

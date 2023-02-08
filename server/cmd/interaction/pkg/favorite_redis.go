@@ -11,6 +11,12 @@ type FavoriteRedisManager struct {
 	RedisClient *redis.Client
 }
 
+func NewFavoriteRedisManager(client *redis.Client) *FavoriteRedisManager {
+	return &FavoriteRedisManager{
+		RedisClient: client,
+	}
+}
+
 func (r *FavoriteRedisManager) FavoriteCountByVideoId(ctx context.Context, videoId int64) (int64, error) {
 	videoIdStr := fmt.Sprintf("%d", videoId)
 	count, err := r.RedisClient.SCard(ctx, videoIdStr).Result()

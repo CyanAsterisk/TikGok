@@ -66,8 +66,8 @@ func main() {
 	impl := &InteractionServerImpl{
 		CommentPublisher:     commentPublisher,
 		FavoritePublisher:    favoritePublisher,
-		CommentRedisManager:  &pkg.CommentRedisManager{RedisClient: global.RedisCommentClient},
-		FavoriteRedisManager: &pkg.FavoriteRedisManager{RedisClient: global.RedisFavoriteClient},
+		CommentRedisManager:  pkg.NewCommentRedisManager(global.RedisCommentClient),
+		FavoriteRedisManager: pkg.NewFavoriteRedisManager(global.RedisFavoriteClient),
 	}
 	// Create new server.
 	srv := interaction.NewServer(impl,

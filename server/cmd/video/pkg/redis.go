@@ -15,6 +15,10 @@ type RedisManager struct {
 	RedisClient *redis.Client
 }
 
+func NewRedisManager(client *redis.Client) *RedisManager {
+	return &RedisManager{RedisClient: client}
+}
+
 func (r *RedisManager) CreateVideo(ctx context.Context, video *model.Video) error {
 	pl := r.RedisClient.TxPipeline()
 	authorIdStr := fmt.Sprintf("%d", video.AuthorId)

@@ -33,19 +33,19 @@ func main() {
 	)
 	defer p.Shutdown(context.Background())
 
-	Publisher, err := pkg.NewPublisher(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
+	publisher, err := pkg.NewPublisher(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
 	if err != nil {
 		klog.Fatal("cannot create publisher", err)
 	}
-	Subscriber, err := pkg.NewSubscriber(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
+	subscriber, err := pkg.NewSubscriber(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
 	if err != nil {
 		klog.Fatal("cannot create subscriber", err.Error())
 	}
-	go pkg.SubscribeRoutine(Subscriber)
+	go pkg.SubscribeRoutine(subscriber)
 
 	impl := &ChatServiceImpl{
-		Publisher:  Publisher,
-		Subscriber: Subscriber,
+		Publisher:  publisher,
+		Subscriber: subscriber,
 	}
 	// Create new server.
 	srv := chat.NewServer(impl,

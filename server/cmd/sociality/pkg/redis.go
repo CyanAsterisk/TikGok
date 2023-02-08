@@ -16,6 +16,10 @@ type RedisManager struct {
 	RedisClient *redis.Client
 }
 
+func NewRedisManager(client *redis.Client) *RedisManager {
+	return &RedisManager{RedisClient: client}
+}
+
 func (r *RedisManager) Action(ctx context.Context, req *sociality.DouyinRelationActionRequest) error {
 	toUserIdStr := fmt.Sprintf("%d", req.UserId)
 	userIdStr := fmt.Sprintf("%d", req.UserId)

@@ -14,6 +14,12 @@ type CommentRedisManager struct {
 	RedisClient *redis.Client
 }
 
+func NewCommentRedisManager(client *redis.Client) *CommentRedisManager {
+	return &CommentRedisManager{
+		RedisClient: client,
+	}
+}
+
 func (r *CommentRedisManager) CommentCountByVideoId(ctx context.Context, videoId int64) (int64, error) {
 	videoIdStr := fmt.Sprintf("%d", videoId)
 	count, err := r.RedisClient.ZCard(ctx, videoIdStr).Result()
