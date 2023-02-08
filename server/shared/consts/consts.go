@@ -79,11 +79,16 @@ const (
 
 	RabbitMqURI = "amqp://%s:%s@%s:%d/"
 
-	RedisFollowingClientDB = 0
-	RedisFollowerClientDB  = 1
-	RedisVideoClientDB     = 2
-	RedisCommentClientDB   = 3
-	RedisFavoriteClientDB  = 4
+	RedisSocialClientDB   = 1
+	RedisVideoClientDB    = 2
+	RedisCommentClientDB  = 3
+	RedisFavoriteClientDB = 4
+
+	RedisFollowerSuffix = "follower"
+	RedisFollowSuffix   = "follow"
+	AllVideoSortSetKey  = "all-video-list-key"
+	VideoIdFiled        = "videoId"
+	CommentJsonFiled    = "commentJson"
 
 	FollowList   = 0
 	FollowerList = 1

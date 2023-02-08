@@ -10,12 +10,11 @@ import (
 )
 
 var (
-	DB                   *gorm.DB
-	ServerConfig         config.ServerConfig
-	NacosConfig          config.NacosConfig
-	AmqpConn             *amqp.Connection
-	RedisFollowingClient *redis.Client
-	RedisFollowerClient  *redis.Client
+	DB           *gorm.DB
+	ServerConfig config.ServerConfig
+	NacosConfig  config.NacosConfig
+	AmqpConn     *amqp.Connection
+	RedisClient  *redis.Client
 
 	UserClient userservice.Client
 	ChatClient chatservice.Client

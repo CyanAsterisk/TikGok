@@ -9,14 +9,10 @@ import (
 )
 
 func InitRedis() {
-	global.RedisFollowerClient = redis.NewClient(&redis.Options{
+	global.RedisClient = redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%d", global.ServerConfig.RedisInfo.Host, global.ServerConfig.RabbitMqInfo.Port),
 		Password: global.ServerConfig.RedisInfo.Password,
-		DB:       consts.RedisFollowerClientDB,
+		DB:       consts.RedisSocialClientDB,
 	})
-	global.RedisFollowingClient = redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%d", global.ServerConfig.RedisInfo.Host, global.ServerConfig.RabbitMqInfo.Port),
-		Password: global.ServerConfig.RedisInfo.Password,
-		DB:       consts.RedisFollowingClientDB,
-	})
+
 }

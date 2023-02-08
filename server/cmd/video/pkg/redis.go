@@ -15,10 +15,6 @@ type RedisManager struct {
 	RedisClient *redis.Client
 }
 
-const (
-	AllVideoSortSetKey = "all-video-list-key"
-)
-
 func (r *RedisManager) CreateVideo(ctx context.Context, video *model.Video) error {
 	pl := r.RedisClient.TxPipeline()
 	authorIdStr := fmt.Sprintf("%d", video.AuthorId)
@@ -30,7 +26,7 @@ func (r *RedisManager) CreateVideo(ctx context.Context, video *model.Video) erro
 	if err = pl.LPush(ctx, authorIdStr, videoIdStr).Err(); err != nil {
 		return err
 	}
-	if err = pl.ZAdd(ctx, AllVideoSortSetKey, &redis.Z{
+	if err = pl.ZAdd(ctx, consts.AllVideoSortSetKey, &redis.Z{
 		Score:  float64(video.CreateTime),
 		Member: videoRecord,
 	}).Err(); err != nil {
@@ -49,7 +45,7 @@ func (r *RedisManager) GetVideoListByLatestTime(ctx context.Context, latestTime 
 		Offset: 0,
 		Count:  consts.VideosLimit,
 	}
-	videoJSONList, err := r.RedisClient.ZRangeByScore(ctx, AllVideoSortSetKey, op).Result()
+	videoJSONList, err := r.RedisClient.ZRangeByScore(ctx, consts.AllVideoSortSetKey, op).Result()
 	if err != nil {
 		return nil, err
 	}

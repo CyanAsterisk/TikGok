@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
+	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/bytedance/sonic"
 	"github.com/go-redis/redis/v8"
 )
@@ -12,11 +13,6 @@ import (
 type CommentRedisManager struct {
 	RedisClient *redis.Client
 }
-
-const (
-	videoIdFiled     = "videoId"
-	commentJsonFiled = "commentJson"
-)
 
 func (r *CommentRedisManager) CommentCountByVideoId(ctx context.Context, videoId int64) (int64, error) {
 	videoIdStr := fmt.Sprintf("%d", videoId)
@@ -26,6 +22,7 @@ func (r *CommentRedisManager) CommentCountByVideoId(ctx context.Context, videoId
 	}
 	return count, err
 }
+
 func (r *CommentRedisManager) CreateComment(ctx context.Context, comment *model.Comment) error {
 	pl := r.RedisClient.TxPipeline()
 	videoIdStr := fmt.Sprintf("%d", comment.VideoId)
@@ -35,8 +32,8 @@ func (r *CommentRedisManager) CreateComment(ctx context.Context, comment *model.
 		return err
 	}
 	batchData := make(map[string]string)
-	batchData[videoIdFiled] = videoIdStr
-	batchData[commentJsonFiled] = string(commentJson)
+	batchData[consts.VideoIdFiled] = videoIdStr
+	batchData[consts.CommentJsonFiled] = string(commentJson)
 	if err = pl.ZAdd(ctx, videoIdStr, &redis.Z{
 		Score:  float64(comment.CreateDate.UnixNano()),
 		Member: commentJson,
@@ -51,9 +48,10 @@ func (r *CommentRedisManager) CreateComment(ctx context.Context, comment *model.
 	}
 	return nil
 }
+
 func (r *CommentRedisManager) DeleteComment(ctx context.Context, commentId int64) error {
 	commentIdStr := fmt.Sprintf("%d", commentId)
-	values, err := r.RedisClient.HMGet(ctx, commentIdStr, videoIdFiled, commentJsonFiled).Result()
+	values, err := r.RedisClient.HMGet(ctx, commentIdStr, consts.VideoIdFiled, consts.CommentJsonFiled).Result()
 	if err != nil {
 		return err
 	}
@@ -64,6 +62,7 @@ func (r *CommentRedisManager) DeleteComment(ctx context.Context, commentId int64
 	}
 	return nil
 }
+
 func (r *CommentRedisManager) GetCommentListByVideoId(ctx context.Context, videoId int64) ([]*model.Comment, error) {
 	videoIdStr := fmt.Sprintf("%d", videoId)
 	values, err := r.RedisClient.ZRange(ctx, videoIdStr, 0, -1).Result()
