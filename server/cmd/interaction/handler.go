@@ -12,15 +12,14 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction"
 	"github.com/CyanAsterisk/TikGok/server/shared/tools"
+	"github.com/bwmarrin/snowflake"
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
 // InteractionServerImpl implements the last service interface defined in the IDL.
 type InteractionServerImpl struct {
 	CommentPublisher
-	CommentSubscriber
 	FavoritePublisher
-	FavoriteSubscriber
 
 	CommentRedisManager
 	FavoriteRedisManager
@@ -28,76 +27,72 @@ type InteractionServerImpl struct {
 
 // CommentPublisher defines the comment action publisher interface.
 type CommentPublisher interface {
-	Publish(context.Context, *interaction.DouyinCommentActionRequest) error
-}
-
-// CommentSubscriber defines a comment action subscriber.
-type CommentSubscriber interface {
-	Subscribe(context.Context) (ch chan *interaction.DouyinCommentActionRequest, cleanUp func(), err error)
+	Publish(context.Context, *model.Comment) error
 }
 
 // FavoritePublisher defines the favorite action publisher interface.
 type FavoritePublisher interface {
-	Publish(context.Context, *interaction.DouyinFavoriteActionRequest) error
-}
-
-// FavoriteSubscriber  defines a favorite action subscriber interface.
-type FavoriteSubscriber interface {
-	Subscribe(context.Context) (ch chan *interaction.DouyinFavoriteActionRequest, cleanUp func(), err error)
+	Publish(context.Context, *model.Favorite) error
 }
 
 // CommentRedisManager defines the comment redis interface.
 type CommentRedisManager interface {
-	CommentCountByVideoId(videoId int64) (int64, error)
-	CreateComment(comment *model.Comment) (*model.Comment, error)
-	DeleteComment(id int64) error
-	GetCommentListByVideoId(videoId int64) ([]*model.Comment, error)
+	CommentCountByVideoId(ctx context.Context, videoId int64) (int64, error)
+	CreateComment(ctx context.Context, comment *model.Comment) error
+	DeleteComment(ctx context.Context, commentId int64) error
+	GetCommentListByVideoId(ctx context.Context, videoId int64) ([]*model.Comment, error)
 }
 
 // FavoriteRedisManager defines the favorite redis interface.
 type FavoriteRedisManager interface {
-	FavoriteCountByVideoId(videoId int64) (int64, error)
-	CreateFavorite(fav *model.Favorite) error
-	UpdateFavorite(userId, videoId int64, actionType int8) error
-	GetFavoriteInfo(userId, videoId int64) (*model.Favorite, error)
-	GetFavoriteVideoIdListByUserId(userId int64) ([]int64, error)
+	FavoriteCountByVideoId(ctx context.Context, videoId int64) (int64, error)
+	Like(ctx context.Context, userId int64, videoId int64) error
+	Unlike(ctx context.Context, userId int64, videoId int64) error
+	Check(ctx context.Context, userId int64, videoId int64) (bool, error)
+	GetFavoriteVideoIdListByUserId(ctx context.Context, userId int64) ([]int64, error)
 }
 
 // Favorite implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) Favorite(ctx context.Context, req *interaction.DouyinFavoriteActionRequest) (resp *interaction.DouyinFavoriteActionResponse, err error) {
 	resp = new(interaction.DouyinFavoriteActionResponse)
-	err = s.FavoritePublisher.Publish(ctx, req)
+	err = s.FavoritePublisher.Publish(ctx, &model.Favorite{
+		UserId:     req.UserId,
+		VideoId:    req.VideoId,
+		ActionType: req.ActionType,
+	})
 	if err != nil {
 		klog.Error("action publish error", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite action error"))
 		return resp, nil
 	}
-	faInfo, err := s.FavoriteRedisManager.GetFavoriteInfo(req.UserId, req.VideoId)
-	if err == nil && faInfo == nil {
-		if err = s.FavoriteRedisManager.CreateFavorite(&model.Favorite{
-			UserId:     req.UserId,
-			VideoId:    req.VideoId,
-			ActionType: req.ActionType,
-		}); err != nil {
-			klog.Error("create favorite by redis err", err)
-			resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("create favorite by redis err"))
-			return resp, nil
-		}
-	}
+	liked, err := s.FavoriteRedisManager.Check(ctx, req.UserId, req.VideoId)
 	if err != nil {
-		klog.Error("favorite by redis err", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite by redis error"))
+		klog.Error("check like by redis err", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("check like by redis error"))
 		return resp, nil
 	}
-	err = s.FavoriteRedisManager.UpdateFavorite(req.UserId, req.VideoId, req.ActionType)
-	if err != nil {
-		klog.Error("update favorite by redis error", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("update favorite by redis error"))
+	if req.ActionType == consts.Like {
+		if !liked {
+			if err = s.FavoriteRedisManager.Like(ctx, req.UserId, req.VideoId); err != nil {
+				klog.Error("like by redis error", err)
+				resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("like by redis error"))
+				return resp, nil
+			}
+		}
+	} else if req.ActionType == consts.UnLike {
+		if liked {
+			if err = s.FavoriteRedisManager.Unlike(ctx, req.UserId, req.VideoId); err != nil {
+				klog.Error("unlike by redis err", err)
+				resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("unlike by redis error"))
+				return resp, nil
+			}
+		}
+	} else {
+		resp.BaseResp = tools.BuildBaseResp(errno.ParamsEr.WithMessage("invalid action type"))
 		return resp, nil
 	}
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
-
 	//
 	//faInfo, err := dao.GetFavoriteInfo(req.UserId, req.VideoId)
 	//if err == nil && faInfo == nil {
@@ -132,7 +127,7 @@ func (s *InteractionServerImpl) Favorite(ctx context.Context, req *interaction.D
 // GetFavoriteVideoIdList implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) GetFavoriteVideoIdList(ctx context.Context, req *interaction.DouyinGetFavoriteVideoIdListRequest) (resp *interaction.DouyinGetFavoriteVideoIdListResponse, err error) {
 	resp = new(interaction.DouyinGetFavoriteVideoIdListResponse)
-	resp.VideoIdList, err = s.FavoriteRedisManager.GetFavoriteVideoIdListByUserId(req.UserId)
+	resp.VideoIdList, err = s.FavoriteRedisManager.GetFavoriteVideoIdListByUserId(ctx, req.UserId)
 	if err != nil {
 		klog.Error("get videoIdList by redis err", err)
 		resp.VideoIdList, err = dao.GetFavoriteVideoIdListByUserId(req.UserId)
@@ -158,26 +153,35 @@ func (s *InteractionServerImpl) GetFavoriteVideoIdList(ctx context.Context, req 
 // Comment implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) Comment(ctx context.Context, req *interaction.DouyinCommentActionRequest) (resp *interaction.DouyinCommentActionResponse, err error) {
 	resp = new(interaction.DouyinCommentActionResponse)
-	err = s.CommentPublisher.Publish(ctx, req)
+	comment := &model.Comment{
+		ID:          req.CommentId,
+		UserId:      req.UserId,
+		VideoId:     req.VideoId,
+		ActionType:  req.ActionType,
+		CommentText: req.CommentText,
+		CreateDate:  time.Now(),
+	}
+	if req.ActionType == consts.ValidComment {
+		sf, err := snowflake.NewNode(consts.CommentSnowflakeNode)
+		if err != nil {
+			klog.Errorf("generate id failed: %s", err.Error())
+			resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("generate id failed"))
+		}
+		comment.ID = sf.Generate().Int64()
+	}
+	err = s.CommentPublisher.Publish(ctx, comment)
 	if err != nil {
 		klog.Error("action publish error", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("comment action error"))
 		return resp, nil
 	}
-	var comment *model.Comment
 	if req.ActionType == consts.ValidComment {
-		comment, err = s.CommentRedisManager.CreateComment(&model.Comment{
-			UserId:      req.UserId,
-			VideoId:     req.VideoId,
-			ActionType:  consts.ValidComment,
-			CommentText: req.CommentText,
-			CreateDate:  time.Now(),
-		})
+		err = s.CommentRedisManager.CreateComment(ctx, comment)
 		if err != nil {
 			klog.Errorf("create comment by redis error", err)
 		}
 	} else if req.ActionType == consts.InvalidComment {
-		err = s.CommentRedisManager.DeleteComment(req.CommentId)
+		err = s.CommentRedisManager.DeleteComment(ctx, req.CommentId)
 		if err != nil {
 			klog.Errorf("delete comment from redis error")
 			resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("delete comment from redis error"))
@@ -204,9 +208,9 @@ func (s *InteractionServerImpl) Comment(ctx context.Context, req *interaction.Do
 }
 
 // GetCommentList implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) GetCommentList(_ context.Context, req *interaction.DouyinGetCommentListRequest) (resp *interaction.DouyinGetCommentListResponse, err error) {
+func (s *InteractionServerImpl) GetCommentList(ctx context.Context, req *interaction.DouyinGetCommentListRequest) (resp *interaction.DouyinGetCommentListResponse, err error) {
 	resp = new(interaction.DouyinGetCommentListResponse)
-	list, err := s.CommentRedisManager.GetCommentListByVideoId(req.VideoId)
+	list, err := s.CommentRedisManager.GetCommentListByVideoId(ctx, req.VideoId)
 	if err != nil {
 		klog.Error("get comment list by redis err", err)
 		list, err = dao.GetCommentListByVideoId(req.VideoId)
@@ -232,9 +236,9 @@ func (s *InteractionServerImpl) GetCommentList(_ context.Context, req *interacti
 }
 
 // GetInteractInfo implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) GetInteractInfo(_ context.Context, req *interaction.DouyinGetInteractInfoRequest) (resp *interaction.DouyinGetInteractInfoResponse, err error) {
+func (s *InteractionServerImpl) GetInteractInfo(ctx context.Context, req *interaction.DouyinGetInteractInfoRequest) (resp *interaction.DouyinGetInteractInfoResponse, err error) {
 	resp = new(interaction.DouyinGetInteractInfoResponse)
-	if resp.InteractInfo, err = s.getInteractInfo(req.VideoId, req.ViewerId); err != nil {
+	if resp.InteractInfo, err = s.getInteractInfo(ctx, req.VideoId, req.ViewerId); err != nil {
 		klog.Error("get interact info err", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr)
 		return resp, nil
@@ -247,7 +251,7 @@ func (s *InteractionServerImpl) GetInteractInfo(_ context.Context, req *interact
 func (s *InteractionServerImpl) BatchGetInteractInfo(ctx context.Context, req *interaction.DouyinBatchGetInteractInfoRequest) (resp *interaction.DouyinBatchGetInteractInfoResponse, err error) {
 	resp = new(interaction.DouyinBatchGetInteractInfoResponse)
 	for _, vid := range req.VideoIdList {
-		info, err := s.getInteractInfo(vid, req.ViewerId)
+		info, err := s.getInteractInfo(ctx, vid, req.ViewerId)
 		if err != nil {
 			klog.Error("get interact info err", err)
 			resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr)
@@ -259,34 +263,38 @@ func (s *InteractionServerImpl) BatchGetInteractInfo(ctx context.Context, req *i
 	return resp, nil
 }
 
-func (s *InteractionServerImpl) getInteractInfo(videoId int64, viewerId int64) (info *base.InteractInfo, err error) {
+func (s *InteractionServerImpl) getInteractInfo(ctx context.Context, videoId int64, viewerId int64) (info *base.InteractInfo, err error) {
 	info = new(base.InteractInfo)
-	if info.CommentCount, err = s.CommentRedisManager.CommentCountByVideoId(videoId); err != nil {
+	if info.CommentCount, err = s.CommentRedisManager.CommentCountByVideoId(ctx, videoId); err != nil {
 		klog.Error("get comment count by redis err", err)
 		if info.CommentCount, err = dao.CommentCountByVideoId(videoId); err != nil {
 			return nil, err
 		}
 	}
-	if info.FavoriteCount, err = s.FavoriteRedisManager.FavoriteCountByVideoId(videoId); err != nil {
+	if info.FavoriteCount, err = s.FavoriteRedisManager.FavoriteCountByVideoId(ctx, videoId); err != nil {
 		klog.Error("get favorite count by redis err", err)
 		if info.FavoriteCount, err = dao.FavoriteCountByVideoId(videoId); err != nil {
 			return nil, err
 		}
 	}
-	fav, err := s.FavoriteRedisManager.GetFavoriteInfo(viewerId, videoId)
-	if err != nil {
-		klog.Error("get favorite info by redis err", err)
-		if fav, err = dao.GetFavoriteInfo(viewerId, videoId); err != nil {
+	if info.IsFavorite, err = s.FavoriteRedisManager.Check(ctx, viewerId, videoId); err != nil {
+		klog.Error("check like by redis err", err)
+		fav, err := dao.GetFavoriteInfo(viewerId, videoId)
+		if err != nil {
+			klog.Error("get favorite info err", err)
 			return nil, err
 		}
-	}
-	if fav != nil && fav.ActionType == consts.IsLike {
-		info.IsFavorite = true
-	} else {
-		info.IsFavorite = false
+		if fav == nil {
+			info.IsFavorite = false
+		} else {
+			if fav.ActionType == consts.IsLike {
+				info.IsFavorite = true
+			} else {
+				info.IsFavorite = false
+			}
+		}
 	}
 	return info, nil
-
 	//if info.CommentCount, err = dao.CommentCountByVideoId(videoId); err != nil {
 	//	return nil, err
 	//}

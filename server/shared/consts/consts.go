@@ -57,6 +57,8 @@ const (
 
 	IsNotLike = 2
 	IsLike    = 1
+	Like      = 1
+	UnLike    = 2
 
 	IsNotFollow = 2
 	IsFollow    = 1
@@ -80,6 +82,8 @@ const (
 	RedisFollowingClientDB = 0
 	RedisFollowerClientDB  = 1
 	RedisVideoClientDB     = 2
+	RedisCommentClientDB   = 3
+	RedisFavoriteClientDB  = 4
 
 	FollowList   = 0
 	FollowerList = 1

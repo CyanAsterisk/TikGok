@@ -7,6 +7,7 @@ import (
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/initialize"
+	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	interaction "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction/interactionserver"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -30,9 +31,44 @@ func main() {
 		provider.WithInsecure(),
 	)
 	defer p.Shutdown(context.Background())
+	initialize.InitRedis()
 	initialize.InitMq()
 
-	impl := &InteractionServerImpl{}
+	mqInfo := global.ServerConfig.RabbitMqInfo
+	commentPublisher, err := pkg.NewCommentPublisher(global.AmqpConn, mqInfo.CommentExchange)
+	if err != nil {
+		klog.Fatal("cannot create comment publisher")
+	}
+	favoritePublisher, err := pkg.NewFavoritePublisher(global.AmqpConn, mqInfo.FavoriteExchange)
+	if err != nil {
+		klog.Fatal("cannot create favorite publisher")
+	}
+	commentSubscriber, err := pkg.NewCommentSubscriber(global.AmqpConn, mqInfo.CommentExchange)
+	if err != nil {
+		klog.Fatal("cannot create comment subscriber")
+	}
+	go func() {
+		if err = pkg.CommentSubscribeRoutine(commentSubscriber); err != nil {
+			klog.Fatal("comment subscribe routine", err)
+		}
+	}()
+
+	favoriteSubscriber, err := pkg.NewFavoriteSubscriber(global.AmqpConn, mqInfo.FavoriteExchange)
+	if err != nil {
+		klog.Fatal("cannot create favorite subscriber")
+	}
+	go func() {
+		if err = pkg.FavoriteSubscribeRoutine(favoriteSubscriber); err != nil {
+			klog.Fatal("favorite subscribe routine", err)
+		}
+	}()
+
+	impl := &InteractionServerImpl{
+		CommentPublisher:     commentPublisher,
+		FavoritePublisher:    favoritePublisher,
+		CommentRedisManager:  &pkg.CommentRedisManager{RedisClient: global.RedisCommentClient},
+		FavoriteRedisManager: &pkg.FavoriteRedisManager{RedisClient: global.RedisFavoriteClient},
+	}
 	// Create new server.
 	srv := interaction.NewServer(impl,
 		server.WithServiceAddr(utils.NewNetAddr(consts.TCP, net.JoinHostPort(IP, strconv.Itoa(Port)))),
@@ -43,7 +79,7 @@ func main() {
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: global.ServerConfig.Name}),
 	)
 
-	err := srv.Run()
+	err = srv.Run()
 	if err != nil {
 		klog.Fatal(err)
 	}
