@@ -36,7 +36,23 @@ func main() {
 	initialize.InitInteraction()
 	initialize.InitUser()
 
+	publisher, err := pkg.NewPublisher(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
+	if err != nil {
+		klog.Fatal("cannot create publisher", err)
+	}
+	subscriber, err := pkg.NewSubscriber(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
+	if err != nil {
+		klog.Fatal("cannot create subscriber", err)
+	}
+	go func() {
+		err = pkg.SubscribeRoutine(subscriber)
+		if err != nil {
+			klog.Fatal("subscribe err", err)
+		}
+	}()
+
 	impl := &VideoServiceImpl{
+		Publisher:          publisher,
 		UserManager:        &pkg.UserManager{UserService: global.UserClient},
 		InteractionManager: &pkg.InteractionManager{InteractionService: global.InteractClient},
 		RedisManager:       pkg.NewRedisManager(global.RedisClient),
@@ -51,7 +67,7 @@ func main() {
 		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: global.ServerConfig.Name}),
 	)
 
-	err := srv.Run()
+	err = srv.Run()
 	if err != nil {
 		klog.Fatal(err)
 	}

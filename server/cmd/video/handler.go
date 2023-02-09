@@ -21,7 +21,6 @@ type VideoServiceImpl struct {
 	UserManager
 	InteractionManager
 	Publisher
-	Subscriber
 	RedisManager
 }
 
@@ -41,12 +40,7 @@ type InteractionManager interface {
 
 // Publisher defines the publisher video interface.
 type Publisher interface {
-	Publish(context.Context, *video.DouyinPublishActionRequest) error
-}
-
-// Subscriber defines a video publish subscriber.
-type Subscriber interface {
-	Subscribe(context.Context) (ch chan *video.DouyinPublishActionRequest, cleanUp func(), err error)
+	Publish(context.Context, *model.Video) error
 }
 
 // RedisManager defines the redis interface.
@@ -106,8 +100,7 @@ func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *video.DouyinPu
 		Title:      req.Title,
 		CreateTime: time.Now().UnixNano(),
 	}
-	// TODO: publish video record instead of req
-	err = s.Publish(ctx, req)
+	err = s.Publish(ctx, videoRecord)
 	if err != nil {
 		klog.Errorf("action publish error", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("publish video action error"))

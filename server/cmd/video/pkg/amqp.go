@@ -3,8 +3,9 @@ package pkg
 import (
 	"context"
 	"fmt"
-	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/video"
 
+	"github.com/CyanAsterisk/TikGok/server/cmd/video/dao"
+	"github.com/CyanAsterisk/TikGok/server/cmd/video/model"
 	"github.com/bytedance/sonic"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/streadway/amqp"
@@ -31,9 +32,9 @@ func NewPublisher(conn *amqp.Connection, exchange string) (*Publisher, error) {
 	}, nil
 }
 
-// Publish publishes a message.
-func (p *Publisher) Publish(_ context.Context, req *video.DouyinPublishActionRequest) error {
-	body, err := sonic.Marshal(req)
+// Publish publishes a video record.
+func (p *Publisher) Publish(_ context.Context, video *model.Video) error {
+	body, err := sonic.Marshal(video)
 	if err != nil {
 		return fmt.Errorf("cannot marshal: %v", err)
 	}
@@ -106,27 +107,42 @@ func (s *Subscriber) SubscribeRaw(_ context.Context) (<-chan amqp.Delivery, func
 }
 
 // Subscribe subscribes and returns a channel with video publish request.
-func (s *Subscriber) Subscribe(c context.Context) (reqChan chan *video.DouyinPublishActionRequest, cleanUpFunc func(), err error) {
+func (s *Subscriber) Subscribe(c context.Context) (videoChan chan *model.Video, cleanUpFunc func(), err error) {
 	msgCh, cleanUp, err := s.SubscribeRaw(c)
 	if err != nil {
 		return nil, cleanUp, err
 	}
 
-	reqCh := make(chan *video.DouyinPublishActionRequest)
+	ch := make(chan *model.Video)
 	go func() {
 		for msg := range msgCh {
-			var req video.DouyinPublishActionRequest
-			err := sonic.Unmarshal(msg.Body, &req)
+			var v model.Video
+			err := sonic.Unmarshal(msg.Body, &v)
 			if err != nil {
 				klog.Errorf("cannot unmarshal %s", err.Error())
 			}
-			reqCh <- &req
+			ch <- &v
 		}
-		close(reqCh)
+		close(ch)
 	}()
-	return reqCh, cleanUp, nil
+	return ch, cleanUp, nil
 }
 
 func declareExchange(ch *amqp.Channel, exchange string) error {
 	return ch.ExchangeDeclare(exchange, "fanout", true, false, false, false, nil)
+}
+
+func SubscribeRoutine(subscriber *Subscriber) error {
+	videoChan, cleanUp, err := subscriber.Subscribe(context.Background())
+	defer cleanUp()
+	if err != nil {
+		klog.Error("cannot subscribe", err)
+	}
+	for video := range videoChan {
+		err = dao.CreateVideo(video)
+		if err != nil {
+			klog.Error("create video err", err)
+		}
+	}
+	return nil
 }
