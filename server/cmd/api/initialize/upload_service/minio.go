@@ -1,4 +1,4 @@
-package initialize
+package upload_service
 
 import (
 	"context"
@@ -10,8 +10,8 @@ import (
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
-func InitMinio() {
-	mi := global.ServerConfig.MinioInfo
+func initMinio() {
+	mi := global.ServerConfig.UploadServiceInfo.MinioInfo
 	// Initialize minio client object.
 	mc, err := minio.New(mi.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(mi.AccessKeyID, mi.SecretAccessKey, ""),
@@ -36,5 +36,5 @@ func InitMinio() {
 	if err != nil {
 		hlog.Fatal("set bucket policy err:%s", err)
 	}
-	global.MinioClient = mc
+	minioClient = mc
 }

@@ -187,7 +187,14 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	playUrl, coverUrl, err := pkg.UpLoadFile(fileHeader)
+	playUrl, coverUrl, err := global.UploadService.UpLoadFile(fileHeader)
+	if err != nil {
+		hlog.Error("upload service err", err)
+		resp.StatusCode = int32(errno.ServiceErr.ErrCode)
+		resp.StatusMsg = errno.ServiceErr.ErrMsg
+		errno.SendResponse(c, resp)
+		return
+	}
 
 	res, err := global.VideoClient.PublishVideo(ctx, &video.DouyinPublishActionRequest{
 		UserId:   aid.(int64),

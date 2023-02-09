@@ -18,18 +18,26 @@ type OtelConfig struct {
 	EndPoint string `mapstructure:"endpoint" json:"endpoint"`
 }
 
+type RabbitMqConfig struct {
+	Host     string `mapstructure:"host" json:"host"`
+	Port     int    `mapstructure:"port" json:"port"`
+	Exchange string `mapstructure:"exchange" json:"exchange"`
+	User     string `mapstructure:"user" json:"user"`
+	Password string `mapstructure:"password" json:"password"`
+}
+
 type ServerConfig struct {
-	Name               string       `mapstructure:"name" json:"name"`
-	Host               string       `mapstructure:"host" json:"host"`
-	Port               int          `mapstructure:"port" json:"port"`
-	JWTInfo            JWTConfig    `mapstructure:"jwt" json:"jwt"`
-	OtelInfo           OtelConfig   `mapstructure:"otel" json:"otel"`
-	ChatSrvInfo        RPCSrvConfig `mapstructure:"chat_srv" json:"chat_srv"`
-	UserSrvInfo        RPCSrvConfig `mapstructure:"user_srv" json:"user_srv"`
-	InteractionSrvInfo RPCSrvConfig `mapstructure:"interaction_srv" json:"interaction_srv"`
-	SocialitySrvInfo   RPCSrvConfig `mapstructure:"sociality_srv" json:"sociality_srv"`
-	VideoSrvInfo       RPCSrvConfig `mapstructure:"video_srv" json:"video_srv"`
-	MinioInfo          MinioConfig  `mapstructure:"minio" json:"minio"`
+	Name               string              `mapstructure:"name" json:"name"`
+	Host               string              `mapstructure:"host" json:"host"`
+	Port               int                 `mapstructure:"port" json:"port"`
+	JWTInfo            JWTConfig           `mapstructure:"jwt" json:"jwt"`
+	OtelInfo           OtelConfig          `mapstructure:"otel" json:"otel"`
+	ChatSrvInfo        RPCSrvConfig        `mapstructure:"chat_srv" json:"chat_srv"`
+	UserSrvInfo        RPCSrvConfig        `mapstructure:"user_srv" json:"user_srv"`
+	InteractionSrvInfo RPCSrvConfig        `mapstructure:"interaction_srv" json:"interaction_srv"`
+	SocialitySrvInfo   RPCSrvConfig        `mapstructure:"sociality_srv" json:"sociality_srv"`
+	VideoSrvInfo       RPCSrvConfig        `mapstructure:"video_srv" json:"video_srv"`
+	UploadServiceInfo  UploadServiceConfig `mapstructure:"upload_srv" json:"upload_srv"`
 }
 
 type RPCSrvConfig struct {
@@ -40,4 +48,9 @@ type MinioConfig struct {
 	Endpoint        string `mapstructure:"endpoint" json:"endpoint"`
 	AccessKeyID     string `mapstructure:"access-key-id" json:"access-key-id"`
 	SecretAccessKey string `mapstructure:"secret-access-key" json:"secret-access-key"`
+}
+
+type UploadServiceConfig struct {
+	MinioInfo    MinioConfig    `mapstructure:"minio" json:"minio"`
+	RabbitMqInfo RabbitMqConfig `mapstructure:"rabbitmq" json:"rabbitmq"`
 }
