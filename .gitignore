@@ -19,4 +19,4 @@
 .vscode
 tmp
 *.log
-video_data
+data

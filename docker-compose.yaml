@@ -5,20 +5,31 @@ services:
   mysql:
     image: mysql:latest
     volumes:
-      - ./video_data/configs/sql:/docker-entrypoint-initdb.d
+      - ./data/configs/mysql:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
     environment:
       - MYSQL_DATABASE=TikGok
       - MYSQL_ROOT_PASSWORD=123456
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - ./data/data/redis:/data
+      - ./data/logs:/logs
+    command: redis-server --requirepass tikgok
 
   # MinIO
   minio:
     image: minio/minio:latest
     command: server --console-address ":9001" /data 
     volumes:
-      - ./video_data/configs/minio:/root/.minio
-      - ./video_data/data/minio:/data
+      - ./data/configs/minio:/root/.minio
+      - ./data/data/minio:/data
     environment:
       - MINIO_ACCESS_KEY=admin
       - MINIO_SECRET_KEY=admin123
