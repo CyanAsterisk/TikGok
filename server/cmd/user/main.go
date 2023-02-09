@@ -32,6 +32,7 @@ func main() {
 		provider.WithInsecure(),
 	)
 	defer p.Shutdown(context.Background())
+	initialize.InitRedis()
 	initialize.InitSocial()
 	initialize.InitChat()
 
@@ -39,6 +40,7 @@ func main() {
 		jwt:           middleware.NewJWT(global.ServerConfig.JWTInfo.SigningKey),
 		SocialManager: &pkg.SocialManager{SocialService: global.SocialClient},
 		ChatManager:   &pkg.ChatManager{ChatService: global.ChatClient},
+		RedisManager:  pkg.NewRedisManger(global.RedisClient),
 	}
 	// Create new server.
 	srv := user.NewServer(impl,

@@ -19,6 +19,12 @@ type MysqlConfig struct {
 	Salt     string `mapstructure:"salt" json:"salt"`
 }
 
+type RedisConfig struct {
+	Host     string `mapstructure:"host" json:"host"`
+	Port     int    `mapstructure:"port" json:"port"`
+	Password string `mapstructure:"password" json:"password"`
+}
+
 type OtelConfig struct {
 	EndPoint string `mapstructure:"endpoint" json:"endpoint"`
 }
@@ -32,6 +38,7 @@ type ServerConfig struct {
 	Host             string             `mapstructure:"host" json:"host"`
 	JWTInfo          JWTConfig          `mapstructure:"jwt" json:"jwt"`
 	MysqlInfo        MysqlConfig        `mapstructure:"mysql" json:"mysql"`
+	RedisInfo        RedisConfig        `mapstructure:"redis" json:"redis"`
 	OtelInfo         OtelConfig         `mapstructure:"otel" json:"otel"`
 	SocialitySrvInfo SocialitySrvConfig `mapstructure:"sociality_srv" json:"sociality_srv"`
 	ChatSrvInfo      ChatSrvConfig      `mapstructure:"chat_srv" json:"chat_srv"`
