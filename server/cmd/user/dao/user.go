@@ -3,7 +3,6 @@ package dao
 import (
 	"errors"
 
-	"github.com/CyanAsterisk/TikGok/server/cmd/user/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/model"
 	"gorm.io/gorm"
 )
@@ -13,10 +12,28 @@ var (
 	ErrUserExist  = errors.New("user already exist")
 )
 
+type User struct {
+	db *gorm.DB
+}
+
+// NewUser create a user dao.
+func NewUser(db *gorm.DB) *User {
+	m := db.Migrator()
+	if !m.HasTable(&model.User{}) {
+		err := m.CreateTable(&model.User{})
+		if err != nil {
+			panic(err)
+		}
+	}
+	return &User{
+		db: db,
+	}
+}
+
 // GetUserByUsername get user by username
-func GetUserByUsername(username string) (*model.User, error) {
+func (u *User) GetUserByUsername(username string) (*model.User, error) {
 	var user model.User
-	err := global.DB.Model(&model.User{}).
+	err := u.db.Model(&model.User{}).
 		Where(&model.User{Username: username}).First(&user).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, ErrNoSuchUser
@@ -25,9 +42,9 @@ func GetUserByUsername(username string) (*model.User, error) {
 }
 
 // GetUserById get user by userid.
-func GetUserById(uid int64) (*model.User, error) {
+func (u *User) GetUserById(uid int64) (*model.User, error) {
 	var user model.User
-	err := global.DB.Model(&model.User{}).
+	err := u.db.Model(&model.User{}).
 		Where(&model.User{ID: uid}).First(&user).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, ErrNoSuchUser
@@ -36,14 +53,14 @@ func GetUserById(uid int64) (*model.User, error) {
 }
 
 // BatchGetUserById get users by userid.
-func BatchGetUserById(uids []int64) ([]*model.User, error) {
+func (u *User) BatchGetUserById(uids []int64) ([]*model.User, error) {
 	if uids == nil {
 		return nil, nil
 	}
 	users := make([]*model.User, 0)
 	for _, id := range uids {
 		var user model.User
-		err := global.DB.Model(&model.User{}).
+		err := u.db.Model(&model.User{}).
 			Where(&model.User{ID: id}).First(&user).Error
 		if err != nil {
 			return nil, err
@@ -54,13 +71,18 @@ func BatchGetUserById(uids []int64) ([]*model.User, error) {
 }
 
 // CreateUser creates a user.
-func CreateUser(user *model.User) error {
-	err := global.DB.Model(&model.User{}).
+func (u *User) CreateUser(user *model.User) error {
+	err := u.db.Model(&model.User{}).
 		Where(&model.User{Username: user.Username}).First(&model.User{}).Error
 	if err == nil {
 		return ErrUserExist
 	} else if err != gorm.ErrRecordNotFound {
 		return err
 	}
-	return global.DB.Model(&model.User{}).Create(user).Error
+	return u.db.Model(&model.User{}).Create(user).Error
+}
+
+// DeleteUserById delete a user by id.
+func (u *User) DeleteUserById(userId int64) error {
+	return u.db.Model(&model.User{}).Delete(&model.User{ID: userId}).Error
 }
