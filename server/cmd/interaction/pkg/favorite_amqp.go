@@ -3,6 +3,7 @@ package pkg
 import (
 	"context"
 	"fmt"
+
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
 	"github.com/bytedance/sonic"
@@ -127,7 +128,7 @@ func (s *FavoriteSubscriber) Subscribe(c context.Context) (chan *model.Favorite,
 	return ch, cleanUp, nil
 }
 
-func FavoriteSubscribeRoutine(subscriber *FavoriteSubscriber) error {
+func FavoriteSubscribeRoutine(subscriber *FavoriteSubscriber, dao *dao.Favorite) error {
 	favCh, cleanUp, err := subscriber.Subscribe(context.Background())
 	defer cleanUp()
 	if err != nil {

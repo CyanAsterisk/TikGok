@@ -18,6 +18,7 @@ type SocialityServiceImpl struct {
 	RedisManager
 	Publisher
 	Subscriber
+	Dao *dao.Follow
 }
 
 // UserManager defines the Anti Corruption Layer
@@ -71,11 +72,11 @@ func (s *SocialityServiceImpl) GetRelationIdList(ctx context.Context, req *socia
 	if err != nil {
 		klog.Error("get id list by redis error", err)
 		if req.Option == consts.FollowList {
-			resp.UserIdList, err = dao.GetFollowIdList(req.OwnerId)
+			resp.UserIdList, err = s.Dao.GetFollowIdList(req.OwnerId)
 		} else if req.Option == consts.FollowerList {
-			resp.UserIdList, err = dao.GetFollowerIdList(req.OwnerId)
+			resp.UserIdList, err = s.Dao.GetFollowerIdList(req.OwnerId)
 		} else if req.Option == consts.FriendsList {
-			resp.UserIdList, err = dao.GetFriendsList(req.OwnerId)
+			resp.UserIdList, err = s.Dao.GetFriendsList(req.OwnerId)
 		} else {
 			resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("wrong option"))
 			return resp, nil
@@ -122,21 +123,21 @@ func (s *SocialityServiceImpl) getSocialInfo(ctx context.Context, viewerId int64
 	info = new(base.SocialInfo)
 	if info.FollowCount, err = s.RedisManager.Count(ctx, ownerId, consts.FollowCount); err != nil {
 		klog.Error("get follow count by redis err", err)
-		info.FollowCount, err = dao.GetFollowingNumsByUserId(ownerId)
+		info.FollowCount, err = s.Dao.GetFollowingNumsByUserId(ownerId)
 		if err != nil {
 			return nil, err
 		}
 	}
 	if info.FollowerCount, err = s.RedisManager.Count(ctx, ownerId, consts.FollowerCount); err != nil {
 		klog.Error("get follower count by redis err", err)
-		info.FollowCount, err = dao.GetFollowerNumsByUserId(ownerId)
+		info.FollowCount, err = s.Dao.GetFollowerNumsByUserId(ownerId)
 		if err != nil {
 			return nil, err
 		}
 	}
 	if info.IsFollow, err = s.RedisManager.Check(ctx, viewerId, ownerId); err != nil {
 		klog.Error("check follow by redis err", err)
-		record, err := dao.FindRecord(ownerId, viewerId)
+		record, err := s.Dao.FindRecord(ownerId, viewerId)
 		if err != nil {
 			return nil, err
 		}

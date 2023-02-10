@@ -3,6 +3,7 @@ package pkg
 import (
 	"context"
 	"fmt"
+
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
@@ -128,7 +129,7 @@ func (s *Subscriber) Subscribe(c context.Context) (chan *sociality.DouyinRelatio
 	return carCh, cleanUp, nil
 }
 
-func SubscribeRoutine(subscriber *Subscriber) {
+func SubscribeRoutine(subscriber *Subscriber, dao *dao.Follow) {
 	msgs, cleanUp, err := subscriber.Subscribe(context.Background())
 	defer cleanUp()
 	if err != nil {

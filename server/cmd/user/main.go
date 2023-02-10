@@ -5,6 +5,7 @@ import (
 	"net"
 	"strconv"
 
+	"github.com/CyanAsterisk/TikGok/server/cmd/user/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/initialize"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/pkg"
@@ -41,6 +42,7 @@ func main() {
 		SocialManager: &pkg.SocialManager{SocialService: global.SocialClient},
 		ChatManager:   &pkg.ChatManager{ChatService: global.ChatClient},
 		RedisManager:  pkg.NewRedisManger(global.RedisClient),
+		Dao:           dao.NewUser(global.DB),
 	}
 	// Create new server.
 	srv := user.NewServer(impl,

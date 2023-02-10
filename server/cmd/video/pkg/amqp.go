@@ -132,7 +132,7 @@ func declareExchange(ch *amqp.Channel, exchange string) error {
 	return ch.ExchangeDeclare(exchange, "fanout", true, false, false, false, nil)
 }
 
-func SubscribeRoutine(subscriber *Subscriber) error {
+func SubscribeRoutine(subscriber *Subscriber, dao *dao.Video) error {
 	videoChan, cleanUp, err := subscriber.Subscribe(context.Background())
 	defer cleanUp()
 	if err != nil {

@@ -5,6 +5,7 @@ import (
 	"net"
 	"strconv"
 
+	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/initialize"
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/pkg"
@@ -44,7 +45,9 @@ func main() {
 	if err != nil {
 		klog.Fatal("cannot create subscriber", err.Error())
 	}
-	go pkg.SubscribeRoutine(subscriber)
+
+	followDao := dao.NewFollow(global.DB)
+	go pkg.SubscribeRoutine(subscriber, followDao)
 
 	impl := &SocialityServiceImpl{
 		UserManager: &pkg.UserManager{
@@ -54,6 +57,7 @@ func main() {
 		Publisher:    publisher,
 		Subscriber:   subscriber,
 		RedisManager: pkg.NewRedisManager(global.RedisClient),
+		Dao:          followDao,
 	}
 	// Create new server.
 	srv := sociality.NewServer(impl,

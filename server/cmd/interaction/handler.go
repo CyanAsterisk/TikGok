@@ -23,6 +23,9 @@ type InteractionServerImpl struct {
 
 	CommentRedisManager
 	FavoriteRedisManager
+
+	CommentDao  *dao.Comment
+	FavoriteDao *dao.Favorite
 }
 
 // CommentPublisher defines the comment action publisher interface.
@@ -130,7 +133,7 @@ func (s *InteractionServerImpl) GetFavoriteVideoIdList(ctx context.Context, req 
 	resp.VideoIdList, err = s.FavoriteRedisManager.GetFavoriteVideoIdListByUserId(ctx, req.UserId)
 	if err != nil {
 		klog.Error("get videoIdList by redis err", err)
-		resp.VideoIdList, err = dao.GetFavoriteVideoIdListByUserId(req.UserId)
+		resp.VideoIdList, err = s.FavoriteDao.GetFavoriteVideoIdListByUserId(req.UserId)
 		if err != nil {
 			klog.Error("get user favorite video list error", err)
 			resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get user favorite video id list error"))
@@ -213,7 +216,7 @@ func (s *InteractionServerImpl) GetCommentList(ctx context.Context, req *interac
 	list, err := s.CommentRedisManager.GetCommentListByVideoId(ctx, req.VideoId)
 	if err != nil {
 		klog.Error("get comment list by redis err", err)
-		list, err = dao.GetCommentListByVideoId(req.VideoId)
+		list, err = s.CommentDao.GetCommentListByVideoId(req.VideoId)
 		if err != nil {
 			klog.Error("get comment list by video id error", err)
 			resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get comment list error"))
@@ -267,19 +270,19 @@ func (s *InteractionServerImpl) getInteractInfo(ctx context.Context, videoId int
 	info = new(base.InteractInfo)
 	if info.CommentCount, err = s.CommentRedisManager.CommentCountByVideoId(ctx, videoId); err != nil {
 		klog.Error("get comment count by redis err", err)
-		if info.CommentCount, err = dao.CommentCountByVideoId(videoId); err != nil {
+		if info.CommentCount, err = s.CommentDao.CommentCountByVideoId(videoId); err != nil {
 			return nil, err
 		}
 	}
 	if info.FavoriteCount, err = s.FavoriteRedisManager.FavoriteCountByVideoId(ctx, videoId); err != nil {
 		klog.Error("get favorite count by redis err", err)
-		if info.FavoriteCount, err = dao.FavoriteCountByVideoId(videoId); err != nil {
+		if info.FavoriteCount, err = s.FavoriteDao.FavoriteCountByVideoId(videoId); err != nil {
 			return nil, err
 		}
 	}
 	if info.IsFavorite, err = s.FavoriteRedisManager.Check(ctx, viewerId, videoId); err != nil {
 		klog.Error("check like by redis err", err)
-		fav, err := dao.GetFavoriteInfo(viewerId, videoId)
+		fav, err := s.FavoriteDao.GetFavoriteInfo(viewerId, videoId)
 		if err != nil {
 			klog.Error("get favorite info err", err)
 			return nil, err

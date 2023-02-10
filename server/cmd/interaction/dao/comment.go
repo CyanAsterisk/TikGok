@@ -1,16 +1,33 @@
 package dao
 
 import (
-	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"gorm.io/gorm"
 )
 
+type Comment struct {
+	db *gorm.DB
+}
+
+// NewComment create an interaction comment dao.
+func NewComment(db *gorm.DB) *Comment {
+	m := db.Migrator()
+	if !m.HasTable(&model.Comment{}) {
+		err := m.CreateTable(&model.Comment{})
+		if err != nil {
+			panic(err)
+		}
+	}
+	return &Comment{
+		db: db,
+	}
+}
+
 // CommentCountByVideoId gets the number of comments by videoId.
-func CommentCountByVideoId(videoId int64) (int64, error) {
+func (c *Comment) CommentCountByVideoId(videoId int64) (int64, error) {
 	var count int64
-	err := global.DB.Model(&model.Comment{}).
+	err := c.db.Model(&model.Comment{}).
 		Where(&model.Comment{VideoId: videoId, ActionType: consts.ValidComment}).Count(&count).Error
 	if err != nil {
 		return -1, err
@@ -19,9 +36,9 @@ func CommentCountByVideoId(videoId int64) (int64, error) {
 }
 
 // CommentIdListByVideoId gets commentId list by videoId
-func CommentIdListByVideoId(videoId int64) ([]string, error) {
+func (c *Comment) CommentIdListByVideoId(videoId int64) ([]string, error) {
 	var commentIdList []string
-	err := global.DB.Model(&model.Comment{}).Select("id").
+	err := c.db.Model(&model.Comment{}).Select("id").
 		Where(&model.Comment{VideoId: videoId}).Find(&commentIdList).Error
 	if err != nil {
 		return nil, err
@@ -30,8 +47,8 @@ func CommentIdListByVideoId(videoId int64) ([]string, error) {
 }
 
 // CreateComment creates a comment.
-func CreateComment(comment *model.Comment) (*model.Comment, error) {
-	err := global.DB.Model(model.Comment{}).
+func (c *Comment) CreateComment(comment *model.Comment) (*model.Comment, error) {
+	err := c.db.Model(model.Comment{}).
 		Create(&comment).Error
 	if err != nil {
 		return nil, err
@@ -40,14 +57,14 @@ func CreateComment(comment *model.Comment) (*model.Comment, error) {
 }
 
 // DeleteComment to delete a comment.
-func DeleteComment(id int64) error {
+func (c *Comment) DeleteComment(id int64) error {
 	var comment model.Comment
-	err := global.DB.Model(model.Comment{}).
+	err := c.db.Model(model.Comment{}).
 		Where(&model.Comment{ID: id, ActionType: consts.ValidComment}).First(&comment).Error
 	if err != nil {
 		return err
 	}
-	err = global.DB.Model(model.Comment{}).
+	err = c.db.Model(model.Comment{}).
 		Where(&model.Comment{ID: id}).Update("action_type", consts.InvalidComment).Error
 	if err != nil {
 		return err
@@ -56,9 +73,9 @@ func DeleteComment(id int64) error {
 }
 
 // GetCommentListByVideoId gets comment list by videoId.
-func GetCommentListByVideoId(videoId int64) ([]*model.Comment, error) {
+func (c *Comment) GetCommentListByVideoId(videoId int64) ([]*model.Comment, error) {
 	var commentList []*model.Comment
-	err := global.DB.Model(model.Comment{}).
+	err := c.db.Model(model.Comment{}).
 		Where(&model.Comment{VideoId: videoId, ActionType: consts.ValidComment}).Order("create_date desc").Find(&commentList).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, nil

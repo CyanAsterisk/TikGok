@@ -15,6 +15,7 @@ import (
 type ChatServiceImpl struct {
 	Publisher
 	Subscriber
+	Dao *dao.Message
 }
 
 // Publisher defines the publisher interface.
@@ -30,7 +31,7 @@ type Subscriber interface {
 // GetChatHistory implements the ChatServiceImpl interface.
 func (s *ChatServiceImpl) GetChatHistory(_ context.Context, req *chat.DouyinMessageGetChatHistoryRequest) (resp *chat.DouyinMessageGetChatHistoryResponse, err error) {
 	resp = new(chat.DouyinMessageGetChatHistoryResponse)
-	msgs, err := dao.GetMessages(req.UserId, req.ToUserId)
+	msgs, err := s.Dao.GetMessages(req.UserId, req.ToUserId)
 	if err != nil {
 		klog.Error("get chat history by mysql error", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.ChatServerErr.WithMessage("get chat history error"))
@@ -57,7 +58,7 @@ func (s *ChatServiceImpl) SentMessage(ctx context.Context, req *chat.DouyinMessa
 // BatchGetLatestMessage implements the ChatServiceImpl interface.
 func (s *ChatServiceImpl) BatchGetLatestMessage(_ context.Context, req *chat.DouyinMessageBatchGetLatestRequest) (resp *chat.DouyinMessageBatchGetLatestResponse, err error) {
 	resp = new(chat.DouyinMessageBatchGetLatestResponse)
-	msgList, err := dao.BatchGetLatestMessage(req.UserId, req.ToUserIdList)
+	msgList, err := s.Dao.BatchGetLatestMessage(req.UserId, req.ToUserIdList)
 	if err != nil {
 		klog.Error("batch get latest message by mysql error", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.ChatServerErr.WithMessage("get latest message error"))
@@ -71,7 +72,7 @@ func (s *ChatServiceImpl) BatchGetLatestMessage(_ context.Context, req *chat.Dou
 // GetLatestMessage implements the ChatServiceImpl interface.
 func (s *ChatServiceImpl) GetLatestMessage(_ context.Context, req *chat.DouyinMessageGetLatestRequest) (resp *chat.DouyinMessageGetLatestResponse, err error) {
 	resp = new(chat.DouyinMessageGetLatestResponse)
-	msg, err := dao.GetLatestMessage(req.UserId, req.ToUserId)
+	msg, err := s.Dao.GetLatestMessage(req.UserId, req.ToUserId)
 	if err != nil {
 		klog.Error("get latest message by mysql error", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.ChatServerErr.WithMessage("get latest message error"))

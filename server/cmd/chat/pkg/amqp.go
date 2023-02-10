@@ -130,7 +130,7 @@ func (s *Subscriber) Subscribe(c context.Context) (chan *chat.DouyinMessageActio
 	return logicCh, cleanUp, nil
 }
 
-func SubscribeRoutine(subscriber *Subscriber) {
+func SubscribeRoutine(subscriber *Subscriber, dao *dao.Message) {
 	msgs, cleanUp, err := subscriber.Subscribe(context.Background())
 	defer cleanUp()
 	if err != nil {

@@ -26,7 +26,7 @@ type UserServiceImpl struct {
 	SocialManager
 	ChatManager
 	RedisManager
-	*dao.User
+	Dao *dao.User
 }
 
 // SocialManager defines the Anti Corruption Layer
@@ -65,7 +65,7 @@ func (s *UserServiceImpl) Register(ctx context.Context, req *user.DouyinUserRegi
 		Username: req.Username,
 		Password: pkg.Md5Crypt(req.Password, global.ServerConfig.MysqlInfo.Salt), // Encrypt password with md5.
 	}
-	if err = s.User.CreateUser(usr); err != nil {
+	if err = s.Dao.CreateUser(usr); err != nil {
 		if err == dao.ErrUserExist {
 			resp.BaseResp = tools.BuildBaseResp(errno.UserAlreadyExistErr)
 		} else {
@@ -101,7 +101,7 @@ func (s *UserServiceImpl) Register(ctx context.Context, req *user.DouyinUserRegi
 func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequest) (resp *user.DouyinUserLoginResponse, err error) {
 	resp = new(user.DouyinUserLoginResponse)
 
-	usr, err := s.User.GetUserByUsername(req.Username)
+	usr, err := s.Dao.GetUserByUsername(req.Username)
 	if err != nil {
 		if err == dao.ErrNoSuchUser {
 			resp.BaseResp = tools.BuildBaseResp(errno.UserNotFoundErr)
@@ -143,7 +143,7 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinGetUs
 	usr, err := s.RedisManager.GetUserById(ctx, req.OwnerId)
 	if err != nil {
 		klog.Error("get user by redis err", err)
-		if usr, err = s.User.GetUserById(req.OwnerId); err != nil {
+		if usr, err = s.Dao.GetUserById(req.OwnerId); err != nil {
 			if err == dao.ErrNoSuchUser {
 				resp.BaseResp = tools.BuildBaseResp(errno.UserNotFoundErr)
 			} else {
@@ -170,7 +170,7 @@ func (s *UserServiceImpl) BatchGetUserInfo(ctx context.Context, req *user.Douyin
 	userList, err := s.RedisManager.BatchGetUserById(ctx, req.OwnerIdList)
 	if err != nil {
 		klog.Error("batch get user by redis err", err)
-		if userList, err = s.User.BatchGetUserById(req.OwnerIdList); err != nil {
+		if userList, err = s.Dao.BatchGetUserById(req.OwnerIdList); err != nil {
 			klog.Error("batch get user by id err", err)
 			resp.BaseResp = tools.BuildBaseResp(errno.UserServerErr.WithMessage("batch get user by id err"))
 			return resp, nil
@@ -194,7 +194,7 @@ func (s *UserServiceImpl) GetFollowList(ctx context.Context, req *user.DouyinGet
 	userList, err := s.RedisManager.BatchGetUserById(ctx, userIdList)
 	if err != nil {
 		klog.Error("batch get user by redis err", err)
-		if userList, err = s.User.BatchGetUserById(userIdList); err != nil {
+		if userList, err = s.Dao.BatchGetUserById(userIdList); err != nil {
 			klog.Error("batch get user by id err", err)
 			resp.BaseResp = tools.BuildBaseResp(errno.UserServerErr.WithMessage("batch get user by id err"))
 			return resp, nil
@@ -224,7 +224,7 @@ func (s *UserServiceImpl) GetFollowerList(ctx context.Context, req *user.DouyinG
 	userList, err := s.RedisManager.BatchGetUserById(ctx, userIdList)
 	if err != nil {
 		klog.Error("batch get user by redis err", err)
-		if userList, err = s.User.BatchGetUserById(userIdList); err != nil {
+		if userList, err = s.Dao.BatchGetUserById(userIdList); err != nil {
 			klog.Error("batch get user by id err", err)
 			resp.BaseResp = tools.BuildBaseResp(errno.UserServerErr.WithMessage("batch get user by id err"))
 			return resp, nil
@@ -254,7 +254,7 @@ func (s *UserServiceImpl) GetFriendList(ctx context.Context, req *user.DouyinGet
 	userList, err := s.RedisManager.BatchGetUserById(ctx, userIdList)
 	if err != nil {
 		klog.Error("batch get user by redis err", err)
-		if userList, err = s.User.BatchGetUserById(userIdList); err != nil {
+		if userList, err = s.Dao.BatchGetUserById(userIdList); err != nil {
 			klog.Error("batch get user by id err", err)
 			resp.BaseResp = tools.BuildBaseResp(errno.UserServerErr.WithMessage("batch get user by id err"))
 			return resp, nil

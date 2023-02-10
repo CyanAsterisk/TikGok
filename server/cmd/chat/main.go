@@ -5,6 +5,7 @@ import (
 	"net"
 	"strconv"
 
+	"github.com/CyanAsterisk/TikGok/server/cmd/chat/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/initialize"
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/pkg"
@@ -41,11 +42,13 @@ func main() {
 	if err != nil {
 		klog.Fatal("cannot create subscriber", err.Error())
 	}
-	go pkg.SubscribeRoutine(subscriber)
+	dao := dao.NewMessage(global.DB)
+	go pkg.SubscribeRoutine(subscriber, dao)
 
 	impl := &ChatServiceImpl{
 		Publisher:  publisher,
 		Subscriber: subscriber,
+		Dao:        dao,
 	}
 	// Create new server.
 	srv := chat.NewServer(impl,

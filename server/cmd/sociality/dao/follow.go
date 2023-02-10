@@ -1,16 +1,33 @@
 package dao
 
 import (
-	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"gorm.io/gorm"
 )
 
+type Follow struct {
+	db *gorm.DB
+}
+
+// NewFollow create a social follow dao.
+func NewFollow(db *gorm.DB) *Follow {
+	m := db.Migrator()
+	if !m.HasTable(&model.Follow{}) {
+		err := m.CreateTable(&model.Follow{})
+		if err != nil {
+			panic(err)
+		}
+	}
+	return &Follow{
+		db: db,
+	}
+}
+
 // GetFollowerNumsByUserId gets follower nums by userId.
-func GetFollowerNumsByUserId(userId int64) (int64, error) {
+func (f *Follow) GetFollowerNumsByUserId(userId int64) (int64, error) {
 	var num int64
-	err := global.DB.Model(&model.Follow{}).
+	err := f.db.Model(&model.Follow{}).
 		Where(&model.Follow{UserId: userId, ActionType: consts.IsFollow}).Count(&num).Error
 	if err != nil {
 		return 0, err
@@ -19,9 +36,9 @@ func GetFollowerNumsByUserId(userId int64) (int64, error) {
 }
 
 // GetFollowingNumsByUserId gets following nums by userId.
-func GetFollowingNumsByUserId(userId int64) (int64, error) {
+func (f *Follow) GetFollowingNumsByUserId(userId int64) (int64, error) {
 	var num int64
-	err := global.DB.Model(&model.Follow{}).
+	err := f.db.Model(&model.Follow{}).
 		Where(&model.Follow{FollowerId: userId, ActionType: consts.IsFollow}).Count(&num).Error
 	if err != nil {
 		return 0, err
@@ -30,8 +47,8 @@ func GetFollowingNumsByUserId(userId int64) (int64, error) {
 }
 
 // CreateFollow creates a follow record.
-func CreateFollow(follow *model.Follow) error {
-	err := global.DB.Model(model.Follow{}).
+func (f *Follow) CreateFollow(follow *model.Follow) error {
+	err := f.db.Model(model.Follow{}).
 		Create(&follow).Error
 	if err != nil {
 		return err
@@ -40,8 +57,8 @@ func CreateFollow(follow *model.Follow) error {
 }
 
 // UpdateFollow to update follow status.
-func UpdateFollow(userId, followId int64, actionType int8) error {
-	err := global.DB.Model(model.Follow{}).
+func (f *Follow) UpdateFollow(userId, followId int64, actionType int8) error {
+	err := f.db.Model(model.Follow{}).
 		Where(&model.Follow{UserId: userId, FollowerId: followId}).Update("action_type", actionType).Error
 	if err != nil {
 		return err
@@ -50,9 +67,9 @@ func UpdateFollow(userId, followId int64, actionType int8) error {
 }
 
 // FindRecord to find if there's a record between user and another user.
-func FindRecord(userId, followId int64) (*model.Follow, error) {
+func (f *Follow) FindRecord(userId, followId int64) (*model.Follow, error) {
 	var follow *model.Follow
-	err := global.DB.Model(model.Follow{}).
+	err := f.db.Model(model.Follow{}).
 		Where(&model.Follow{UserId: userId, FollowerId: followId}).First(&follow).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, nil
@@ -64,9 +81,9 @@ func FindRecord(userId, followId int64) (*model.Follow, error) {
 }
 
 // GetFollowerIdList gets followerId list.
-func GetFollowerIdList(userId int64) ([]int64, error) {
+func (f *Follow) GetFollowerIdList(userId int64) ([]int64, error) {
 	var list []int64
-	err := global.DB.Model(model.Follow{}).
+	err := f.db.Model(model.Follow{}).
 		Where(&model.Follow{UserId: userId, ActionType: consts.IsFollow}).Pluck("follower_id", &list).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, nil
@@ -78,9 +95,9 @@ func GetFollowerIdList(userId int64) ([]int64, error) {
 }
 
 // GetFollowIdList gets followingId list.
-func GetFollowIdList(userId int64) ([]int64, error) {
+func (f *Follow) GetFollowIdList(userId int64) ([]int64, error) {
 	var list []int64
-	err := global.DB.Model(model.Follow{}).
+	err := f.db.Model(model.Follow{}).
 		Where(&model.Follow{FollowerId: userId, ActionType: consts.IsFollow}).Pluck("user_id", &list).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, nil
@@ -92,14 +109,14 @@ func GetFollowIdList(userId int64) ([]int64, error) {
 }
 
 // GetFriendsList gets friends list.
-func GetFriendsList(userId int64) ([]int64, error) {
+func (f *Follow) GetFriendsList(userId int64) ([]int64, error) {
 	var followingList []int64
 	var friendsList []int64
-	err := global.DB.Model(model.Follow{}).
+	err := f.db.Model(model.Follow{}).
 		Where(&model.Follow{FollowerId: userId, ActionType: consts.IsFollow}).Pluck("user_id", &followingList).
 		FindInBatches(&followingList, 100, func(tx *gorm.DB, batch int) error {
 			for _, c := range followingList {
-				_, err := FindRecord(userId, c)
+				_, err := f.FindRecord(userId, c)
 				if err != nil {
 					return err
 				}

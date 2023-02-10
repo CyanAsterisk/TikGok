@@ -1,13 +1,31 @@
 package dao
 
 import (
-	"github.com/CyanAsterisk/TikGok/server/cmd/chat/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/model"
+	"gorm.io/gorm"
 )
 
-func GetMessages(toId int64, fromId int64) ([]*model.Message, error) {
+type Message struct {
+	db *gorm.DB
+}
+
+// NewMessage create a message dao.
+func NewMessage(db *gorm.DB) *Message {
+	m := db.Migrator()
+	if !m.HasTable(&model.Message{}) {
+		err := m.CreateTable(&model.Message{})
+		if err != nil {
+			panic(err)
+		}
+	}
+	return &Message{
+		db: db,
+	}
+}
+
+func (m *Message) GetMessages(toId int64, fromId int64) ([]*model.Message, error) {
 	var messages []*model.Message
-	err := global.DB.Model(model.Message{}).
+	err := m.db.Model(model.Message{}).
 		Where(&model.Message{ToUserId: toId, FromUserId: fromId}).Or(&model.Message{ToUserId: fromId, FromUserId: toId}).
 		Order("create_date desc").Find(&messages).Error
 	if err != nil {
@@ -16,8 +34,8 @@ func GetMessages(toId int64, fromId int64) ([]*model.Message, error) {
 	return messages, nil
 }
 
-func ChatAction(message *model.Message) error {
-	err := global.DB.Model(model.Message{}).
+func (m *Message) ChatAction(message *model.Message) error {
+	err := m.db.Model(model.Message{}).
 		Create(&message).Error
 	if err != nil {
 		return err
@@ -25,9 +43,9 @@ func ChatAction(message *model.Message) error {
 	return nil
 }
 
-func GetLatestMessage(uId int64, toUId int64) (*model.Message, error) {
+func (m *Message) GetLatestMessage(uId int64, toUId int64) (*model.Message, error) {
 	var message *model.Message
-	err := global.DB.Model(model.Message{}).
+	err := m.db.Model(model.Message{}).
 		Where(&model.Message{ToUserId: uId, FromUserId: toUId}).Or(&model.Message{ToUserId: toUId, FromUserId: uId}).
 		Order("create_date desc").First(&message).Error
 	if err != nil {
@@ -36,10 +54,10 @@ func GetLatestMessage(uId int64, toUId int64) (*model.Message, error) {
 	return message, nil
 }
 
-func BatchGetLatestMessage(uId int64, toUIdList []int64) ([]*model.Message, error) {
+func (m *Message) BatchGetLatestMessage(uId int64, toUIdList []int64) ([]*model.Message, error) {
 	msgList := make([]*model.Message, 0)
 	for _, toUid := range toUIdList {
-		msg, err := GetLatestMessage(uId, toUid)
+		msg, err := m.GetLatestMessage(uId, toUid)
 		if err != nil {
 			return nil, err
 		}

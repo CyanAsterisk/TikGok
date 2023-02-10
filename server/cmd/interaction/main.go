@@ -5,6 +5,7 @@ import (
 	"net"
 	"strconv"
 
+	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/initialize"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/pkg"
@@ -47,8 +48,12 @@ func main() {
 	if err != nil {
 		klog.Fatal("cannot create comment subscriber")
 	}
+
+	commentDao := dao.NewComment(global.DB)
+	favoriteDao := dao.NewFavorite(global.DB)
+
 	go func() {
-		if err = pkg.CommentSubscribeRoutine(commentSubscriber); err != nil {
+		if err = pkg.CommentSubscribeRoutine(commentSubscriber, commentDao); err != nil {
 			klog.Fatal("comment subscribe routine", err)
 		}
 	}()
@@ -58,7 +63,7 @@ func main() {
 		klog.Fatal("cannot create favorite subscriber")
 	}
 	go func() {
-		if err = pkg.FavoriteSubscribeRoutine(favoriteSubscriber); err != nil {
+		if err = pkg.FavoriteSubscribeRoutine(favoriteSubscriber, favoriteDao); err != nil {
 			klog.Fatal("favorite subscribe routine", err)
 		}
 	}()
@@ -68,6 +73,8 @@ func main() {
 		FavoritePublisher:    favoritePublisher,
 		CommentRedisManager:  pkg.NewCommentRedisManager(global.RedisCommentClient),
 		FavoriteRedisManager: pkg.NewFavoriteRedisManager(global.RedisFavoriteClient),
+		CommentDao:           commentDao,
+		FavoriteDao:          favoriteDao,
 	}
 	// Create new server.
 	srv := interaction.NewServer(impl,

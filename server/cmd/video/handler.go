@@ -22,6 +22,7 @@ type VideoServiceImpl struct {
 	InteractionManager
 	Publisher
 	RedisManager
+	Dao *dao.Video
 }
 
 // UserManager defines the Anti Corruption Layer
@@ -61,7 +62,7 @@ func (s *VideoServiceImpl) Feed(ctx context.Context, req *video.DouyinFeedReques
 	vs, err := s.RedisManager.GetVideoListByLatestTime(ctx, req.LatestTime)
 	if err != nil {
 		klog.Error("get videos by latest time err", err)
-		vs, err = dao.GetVideoListByLatestTime(req.LatestTime)
+		vs, err = s.Dao.GetVideoListByLatestTime(req.LatestTime)
 		if err != nil {
 			klog.Error("get videos by latest time err", err)
 			resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("get videos error"))
@@ -108,8 +109,6 @@ func (s *VideoServiceImpl) PublishVideo(ctx context.Context, req *video.DouyinPu
 	}
 	if err = s.RedisManager.CreateVideo(ctx, videoRecord); err != nil {
 		klog.Error("create video by redis err", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("create video err"))
-		return resp, nil
 	}
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
@@ -122,7 +121,7 @@ func (s *VideoServiceImpl) GetPublishedVideoList(ctx context.Context, req *video
 	vs, err := s.RedisManager.GetVideoListByAuthorId(ctx, req.OwnerId)
 	if err != nil {
 		klog.Error("get published video by author id err", err)
-		vs, err = dao.GetVideoListByAuthorId(req.OwnerId)
+		vs, err = s.Dao.GetVideoListByAuthorId(req.OwnerId)
 		if err != nil {
 			klog.Error("get published video list err", err)
 			resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("get published video list err"))
@@ -153,7 +152,7 @@ func (s *VideoServiceImpl) GetFavoriteVideoList(ctx context.Context, req *video.
 	videoList, err := s.RedisManager.BatchGetVideoByVideoId(ctx, idList)
 	if err != nil {
 		klog.Error("batch get video list by if from redis err", err)
-		videoList, err = dao.BatchGetVideoByVideoId(idList)
+		videoList, err = s.Dao.BatchGetVideoByVideoId(idList)
 		if err != nil {
 			klog.Error("batch get video list by video id list err", err)
 			resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr)
@@ -185,7 +184,7 @@ func (s *VideoServiceImpl) fillVideoList(ctx context.Context, videoList []*model
 	if err != nil {
 		return nil, err
 	}
-	InfoList, err := s.InteractionManager.BatchGetInteractInfo(ctx, authorIdList, viewerId)
+	InfoList, err := s.InteractionManager.BatchGetInteractInfo(ctx, videoIdList, viewerId)
 	if err != nil {
 		return nil, err
 	}

@@ -128,7 +128,7 @@ func (s *CommentSubscriber) Subscribe(c context.Context) (chan *model.Comment, f
 	return ch, cleanUp, nil
 }
 
-func CommentSubscribeRoutine(subscriber *CommentSubscriber) error {
+func CommentSubscribeRoutine(subscriber *CommentSubscriber, dao *dao.Comment) error {
 	commentCh, cleanUp, err := subscriber.Subscribe(context.Background())
 	defer cleanUp()
 	if err != nil {

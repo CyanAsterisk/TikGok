@@ -5,6 +5,7 @@ import (
 	"net"
 	"strconv"
 
+	"github.com/CyanAsterisk/TikGok/server/cmd/video/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/initialize"
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/pkg"
@@ -44,8 +45,9 @@ func main() {
 	if err != nil {
 		klog.Fatal("cannot create subscriber", err)
 	}
+	videoDao := dao.NewVideo(global.DB)
 	go func() {
-		err = pkg.SubscribeRoutine(subscriber)
+		err = pkg.SubscribeRoutine(subscriber, videoDao)
 		if err != nil {
 			klog.Fatal("subscribe err", err)
 		}
@@ -56,6 +58,7 @@ func main() {
 		UserManager:        &pkg.UserManager{UserService: global.UserClient},
 		InteractionManager: &pkg.InteractionManager{InteractionService: global.InteractClient},
 		RedisManager:       pkg.NewRedisManager(global.RedisClient),
+		Dao:                videoDao,
 	}
 	// Create new server.
 	srv := video.NewServer(impl,
