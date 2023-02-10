@@ -32,8 +32,8 @@ type UserServiceImpl struct {
 // SocialManager defines the Anti Corruption Layer
 // for get social logic.
 type SocialManager interface {
-	GetRelationList(ctx context.Context, viewerId int64, ownerId int64, option int8) ([]int64, error)
-	GetSocialInfo(ctx context.Context, viewerId int64, ownerId int64) (*base.SocialInfo, error)
+	GetRelationList(ctx context.Context, viewerId, ownerId int64, option int8) ([]int64, error)
+	GetSocialInfo(ctx context.Context, viewerId, ownerId int64) (*base.SocialInfo, error)
 	BatchGetSocialInfo(ctx context.Context, viewerId int64, ownerIdList []int64) ([]*base.SocialInfo, error)
 }
 

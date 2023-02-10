@@ -2,9 +2,9 @@ package pkg
 
 import (
 	"context"
-	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction/interactionserver"
 )
@@ -14,7 +14,7 @@ type InteractionManager struct {
 }
 
 // GetInteractInfo get video interactInfo.
-func (i *InteractionManager) GetInteractInfo(ctx context.Context, videoId int64, viewerId int64) (*base.InteractInfo, error) {
+func (i *InteractionManager) GetInteractInfo(ctx context.Context, videoId, viewerId int64) (*base.InteractInfo, error) {
 	resp, err := i.InteractionService.GetInteractInfo(ctx, &interaction.DouyinGetInteractInfoRequest{
 		VideoId:  videoId,
 		ViewerId: viewerId,

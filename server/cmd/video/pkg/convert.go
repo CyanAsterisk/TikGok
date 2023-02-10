@@ -13,7 +13,6 @@ func Video(v *model.Video) *base.Video {
 		CoverUrl: v.CoverUrl,
 		Title:    v.Title,
 	}
-
 }
 
 // Videos model to idl

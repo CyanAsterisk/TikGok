@@ -20,6 +20,7 @@ func PackVideo(video *model.Video, author *base.User, info *base.InteractInfo) *
 		Title:         video.Title,
 	}
 }
+
 func PackVideos(videoList []*model.Video, authorList []*base.User, infoList []*base.InteractInfo) []*base.Video {
 	if videoList == nil {
 		return nil

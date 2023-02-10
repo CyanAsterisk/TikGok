@@ -23,7 +23,7 @@ func NewMessage(db *gorm.DB) *Message {
 	}
 }
 
-func (m *Message) GetMessages(toId int64, fromId int64) ([]*model.Message, error) {
+func (m *Message) GetMessages(toId, fromId int64) ([]*model.Message, error) {
 	var messages []*model.Message
 	err := m.db.Model(model.Message{}).
 		Where(&model.Message{ToUserId: toId, FromUserId: fromId}).Or(&model.Message{ToUserId: fromId, FromUserId: toId}).
@@ -43,7 +43,7 @@ func (m *Message) ChatAction(message *model.Message) error {
 	return nil
 }
 
-func (m *Message) GetLatestMessage(uId int64, toUId int64) (*model.Message, error) {
+func (m *Message) GetLatestMessage(uId, toUId int64) (*model.Message, error) {
 	var message *model.Message
 	err := m.db.Model(model.Message{}).
 		Where(&model.Message{ToUserId: uId, FromUserId: toUId}).Or(&model.Message{ToUserId: toUId, FromUserId: uId}).

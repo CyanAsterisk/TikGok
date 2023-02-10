@@ -78,7 +78,6 @@ func RunWithMySQLInDocker(m *testing.M) int {
 }
 
 func NewTestMysqlDB() *gorm.DB {
-
 	time.Sleep(time.Second * 15) // Wait the container start. TODO: need to optimize
 	db, err := gorm.Open(mysql.Open(mysqlDSN), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{

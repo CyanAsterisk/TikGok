@@ -42,6 +42,7 @@ func (r *RedisManager) CreateVideo(ctx context.Context, video *model.Video) erro
 	_, err = pl.Exec(ctx)
 	return err
 }
+
 func (r *RedisManager) GetVideoListByLatestTime(ctx context.Context, latestTime int64) ([]*model.Video, error) {
 	op := &redis.ZRangeBy{
 		Min:    "",
@@ -59,6 +60,7 @@ func (r *RedisManager) GetVideoListByLatestTime(ctx context.Context, latestTime 
 	}
 	return videoList, nil
 }
+
 func (r *RedisManager) GetVideoListByAuthorId(ctx context.Context, authorId int64) ([]*model.Video, error) {
 	videoJSONList, err := r.RedisClient.LRange(ctx, fmt.Sprintf("%d", authorId), 0, -1).Result()
 	if err != nil {
@@ -70,6 +72,7 @@ func (r *RedisManager) GetVideoListByAuthorId(ctx context.Context, authorId int6
 	}
 	return videoList, nil
 }
+
 func (r *RedisManager) GetVideoByVideoId(ctx context.Context, videoId int64) (*model.Video, error) {
 	videoIdStr := fmt.Sprintf("%d", videoId)
 	videoJSONStr, err := r.RedisClient.Get(ctx, videoIdStr).Result()
@@ -83,6 +86,7 @@ func (r *RedisManager) GetVideoByVideoId(ctx context.Context, videoId int64) (*m
 	}
 	return video, nil
 }
+
 func (r *RedisManager) BatchGetVideoByVideoId(ctx context.Context, videoIdList []int64) ([]*model.Video, error) {
 	if videoIdList == nil {
 		return nil, nil
@@ -97,6 +101,7 @@ func (r *RedisManager) BatchGetVideoByVideoId(ctx context.Context, videoIdList [
 	}
 	return vl, nil
 }
+
 func videoListJsonToStruct(videoJsonList []string) ([]*model.Video, error) {
 	if videoJsonList == nil {
 		return nil, nil

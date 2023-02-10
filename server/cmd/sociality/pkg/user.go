@@ -2,10 +2,10 @@ package pkg
 
 import (
 	"context"
-	"github.com/CyanAsterisk/TikGok/server/shared/errno"
-	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/chat"
 
+	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/chat"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/chat/chatservice"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/user"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/user/userservice"

@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"flag"
+
 	"github.com/CyanAsterisk/TikGok/server/shared/tools"
 
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"

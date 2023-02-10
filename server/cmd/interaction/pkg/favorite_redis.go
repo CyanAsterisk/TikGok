@@ -3,6 +3,7 @@ package pkg
 import (
 	"context"
 	"fmt"
+
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/go-redis/redis/v8"
 )
@@ -26,7 +27,7 @@ func (r *FavoriteRedisManager) FavoriteCountByVideoId(ctx context.Context, video
 	return count, nil
 }
 
-func (r *FavoriteRedisManager) Like(ctx context.Context, userId int64, videoId int64) error {
+func (r *FavoriteRedisManager) Like(ctx context.Context, userId, videoId int64) error {
 	userIdStr := fmt.Sprintf("%d", userId)
 	videoIdStr := fmt.Sprintf("%d", videoId)
 	pl := r.RedisClient.TxPipeline()
@@ -42,7 +43,7 @@ func (r *FavoriteRedisManager) Like(ctx context.Context, userId int64, videoId i
 	return nil
 }
 
-func (r *FavoriteRedisManager) Unlike(ctx context.Context, userId int64, videoId int64) error {
+func (r *FavoriteRedisManager) Unlike(ctx context.Context, userId, videoId int64) error {
 	userIdStr := fmt.Sprintf("%d", userId)
 	videoIdStr := fmt.Sprintf("%d", videoId)
 	pl := r.RedisClient.TxPipeline()
@@ -58,7 +59,7 @@ func (r *FavoriteRedisManager) Unlike(ctx context.Context, userId int64, videoId
 	return nil
 }
 
-func (r *FavoriteRedisManager) Check(ctx context.Context, userId int64, videoId int64) (bool, error) {
+func (r *FavoriteRedisManager) Check(ctx context.Context, userId, videoId int64) (bool, error) {
 	userIdStr := fmt.Sprintf("%d", userId)
 	videoIdStr := fmt.Sprintf("%d", videoId)
 	flag1, err := r.RedisClient.SIsMember(ctx, userIdStr, videoId).Result()

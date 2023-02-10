@@ -1,7 +1,7 @@
 package tools
 
 // SimpleGeneric has complexity: O(n^2)
-func SimpleGeneric[T comparable](a []T, b []T) []T {
+func SimpleGeneric[T comparable](a, b []T) []T {
 	set := make([]T, 0)
 
 	for _, v := range a {

@@ -14,5 +14,4 @@ func InitRedis() {
 		Password: global.ServerConfig.RedisInfo.Password,
 		DB:       consts.RedisSocialClientDB,
 	})
-
 }

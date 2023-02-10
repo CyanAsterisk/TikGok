@@ -1,9 +1,10 @@
 package initialize
 
 import (
-	"github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"net"
 	"strconv"
+
+	"github.com/CyanAsterisk/TikGok/server/shared/tools"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/global"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"

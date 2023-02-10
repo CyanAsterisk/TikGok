@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"context"
+
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
@@ -12,7 +13,7 @@ type SocialManager struct {
 	SocialService socialityservice.Client
 }
 
-func (s *SocialManager) GetSocialInfo(ctx context.Context, viewerId int64, ownerId int64) (*base.SocialInfo, error) {
+func (s *SocialManager) GetSocialInfo(ctx context.Context, viewerId, ownerId int64) (*base.SocialInfo, error) {
 	resp, err := s.SocialService.GetSocialInfo(ctx, &sociality.DouyinGetSocialInfoRequest{
 		ViewerId: viewerId,
 		OwnerId:  ownerId,
@@ -40,7 +41,7 @@ func (s *SocialManager) BatchGetSocialInfo(ctx context.Context, viewerId int64, 
 	return resp.SocialInfoList, nil
 }
 
-func (s *SocialManager) GetRelationList(ctx context.Context, viewerId int64, ownerId int64, option int8) ([]int64, error) {
+func (s *SocialManager) GetRelationList(ctx context.Context, viewerId, ownerId int64, option int8) ([]int64, error) {
 	resp, err := s.SocialService.GetRelationIdList(ctx, &sociality.DouyinGetRelationIdListRequest{
 		ViewerId: viewerId,
 		OwnerId:  ownerId,

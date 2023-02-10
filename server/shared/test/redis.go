@@ -3,6 +3,7 @@ package test
 import (
 	"context"
 	"fmt"
+	"testing"
 
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/docker/docker/api/types"
@@ -10,7 +11,6 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
 	"github.com/go-redis/redis/v8"
-	"testing"
 )
 
 var port string

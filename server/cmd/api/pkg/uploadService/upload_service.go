@@ -44,7 +44,7 @@ var videoSuffixSet = map[string]struct{}{
 	"mpg": {}, "mov": {},
 }
 
-func (s *Service) UpLoadFile(videoFH *multipart.FileHeader) (playerUrl string, coverUrl string, err error) {
+func (s *Service) UpLoadFile(videoFH *multipart.FileHeader) (playerUrl, coverUrl string, err error) {
 	suffix, err := getFileSuffix(videoFH.Filename)
 	if err != nil {
 		return "", "", err

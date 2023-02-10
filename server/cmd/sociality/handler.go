@@ -119,7 +119,7 @@ func (s *SocialityServiceImpl) BatchGetSocialInfo(ctx context.Context, req *soci
 	return resp, nil
 }
 
-func (s *SocialityServiceImpl) getSocialInfo(ctx context.Context, viewerId int64, ownerId int64) (info *base.SocialInfo, err error) {
+func (s *SocialityServiceImpl) getSocialInfo(ctx context.Context, viewerId, ownerId int64) (info *base.SocialInfo, err error) {
 	info = new(base.SocialInfo)
 	if info.FollowCount, err = s.RedisManager.Count(ctx, ownerId, consts.FollowCount); err != nil {
 		klog.Error("get follow count by redis err", err)

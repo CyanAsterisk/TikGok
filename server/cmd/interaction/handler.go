@@ -49,9 +49,9 @@ type CommentRedisManager interface {
 // FavoriteRedisManager defines the favorite redis interface.
 type FavoriteRedisManager interface {
 	FavoriteCountByVideoId(ctx context.Context, videoId int64) (int64, error)
-	Like(ctx context.Context, userId int64, videoId int64) error
-	Unlike(ctx context.Context, userId int64, videoId int64) error
-	Check(ctx context.Context, userId int64, videoId int64) (bool, error)
+	Like(ctx context.Context, userId, videoId int64) error
+	Unlike(ctx context.Context, userId, videoId int64) error
+	Check(ctx context.Context, userId, videoId int64) (bool, error)
 	GetFavoriteVideoIdListByUserId(ctx context.Context, userId int64) ([]int64, error)
 }
 
@@ -266,7 +266,7 @@ func (s *InteractionServerImpl) BatchGetInteractInfo(ctx context.Context, req *i
 	return resp, nil
 }
 
-func (s *InteractionServerImpl) getInteractInfo(ctx context.Context, videoId int64, viewerId int64) (info *base.InteractInfo, err error) {
+func (s *InteractionServerImpl) getInteractInfo(ctx context.Context, videoId, viewerId int64) (info *base.InteractInfo, err error) {
 	info = new(base.InteractInfo)
 	if info.CommentCount, err = s.CommentRedisManager.CommentCountByVideoId(ctx, videoId); err != nil {
 		klog.Error("get comment count by redis err", err)

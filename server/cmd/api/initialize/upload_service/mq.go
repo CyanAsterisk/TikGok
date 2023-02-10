@@ -13,7 +13,6 @@ import (
 
 // InitMq to init rabbitMQ
 func initMq() {
-
 	info := global.ServerConfig.UploadServiceInfo.RabbitMqInfo
 	amqpConn, err := amqp.Dial(fmt.Sprintf(consts.RabbitMqURI, info.User, info.Password, info.Host, info.Port))
 	if err != nil {
