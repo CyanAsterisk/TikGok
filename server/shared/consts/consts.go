@@ -71,6 +71,7 @@ const (
 	MySQLContainerIP   = "127.0.0.1"
 	MySQLPort          = "0"
 	MySQLAdmin         = "root"
+	DockerTestMySQLPwd = "123456"
 
 	RedisImage         = "redis:latest"
 	RedisContainerPort = "6379/tcp"
