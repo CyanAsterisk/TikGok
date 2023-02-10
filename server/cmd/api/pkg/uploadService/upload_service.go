@@ -10,23 +10,26 @@ import (
 	"strings"
 	"time"
 
+	"github.com/CyanAsterisk/TikGok/server/cmd/api/config"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/bwmarrin/snowflake"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/disintegration/imaging"
 	"github.com/minio/minio-go/v7"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 )
 
 type Service struct {
+	config      *config.UploadServiceConfig
 	minioClient *minio.Client
 	subscriber  *Subscriber
 	publisher   *Publisher
 }
 
-func NewUploadService(minioClient *minio.Client, subscriber *Subscriber, publisher *Publisher) *Service {
+func NewUploadService(minioClient *minio.Client, subscriber *Subscriber, publisher *Publisher, config *config.UploadServiceConfig) *Service {
 	return &Service{
+		config:      config,
 		minioClient: minioClient,
 		subscriber:  subscriber,
 		publisher:   publisher,
@@ -52,7 +55,7 @@ func (s *Service) UpLoadFile(videoFH *multipart.FileHeader) (playerUrl string, c
 
 	sf, err := snowflake.NewNode(consts.MinioSnowflakeNode)
 	if err != nil {
-		hlog.Errorf("generate id failed: %s", err.Error())
+		klog.Errorf("generate id failed: %s", err.Error())
 		return "", "", err
 	}
 	taskId := sf.Generate().String()
@@ -82,7 +85,7 @@ func (s *Service) UpLoadFile(videoFH *multipart.FileHeader) (playerUrl string, c
 	if err = s.publisher.Publish(context.Background(), task); err != nil {
 		return "", "", err
 	}
-	urlPrefix := consts.MinIOServer + "/" + consts.MinIOBucket + "/"
+	urlPrefix := s.config.MinioInfo.UrlPrefix
 	return urlPrefix + task.VideoUploadPath, urlPrefix + task.CoverUploadPath, nil
 }
 
@@ -90,25 +93,34 @@ func (s *Service) RunVideoUpload() error {
 	taskCh, cleanUp, err := s.subscriber.Subscribe(context.Background())
 	defer cleanUp()
 	if err != nil {
-		hlog.Error("cannot subscribe", err)
+		klog.Error("cannot subscribe", err)
 		return err
 	}
 	for task := range taskCh {
 		if err = getVideoCover(task.VideoTmpPath, task.CoverTmpPath); err != nil {
-			hlog.Errorf("get video cover err: videoTmpPath = %s", task.VideoTmpPath)
+			klog.Errorf("get video cover err: videoTmpPath = %s", task.VideoTmpPath)
 			continue
 		}
 		suffix, err := getFileSuffix(task.VideoTmpPath)
 		if err != nil {
-			hlog.Errorf("get video suffix err:videoTmpPath = %s", task.VideoTmpPath)
+			klog.Errorf("get video suffix err:videoTmpPath = %s", task.VideoTmpPath)
+			continue
 		}
-		_, err = s.minioClient.FPutObject(context.Background(), consts.MinIOBucket, task.CoverUploadPath, task.CoverTmpPath, minio.PutObjectOptions{
+		buckName := s.config.MinioInfo.Bucket
+
+		if _, err = s.minioClient.FPutObject(context.Background(), buckName, task.CoverUploadPath, task.CoverTmpPath, minio.PutObjectOptions{
 			ContentType: "image/png",
-		})
+		}); err != nil {
+			klog.Error("upload cover image err", err)
+			continue
+		}
 		_ = os.Remove(task.CoverTmpPath)
-		_, err = s.minioClient.FPutObject(context.Background(), consts.MinIOBucket, task.VideoUploadPath, task.VideoTmpPath, minio.PutObjectOptions{
+		if _, err = s.minioClient.FPutObject(context.Background(), buckName, task.VideoUploadPath, task.VideoTmpPath, minio.PutObjectOptions{
 			ContentType: fmt.Sprintf("video/%s", suffix),
-		})
+		}); err != nil {
+			klog.Error("upload cover image err", err)
+			continue
+		}
 		_ = os.Remove(task.VideoTmpPath)
 	}
 	return nil

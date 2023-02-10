@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/bytedance/sonic"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/streadway/amqp"
 )
 
@@ -83,7 +83,7 @@ func (s *Subscriber) SubscribeRaw(_ context.Context) (<-chan amqp.Delivery, func
 	closeCh := func() {
 		err := ch.Close()
 		if err != nil {
-			hlog.Errorf("cannot close channel %s", err.Error())
+			klog.Errorf("cannot close channel %s", err.Error())
 		}
 	}
 
@@ -95,7 +95,7 @@ func (s *Subscriber) SubscribeRaw(_ context.Context) (<-chan amqp.Delivery, func
 	cleanUp := func() {
 		_, err := ch.QueueDelete(q.Name, false, false, false)
 		if err != nil {
-			hlog.Errorf("cannot delete queue %s : %s", q.Name, err.Error())
+			klog.Errorf("cannot delete queue %s : %s", q.Name, err.Error())
 		}
 		closeCh()
 	}
@@ -125,7 +125,7 @@ func (s *Subscriber) Subscribe(c context.Context) (taskChan chan *VideoUploadTas
 			var task VideoUploadTask
 			err := sonic.Unmarshal(msg.Body, &task)
 			if err != nil {
-				hlog.Errorf("cannot unmarshal %s", err.Error())
+				klog.Errorf("cannot unmarshal %s", err.Error())
 			}
 			taskChan <- &task
 		}

@@ -46,8 +46,10 @@ type RPCSrvConfig struct {
 
 type MinioConfig struct {
 	Endpoint        string `mapstructure:"endpoint" json:"endpoint"`
-	AccessKeyID     string `mapstructure:"access-key-id" json:"access-key-id"`
-	SecretAccessKey string `mapstructure:"secret-access-key" json:"secret-access-key"`
+	AccessKeyID     string `mapstructure:"access_key_id" json:"access_key_id"`
+	SecretAccessKey string `mapstructure:"secret_access_key" json:"secret_access_key"`
+	Bucket          string `mapstructure:"bucket" json:"bucket"`
+	UrlPrefix       string `mapstructure:"url_prefix" json:"urlprefix"`
 }
 
 type UploadServiceConfig struct {

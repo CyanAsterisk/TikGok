@@ -72,8 +72,10 @@ const (
 	MySQLPort          = "0"
 	MySQLAdmin         = "root"
 
-	MinIOBucket = "tikgok"
-	MinIOServer = "localhost:9000"
+	RedisImage         = "redis:latest"
+	RedisContainerPort = "6379/tcp"
+	RedisContainerIP   = "127.0.0.1"
+	RedisPort          = "0"
 
 	VideosLimit = 10
 
@@ -83,6 +85,7 @@ const (
 	RedisVideoClientDB    = 2
 	RedisCommentClientDB  = 3
 	RedisFavoriteClientDB = 4
+	RedisUserClientDB     = 5
 
 	RedisFollowerSuffix = "follower"
 	RedisFollowSuffix   = "follow"
