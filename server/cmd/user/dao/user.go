@@ -56,7 +56,7 @@ func BatchGetUserById(uids []int64) ([]*model.User, error) {
 // CreateUser creates a user.
 func CreateUser(user *model.User) error {
 	err := global.DB.Model(&model.User{}).
-		Where(&model.User{Username: user.Username}).First(&user).Error
+		Where(&model.User{Username: user.Username}).First(&model.User{}).Error
 	if err == nil {
 		return ErrUserExist
 	} else if err != gorm.ErrRecordNotFound {
