@@ -94,6 +94,9 @@ const (
 	VideoIdFiled        = "videoId"
 	CommentJsonFiled    = "commentJson"
 
+	UsernameFiled = "username"
+	CryptPwdFiled = "password"
+
 	FollowList   = 0
 	FollowerList = 1
 	FriendsList  = 2
