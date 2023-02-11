@@ -41,7 +41,7 @@ func main() {
 		jwt:           middleware.NewJWT(global.ServerConfig.JWTInfo.SigningKey),
 		SocialManager: &pkg.SocialManager{SocialService: global.SocialClient},
 		ChatManager:   &pkg.ChatManager{ChatService: global.ChatClient},
-		RedisManager:  pkg.NewRedisManger(global.RedisClient),
+		RedisManager:  pkg.NewRedisManager(global.RedisClient),
 		Dao:           dao.NewUser(global.DB),
 	}
 	// Create new server.
