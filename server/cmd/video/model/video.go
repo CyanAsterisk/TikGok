@@ -15,7 +15,6 @@ type Video struct {
 	CreateTime int64  `gorm:"not null;"`
 }
 
-// BeforeCreate uses snowflake to generate an ID.
 func (v *Video) BeforeCreate(_ *gorm.DB) (err error) {
 	if v.ID == 0 {
 		klog.Error("video id should be giving")

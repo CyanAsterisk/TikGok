@@ -20,23 +20,53 @@ func NewRedisManager(client *redis.Client) *RedisManager {
 }
 
 func (r *RedisManager) CreateVideo(ctx context.Context, video *model.Video) error {
-	pl := r.RedisClient.TxPipeline()
 	authorIdStr := fmt.Sprintf("%d", video.AuthorId)
 	videoIdStr := fmt.Sprintf("%d", video.ID)
+	_, err := r.RedisClient.Get(ctx, videoIdStr).Result()
+	if err == nil {
+		return errno.VideoServerErr.WithMessage("video record already exists")
+	} else if err != redis.Nil {
+		return err
+	}
+	pl := r.RedisClient.TxPipeline()
+
+	z := &redis.Z{
+		Score:  float64(video.CreateTime),
+		Member: video.ID,
+	}
+	if err = pl.ZAdd(ctx, authorIdStr, z).Err(); err != nil {
+		return err
+	}
+	if err = pl.ZAdd(ctx, consts.AllVideoSortSetKey, z).Err(); err != nil {
+		return err
+	}
 	videoRecord, err := sonic.Marshal(video)
 	if err != nil {
 		return errno.VideoServerErr.WithMessage("marshal video error")
 	}
-	if err = pl.LPush(ctx, authorIdStr, videoIdStr).Err(); err != nil {
-		return err
-	}
-	if err = pl.ZAdd(ctx, consts.AllVideoSortSetKey, &redis.Z{
-		Score:  float64(video.CreateTime),
-		Member: videoRecord,
-	}).Err(); err != nil {
-		return err
-	}
 	if err = pl.Set(ctx, videoIdStr, videoRecord, 0).Err(); err != nil {
+		return err
+	}
+	_, err = pl.Exec(ctx)
+	return err
+}
+
+func (r *RedisManager) DeleteVideoById(ctx context.Context, videoId int64) error {
+	v, err := r.GetVideoByVideoId(ctx, videoId)
+	if err != nil {
+		return err
+	}
+	pl := r.RedisClient.TxPipeline()
+	authorIdStr := fmt.Sprintf("%d", v.AuthorId)
+	videoIdStr := fmt.Sprintf("%d", v.ID)
+
+	if err = pl.ZRem(ctx, authorIdStr, v.ID).Err(); err != nil {
+		return err
+	}
+	if err = pl.ZRem(ctx, consts.AllVideoSortSetKey, v.ID).Err(); err != nil {
+		return err
+	}
+	if err = pl.Del(ctx, videoIdStr).Err(); err != nil {
 		return err
 	}
 	_, err = pl.Exec(ctx)
@@ -50,11 +80,12 @@ func (r *RedisManager) GetVideoListByLatestTime(ctx context.Context, latestTime 
 		Offset: 0,
 		Count:  consts.VideosLimit,
 	}
-	videoJSONList, err := r.RedisClient.ZRangeByScore(ctx, consts.AllVideoSortSetKey, op).Result()
+	vidList := make([]int64, 0)
+	err := r.RedisClient.ZRevRangeByScore(ctx, consts.AllVideoSortSetKey, op).ScanSlice(&vidList)
 	if err != nil {
 		return nil, err
 	}
-	videoList, err := videoListJsonToStruct(videoJSONList)
+	videoList, err := r.BatchGetVideoByVideoId(ctx, vidList)
 	if err != nil {
 		return nil, err
 	}
@@ -62,11 +93,12 @@ func (r *RedisManager) GetVideoListByLatestTime(ctx context.Context, latestTime 
 }
 
 func (r *RedisManager) GetVideoListByAuthorId(ctx context.Context, authorId int64) ([]*model.Video, error) {
-	videoJSONList, err := r.RedisClient.LRange(ctx, fmt.Sprintf("%d", authorId), 0, -1).Result()
+	vidList := make([]int64, 0)
+	err := r.RedisClient.ZRevRange(ctx, fmt.Sprintf("%d", authorId), 0, -1).ScanSlice(&vidList)
 	if err != nil {
 		return nil, err
 	}
-	videoList, err := videoListJsonToStruct(videoJSONList)
+	videoList, err := r.BatchGetVideoByVideoId(ctx, vidList)
 	if err != nil {
 		return nil, err
 	}
@@ -79,12 +111,12 @@ func (r *RedisManager) GetVideoByVideoId(ctx context.Context, videoId int64) (*m
 	if err != nil {
 		return nil, err
 	}
-	video := &model.Video{}
-	err = sonic.Unmarshal([]byte(videoJSONStr), video)
+	var video model.Video
+	err = sonic.Unmarshal([]byte(videoJSONStr), &video)
 	if err != nil {
 		return nil, err
 	}
-	return video, nil
+	return &video, nil
 }
 
 func (r *RedisManager) BatchGetVideoByVideoId(ctx context.Context, videoIdList []int64) ([]*model.Video, error) {
@@ -100,19 +132,4 @@ func (r *RedisManager) BatchGetVideoByVideoId(ctx context.Context, videoIdList [
 		vl = append(vl, video)
 	}
 	return vl, nil
-}
-
-func videoListJsonToStruct(videoJsonList []string) ([]*model.Video, error) {
-	if videoJsonList == nil {
-		return nil, nil
-	}
-	videoList := make([]*model.Video, 0)
-	for _, videoJson := range videoJsonList {
-		video := &model.Video{}
-		if err := sonic.Unmarshal([]byte(videoJson), video); err != nil {
-			return nil, err
-		}
-		videoList = append(videoList, video)
-	}
-	return videoList, nil
 }
