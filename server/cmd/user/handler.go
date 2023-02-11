@@ -177,6 +177,11 @@ func (s *UserServiceImpl) BatchGetUserInfo(ctx context.Context, req *user.Douyin
 		}
 	}
 	infoList, err := s.SocialManager.BatchGetSocialInfo(ctx, req.ViewerId, req.OwnerIdList)
+	if err != nil {
+		klog.Error("batch get social info error", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("batch get social info err"))
+		return resp, nil
+	}
 	resp.UserList = pkg.PackUsers(userList, infoList)
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
