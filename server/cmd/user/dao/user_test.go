@@ -1,7 +1,6 @@
 package dao
 
 import (
-	"os"
 	"testing"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/model"
@@ -10,7 +9,13 @@ import (
 )
 
 func TestUserLifecycle(t *testing.T) {
-	dao := newUser()
+	cleanUp, db, err := test.RunWithMySQLInDocker(t)
+	defer cleanUp()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	dao := NewUser(db)
 
 	aid1 := int64(1024)
 	aid2 := int64(2048)
@@ -133,13 +138,4 @@ func TestUserLifecycle(t *testing.T) {
 			t.Errorf("%s:result err: want %s,got %s", cc.name, cc.wantResult, result)
 		}
 	}
-}
-
-func newUser() *User {
-	db := test.NewTestMysqlDB()
-	return NewUser(db)
-}
-
-func TestMain(m *testing.M) {
-	os.Exit(test.RunWithMySQLInDocker(m))
 }

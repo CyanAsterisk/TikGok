@@ -2,7 +2,6 @@ package pkg
 
 import (
 	"context"
-	"os"
 	"testing"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/model"
@@ -13,7 +12,12 @@ import (
 
 func TestUserLifecycle(t *testing.T) {
 	c := context.Background()
-	manager := newManager(c, t)
+	cleanFunc, client, err := test.RunWithRedisInDocker(consts.RedisVideoClientDB, t)
+	defer cleanFunc()
+	if err != nil {
+		t.Fatal(err)
+	}
+	manager := NewRedisManager(client)
 
 	aid1 := int64(1024)
 	aid2 := int64(2048)
@@ -136,16 +140,4 @@ func TestUserLifecycle(t *testing.T) {
 			t.Errorf("%s:result err: want %s,got %s", cc.name, cc.wantResult, result)
 		}
 	}
-}
-
-func newManager(c context.Context, t *testing.T) *RedisManager {
-	rc, err := test.NewRedisClient(c, consts.RedisUserClientDB)
-	if err != nil {
-		t.Fatalf("cannot create redis client: %v", err)
-	}
-	return NewRedisManger(rc)
-}
-
-func TestMain(m *testing.M) {
-	os.Exit(test.RunWithRedisInDocker(m))
 }

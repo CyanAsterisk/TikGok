@@ -18,7 +18,7 @@ type RedisManager struct {
 	redisClient *redis.Client
 }
 
-func NewRedisManger(client *redis.Client) *RedisManager {
+func NewRedisManager(client *redis.Client) *RedisManager {
 	return &RedisManager{redisClient: client}
 }
 

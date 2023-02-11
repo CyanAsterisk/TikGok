@@ -13,14 +13,12 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
-var port string
-
 // RunWithRedisInDocker runs the tests with
 // a redis instance in a docker container.
-func RunWithRedisInDocker(m *testing.M) int {
+func RunWithRedisInDocker(db int, t *testing.T) (cleanUpFunc func(), cli *redis.Client, err error) {
 	c, err := client.NewClientWithOpts(client.WithVersion("1.41"))
 	if err != nil {
-		panic(err)
+		return func() {}, nil, err
 	}
 
 	ctx := context.Background()
@@ -43,39 +41,31 @@ func RunWithRedisInDocker(m *testing.M) int {
 			},
 		}, nil, nil, "")
 	if err != nil {
-		panic(err)
+		return func() {}, nil, err
 	}
 	containerID := resp.ID
-	defer func() {
-		err := c.ContainerRemove(ctx, containerID, types.ContainerRemoveOptions{
+	cleanUpFunc = func() {
+		err = c.ContainerRemove(ctx, containerID, types.ContainerRemoveOptions{
 			Force: true,
 		})
 		if err != nil {
-			panic(err)
+			t.Error("remove test docker failed", err)
 		}
-	}()
+	}
 
 	err = c.ContainerStart(ctx, containerID, types.ContainerStartOptions{})
 	if err != nil {
-		panic(err)
+		return cleanUpFunc, nil, err
 	}
 
 	inspRes, err := c.ContainerInspect(ctx, containerID)
 	if err != nil {
-		panic(err)
+		return cleanUpFunc, nil, err
 	}
 	hostPort := inspRes.NetworkSettings.Ports[consts.RedisContainerPort][0]
-	port = hostPort.HostPort
-	return m.Run()
-}
 
-// NewRedisClient creates a client connected to the redis instance in docker.
-func NewRedisClient(c context.Context, db int) (*redis.Client, error) {
-	if port == "" {
-		return nil, fmt.Errorf("redis port not set.Please run RunWithRedisInDocker in TestMain")
-	}
-	return redis.NewClient(&redis.Options{
-		Addr: fmt.Sprintf("%s:%s", consts.RedisContainerIP, port),
+	return cleanUpFunc, redis.NewClient(&redis.Options{
+		Addr: fmt.Sprintf("%s:%s", consts.RedisContainerIP, hostPort.HostPort),
 		DB:   db,
 	}), nil
 }

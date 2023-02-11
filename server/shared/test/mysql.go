@@ -20,18 +20,15 @@ import (
 	"gorm.io/gorm/schema"
 )
 
-var mysqlDSN string
-
 // RunWithMySQLInDocker runs the tests with
 // a MySQL instance in a docker container.
-func RunWithMySQLInDocker(m *testing.M) int {
+func RunWithMySQLInDocker(t *testing.T) (cleanUpFunc func(), db *gorm.DB, err error) {
 	c, err := client.NewClientWithOpts(client.WithVersion("1.41"))
 	if err != nil {
-		panic(err)
+		return func() {}, nil, err
 	}
 
 	ctx := context.Background()
-
 	resp, err := c.ContainerCreate(ctx, &container.Config{
 		Image: consts.MySQLImage,
 		ExposedPorts: nat.PortSet{
@@ -49,37 +46,33 @@ func RunWithMySQLInDocker(m *testing.M) int {
 		},
 	}, nil, nil, "")
 	if err != nil {
-		panic(err)
+		return func() {}, nil, err
 	}
 	containerID := resp.ID
-	defer func() {
-		err := c.ContainerRemove(ctx, containerID, types.ContainerRemoveOptions{
+	cleanUpFunc = func() {
+		err = c.ContainerRemove(ctx, containerID, types.ContainerRemoveOptions{
 			Force: true,
 		})
 		if err != nil {
-			panic(err)
+			t.Error("remove test docker failed", err)
 		}
-	}()
+	}
 
 	err = c.ContainerStart(ctx, containerID, types.ContainerStartOptions{})
 	if err != nil {
-		panic(err)
+		return cleanUpFunc, nil, err
 	}
 
 	inspRes, err := c.ContainerInspect(ctx, containerID)
 	if err != nil {
-		panic(err)
+		return cleanUpFunc, nil, err
 	}
 	hostPort := inspRes.NetworkSettings.Ports[consts.MySQLContainerPort][0]
 	port, _ := strconv.Atoi(hostPort.HostPort)
-	mysqlDSN = fmt.Sprintf(consts.MySqlDSN, consts.MySQLAdmin, consts.DockerTestMySQLPwd, hostPort.HostIP, port, consts.TikGok)
+	mysqlDSN := fmt.Sprintf(consts.MySqlDSN, consts.MySQLAdmin, consts.DockerTestMySQLPwd, hostPort.HostIP, port, consts.TikGok)
 
-	return m.Run()
-}
-
-func NewTestMysqlDB() *gorm.DB {
-	time.Sleep(time.Second * 15) // Wait the container start. TODO: need to optimize
-	db, err := gorm.Open(mysql.Open(mysqlDSN), &gorm.Config{
+	time.Sleep(5) //TODO: fix this bug
+	db, err = gorm.Open(mysql.Open(mysqlDSN), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
 		},
@@ -94,9 +87,9 @@ func NewTestMysqlDB() *gorm.DB {
 		),
 	})
 	if err != nil {
-		panic(err)
+		return cleanUpFunc, nil, err
 	}
-	return db
+	return cleanUpFunc, db, nil
 }
 
 func SetupDatabase() {
