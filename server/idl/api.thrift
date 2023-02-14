@@ -157,12 +157,12 @@ struct douyin_relation_friend_list_request {
 struct douyin_relation_friend_list_response {
     1: i32 status_code // Status code, 0-success, other values-failure
     2: string status_msg // Return status description
-    3: required list<base.FriendUser> user_list,     // List of user information
+    3: list<base.FriendUser> user_list,     // List of user information
 }
 
 struct douyin_message_chat_request {
-    1: string token // User authentication token
-    2: i64 to_user_id // The other party's user id
+    1: string token(api.query="token") // User authentication token
+    2: i64 to_user_id(api.query="to_user_id") // The other party's user id
 }
 
 struct douyin_message_chat_response {
@@ -172,10 +172,10 @@ struct douyin_message_chat_response {
 }
 
 struct douyin_message_action_request {
-    1: string token // User authentication token
-    2: i64 to_user_id // The other party's user id
-    3: i8 action_type // 1- Send a message
-    4: string content // Message content
+    1: string token(api.query="token") // User authentication token
+    2: i64 to_user_id(api.query="to_user_id") // The other party's user id
+    3: i8 action_type(api.query="action_type", api.vd="$==1 || $==2") // 1- Send a message
+    4: string content(api.query="comment", api.vd="len($)>0 && len($)<255") // Message content
 }
 
 struct douyin_message_action_response {

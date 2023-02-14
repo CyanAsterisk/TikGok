@@ -21,9 +21,9 @@ struct User {
 }
 
 struct SocialInfo{
-     1: i64 follow_count // Total number of followings
-     2: i64 follower_count // Total number of followers
-     3: bool is_follow // true-followed, false-not followed
+    1: i64 follow_count // Total number of followings
+    2: i64 follower_count // Total number of followers
+    3: bool is_follow // true-followed, false-not followed
 }
 
 struct Video {
@@ -62,6 +62,6 @@ struct Message {
 }
 
 struct LatestMsg{
-     1: string message // Latest chat messages with this friend
-     2: i64 msgType // message type, 0 => the message received by the current requesting user, 1 => the message sent by the current requesting user
+    1: string message // Latest chat messages with this friend
+    2: i64 msgType // message type, 0 => the message received by the current requesting user, 1 => the message sent by the current requesting user
 }

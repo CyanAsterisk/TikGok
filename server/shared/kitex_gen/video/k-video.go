@@ -31,8 +31,6 @@ func (p *DouyinFeedRequest) FastRead(buf []byte) (int, error) {
 	var l int
 	var fieldTypeId thrift.TType
 	var fieldId int16
-	var issetLatestTime bool = false
-	var issetViewerId bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -56,7 +54,6 @@ func (p *DouyinFeedRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetLatestTime = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -71,7 +68,6 @@ func (p *DouyinFeedRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetViewerId = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -99,15 +95,6 @@ func (p *DouyinFeedRequest) FastRead(buf []byte) (int, error) {
 		goto ReadStructEndError
 	}
 
-	if !issetLatestTime {
-		fieldId = 1
-		goto RequiredFieldNotSetError
-	}
-
-	if !issetViewerId {
-		fieldId = 2
-		goto RequiredFieldNotSetError
-	}
 	return offset, nil
 ReadStructBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -121,8 +108,6 @@ ReadFieldEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
 ReadStructEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-RequiredFieldNotSetError:
-	return offset, thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinFeedRequest[fieldId]))
 }
 
 func (p *DouyinFeedRequest) FastReadField1(buf []byte) (int, error) {
@@ -224,9 +209,6 @@ func (p *DouyinFeedResponse) FastRead(buf []byte) (int, error) {
 	var l int
 	var fieldTypeId thrift.TType
 	var fieldId int16
-	var issetBaseResp bool = false
-	var issetVideoList bool = false
-	var issetNextTime bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -250,7 +232,6 @@ func (p *DouyinFeedResponse) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetBaseResp = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -265,7 +246,6 @@ func (p *DouyinFeedResponse) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetVideoList = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -280,7 +260,6 @@ func (p *DouyinFeedResponse) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetNextTime = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -308,20 +287,6 @@ func (p *DouyinFeedResponse) FastRead(buf []byte) (int, error) {
 		goto ReadStructEndError
 	}
 
-	if !issetBaseResp {
-		fieldId = 1
-		goto RequiredFieldNotSetError
-	}
-
-	if !issetVideoList {
-		fieldId = 2
-		goto RequiredFieldNotSetError
-	}
-
-	if !issetNextTime {
-		fieldId = 3
-		goto RequiredFieldNotSetError
-	}
 	return offset, nil
 ReadStructBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -335,8 +300,6 @@ ReadFieldEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
 ReadStructEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-RequiredFieldNotSetError:
-	return offset, thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinFeedResponse[fieldId]))
 }
 
 func (p *DouyinFeedResponse) FastReadField1(buf []byte) (int, error) {
@@ -492,10 +455,6 @@ func (p *DouyinPublishActionRequest) FastRead(buf []byte) (int, error) {
 	var l int
 	var fieldTypeId thrift.TType
 	var fieldId int16
-	var issetUserId bool = false
-	var issetPlayUrl bool = false
-	var issetCoverUrl bool = false
-	var issetTitle bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -519,7 +478,6 @@ func (p *DouyinPublishActionRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetUserId = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -534,7 +492,6 @@ func (p *DouyinPublishActionRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetPlayUrl = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -549,7 +506,6 @@ func (p *DouyinPublishActionRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetCoverUrl = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -564,7 +520,6 @@ func (p *DouyinPublishActionRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetTitle = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -592,25 +547,6 @@ func (p *DouyinPublishActionRequest) FastRead(buf []byte) (int, error) {
 		goto ReadStructEndError
 	}
 
-	if !issetUserId {
-		fieldId = 1
-		goto RequiredFieldNotSetError
-	}
-
-	if !issetPlayUrl {
-		fieldId = 2
-		goto RequiredFieldNotSetError
-	}
-
-	if !issetCoverUrl {
-		fieldId = 3
-		goto RequiredFieldNotSetError
-	}
-
-	if !issetTitle {
-		fieldId = 4
-		goto RequiredFieldNotSetError
-	}
 	return offset, nil
 ReadStructBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -624,8 +560,6 @@ ReadFieldEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
 ReadStructEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-RequiredFieldNotSetError:
-	return offset, thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinPublishActionRequest[fieldId]))
 }
 
 func (p *DouyinPublishActionRequest) FastReadField1(buf []byte) (int, error) {
@@ -795,7 +729,6 @@ func (p *DouyinPublishActionResponse) FastRead(buf []byte) (int, error) {
 	var l int
 	var fieldTypeId thrift.TType
 	var fieldId int16
-	var issetBaseResp bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -819,7 +752,6 @@ func (p *DouyinPublishActionResponse) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetBaseResp = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -847,10 +779,6 @@ func (p *DouyinPublishActionResponse) FastRead(buf []byte) (int, error) {
 		goto ReadStructEndError
 	}
 
-	if !issetBaseResp {
-		fieldId = 1
-		goto RequiredFieldNotSetError
-	}
 	return offset, nil
 ReadStructBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -864,8 +792,6 @@ ReadFieldEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
 ReadStructEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-RequiredFieldNotSetError:
-	return offset, thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinPublishActionResponse[fieldId]))
 }
 
 func (p *DouyinPublishActionResponse) FastReadField1(buf []byte) (int, error) {
@@ -930,8 +856,6 @@ func (p *DouyinGetPublishedListRequest) FastRead(buf []byte) (int, error) {
 	var l int
 	var fieldTypeId thrift.TType
 	var fieldId int16
-	var issetViewerId bool = false
-	var issetOwnerId bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -955,7 +879,6 @@ func (p *DouyinGetPublishedListRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetViewerId = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -970,7 +893,6 @@ func (p *DouyinGetPublishedListRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetOwnerId = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -998,15 +920,6 @@ func (p *DouyinGetPublishedListRequest) FastRead(buf []byte) (int, error) {
 		goto ReadStructEndError
 	}
 
-	if !issetViewerId {
-		fieldId = 1
-		goto RequiredFieldNotSetError
-	}
-
-	if !issetOwnerId {
-		fieldId = 2
-		goto RequiredFieldNotSetError
-	}
 	return offset, nil
 ReadStructBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -1020,8 +933,6 @@ ReadFieldEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
 ReadStructEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-RequiredFieldNotSetError:
-	return offset, thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinGetPublishedListRequest[fieldId]))
 }
 
 func (p *DouyinGetPublishedListRequest) FastReadField1(buf []byte) (int, error) {
@@ -1123,8 +1034,6 @@ func (p *DouyinGetPublishedListResponse) FastRead(buf []byte) (int, error) {
 	var l int
 	var fieldTypeId thrift.TType
 	var fieldId int16
-	var issetBaseResp bool = false
-	var issetVideoList bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -1148,7 +1057,6 @@ func (p *DouyinGetPublishedListResponse) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetBaseResp = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -1163,7 +1071,6 @@ func (p *DouyinGetPublishedListResponse) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetVideoList = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -1191,15 +1098,6 @@ func (p *DouyinGetPublishedListResponse) FastRead(buf []byte) (int, error) {
 		goto ReadStructEndError
 	}
 
-	if !issetBaseResp {
-		fieldId = 1
-		goto RequiredFieldNotSetError
-	}
-
-	if !issetVideoList {
-		fieldId = 2
-		goto RequiredFieldNotSetError
-	}
 	return offset, nil
 ReadStructBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -1213,8 +1111,6 @@ ReadFieldEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
 ReadStructEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-RequiredFieldNotSetError:
-	return offset, thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinGetPublishedListResponse[fieldId]))
 }
 
 func (p *DouyinGetPublishedListResponse) FastReadField1(buf []byte) (int, error) {
@@ -1336,8 +1232,6 @@ func (p *DouyinGetFavoriteListRequest) FastRead(buf []byte) (int, error) {
 	var l int
 	var fieldTypeId thrift.TType
 	var fieldId int16
-	var issetViewerId bool = false
-	var issetOwnerId bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -1361,7 +1255,6 @@ func (p *DouyinGetFavoriteListRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetViewerId = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -1376,7 +1269,6 @@ func (p *DouyinGetFavoriteListRequest) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetOwnerId = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -1404,15 +1296,6 @@ func (p *DouyinGetFavoriteListRequest) FastRead(buf []byte) (int, error) {
 		goto ReadStructEndError
 	}
 
-	if !issetViewerId {
-		fieldId = 1
-		goto RequiredFieldNotSetError
-	}
-
-	if !issetOwnerId {
-		fieldId = 2
-		goto RequiredFieldNotSetError
-	}
 	return offset, nil
 ReadStructBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -1426,8 +1309,6 @@ ReadFieldEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
 ReadStructEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-RequiredFieldNotSetError:
-	return offset, thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinGetFavoriteListRequest[fieldId]))
 }
 
 func (p *DouyinGetFavoriteListRequest) FastReadField1(buf []byte) (int, error) {
@@ -1529,8 +1410,6 @@ func (p *DouyinGetFavoriteListResponse) FastRead(buf []byte) (int, error) {
 	var l int
 	var fieldTypeId thrift.TType
 	var fieldId int16
-	var issetBaseResp bool = false
-	var issetVideoList bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
 	if err != nil {
@@ -1554,7 +1433,6 @@ func (p *DouyinGetFavoriteListResponse) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetBaseResp = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -1569,7 +1447,6 @@ func (p *DouyinGetFavoriteListResponse) FastRead(buf []byte) (int, error) {
 				if err != nil {
 					goto ReadFieldError
 				}
-				issetVideoList = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -1597,15 +1474,6 @@ func (p *DouyinGetFavoriteListResponse) FastRead(buf []byte) (int, error) {
 		goto ReadStructEndError
 	}
 
-	if !issetBaseResp {
-		fieldId = 1
-		goto RequiredFieldNotSetError
-	}
-
-	if !issetVideoList {
-		fieldId = 2
-		goto RequiredFieldNotSetError
-	}
 	return offset, nil
 ReadStructBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -1619,8 +1487,6 @@ ReadFieldEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
 ReadStructEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-RequiredFieldNotSetError:
-	return offset, thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DouyinGetFavoriteListResponse[fieldId]))
 }
 
 func (p *DouyinGetFavoriteListResponse) FastReadField1(buf []byte) (int, error) {
