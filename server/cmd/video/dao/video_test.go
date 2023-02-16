@@ -16,7 +16,7 @@ func TestVideoLifecycle(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	manager := NewVideo(db)
+	dao := NewVideo(db)
 
 	timeStamp := int64(1676323214)
 	videoList := make([]*model.Video, 0)
@@ -41,7 +41,7 @@ func TestVideoLifecycle(t *testing.T) {
 			name: "create video",
 			op: func() (string, error) {
 				for _, v := range videoList {
-					if err = manager.CreateVideo(v); err != nil {
+					if err = dao.CreateVideo(v); err != nil {
 						return "", err
 					}
 				}
@@ -53,7 +53,7 @@ func TestVideoLifecycle(t *testing.T) {
 		{
 			name: "duplicate create video",
 			op: func() (string, error) {
-				err = manager.CreateVideo(videoList[0])
+				err = dao.CreateVideo(videoList[0])
 				return "", err
 			},
 			wantErr: true,
@@ -61,7 +61,7 @@ func TestVideoLifecycle(t *testing.T) {
 		{
 			name: "get video by id",
 			op: func() (string, error) {
-				video, err := manager.GetVideoByVideoId(videoList[0].ID)
+				video, err := dao.GetVideoByVideoId(videoList[0].ID)
 				if err != nil {
 					return "", err
 				}
@@ -77,7 +77,7 @@ func TestVideoLifecycle(t *testing.T) {
 		{
 			name: "get videoList by Author id",
 			op: func() (string, error) {
-				video, err := manager.GetVideoListByAuthorId(videoList[0].AuthorId)
+				video, err := dao.GetVideoListByAuthorId(videoList[0].AuthorId)
 				if err != nil {
 					return "", err
 				}
@@ -93,7 +93,7 @@ func TestVideoLifecycle(t *testing.T) {
 		{
 			name: "get video list by last time",
 			op: func() (string, error) {
-				videos, err := manager.GetVideoListByLatestTime(timeStamp + 2)
+				videos, err := dao.GetVideoListByLatestTime(timeStamp + 2)
 				if err != nil {
 					return "", err
 				}
@@ -109,7 +109,7 @@ func TestVideoLifecycle(t *testing.T) {
 		{
 			name: "batch get video by id",
 			op: func() (string, error) {
-				videoList, err := manager.BatchGetVideoByVideoId([]int64{videoList[0].ID, videoList[1].ID})
+				videoList, err := dao.BatchGetVideoByVideoId([]int64{videoList[0].ID, videoList[1].ID})
 				if err != nil {
 					return "", err
 				}
@@ -125,7 +125,7 @@ func TestVideoLifecycle(t *testing.T) {
 		{
 			name: "delete video by id",
 			op: func() (string, error) {
-				err := manager.DeleteVideoById(videoList[0].ID)
+				err := dao.DeleteVideoById(videoList[0].ID)
 				return "", err
 			},
 			wantErr:    false,
@@ -134,7 +134,7 @@ func TestVideoLifecycle(t *testing.T) {
 		{
 			name: "duplicate delete video by id",
 			op: func() (string, error) {
-				err := manager.DeleteVideoById(videoList[0].ID)
+				err := dao.DeleteVideoById(videoList[0].ID)
 				return "", err
 			},
 			wantErr: true,
