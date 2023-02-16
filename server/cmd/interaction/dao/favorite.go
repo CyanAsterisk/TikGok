@@ -24,8 +24,8 @@ func NewFavorite(db *gorm.DB) *Favorite {
 	}
 }
 
-// FavoriteCountByVideoId gets the number of favorite by videoId.
-func (f *Favorite) FavoriteCountByVideoId(videoId int64) (int64, error) {
+// GetFavoriteCountByVideoId gets the number of favorite by videoId.
+func (f *Favorite) GetFavoriteCountByVideoId(videoId int64) (int64, error) {
 	var count int64
 	err := f.db.Model(&model.Favorite{}).
 		Where(&model.Favorite{VideoId: videoId, ActionType: consts.IsLike}).Count(&count).Error
@@ -39,7 +39,8 @@ func (f *Favorite) FavoriteCountByVideoId(videoId int64) (int64, error) {
 func (f *Favorite) GetFavoriteUserList(videoId int64) ([]int64, error) {
 	var userList []int64
 	err := f.db.Model(model.Favorite{}).
-		Where(&model.Favorite{VideoId: videoId, ActionType: consts.IsLike}).Pluck("user_id", &userList).Error
+		Where(&model.Favorite{VideoId: videoId, ActionType: consts.IsLike}).
+		Order("create_date desc").Pluck("user_id", &userList).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, nil
 	}
@@ -51,6 +52,13 @@ func (f *Favorite) GetFavoriteUserList(videoId int64) ([]int64, error) {
 
 // CreateFavorite creates a favorite record.
 func (f *Favorite) CreateFavorite(fav *model.Favorite) error {
+	err := f.db.Model(&model.Favorite{}).
+		Where(&model.Favorite{VideoId: fav.VideoId, UserId: fav.UserId}).First(&model.Favorite{}).Error
+	if err == nil {
+		return ErrRecordAlreadyExist
+	} else if err != gorm.ErrRecordNotFound {
+		return err
+	}
 	return f.db.Model(model.Favorite{}).
 		Create(&fav).Error
 }
@@ -80,7 +88,8 @@ func (f *Favorite) GetFavoriteInfo(userId, videoId int64) (*model.Favorite, erro
 func (f *Favorite) GetFavoriteVideoIdListByUserId(userId int64) ([]int64, error) {
 	var videoList []int64
 	err := f.db.Model(model.Favorite{}).
-		Where(&model.Favorite{UserId: userId, ActionType: consts.IsLike}).Pluck("video_id", &videoList).Error
+		Where(&model.Favorite{UserId: userId, ActionType: consts.IsLike}).
+		Order("create_date desc").Pluck("video_id", &videoList).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, nil
 	}

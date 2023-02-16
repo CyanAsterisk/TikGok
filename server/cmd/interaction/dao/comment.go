@@ -1,6 +1,8 @@
 package dao
 
 import (
+	"errors"
+
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"gorm.io/gorm"
@@ -9,6 +11,11 @@ import (
 type Comment struct {
 	db *gorm.DB
 }
+
+var (
+	ErrNoSuchRecord       = errors.New("no such record")
+	ErrRecordAlreadyExist = errors.New("record already exist")
+)
 
 // NewComment create an interaction comment dao.
 func NewComment(db *gorm.DB) *Comment {
@@ -35,11 +42,11 @@ func (c *Comment) CommentCountByVideoId(videoId int64) (int64, error) {
 	return count, nil
 }
 
-// CommentIdListByVideoId gets commentId list by videoId
-func (c *Comment) CommentIdListByVideoId(videoId int64) ([]string, error) {
+// GetCommentIdListByVideoId gets commentId list by videoId
+func (c *Comment) GetCommentIdListByVideoId(videoId int64) ([]string, error) {
 	var commentIdList []string
 	err := c.db.Model(&model.Comment{}).Select("id").
-		Where(&model.Comment{VideoId: videoId}).Find(&commentIdList).Error
+		Where(&model.Comment{VideoId: videoId, ActionType: consts.ValidComment}).Find(&commentIdList).Error
 	if err != nil {
 		return nil, err
 	}
@@ -47,13 +54,13 @@ func (c *Comment) CommentIdListByVideoId(videoId int64) ([]string, error) {
 }
 
 // CreateComment creates a comment.
-func (c *Comment) CreateComment(comment *model.Comment) (*model.Comment, error) {
-	err := c.db.Model(model.Comment{}).
-		Create(&comment).Error
+func (c *Comment) CreateComment(comment *model.Comment) error {
+	err := c.db.Model(&model.Comment{}).
+		Where(&model.Comment{ID: comment.ID}).First(&model.Comment{}).Error
 	if err != nil {
-		return nil, err
+		return ErrRecordAlreadyExist
 	}
-	return comment, nil
+	return c.db.Model(model.Comment{}).Create(&comment).Error
 }
 
 // DeleteComment to delete a comment.
@@ -62,6 +69,9 @@ func (c *Comment) DeleteComment(id int64) error {
 	err := c.db.Model(model.Comment{}).
 		Where(&model.Comment{ID: id, ActionType: consts.ValidComment}).First(&comment).Error
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return ErrNoSuchRecord
+		}
 		return err
 	}
 	err = c.db.Model(model.Comment{}).

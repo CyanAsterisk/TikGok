@@ -137,7 +137,7 @@ func CommentSubscribeRoutine(subscriber *CommentSubscriber, dao *dao.Comment) er
 	}
 	for comment := range commentCh {
 		if comment.ActionType == consts.ValidComment {
-			if _, err = dao.CreateComment(comment); err != nil {
+			if err = dao.CreateComment(comment); err != nil {
 				klog.Error("create comment err")
 			}
 		} else if comment.ActionType == consts.InvalidComment {

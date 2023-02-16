@@ -1,7 +1,10 @@
 package model
 
+import "time"
+
 type Favorite struct {
-	UserId     int64 `gorm:"not null"`
-	VideoId    int64 `gorm:"not null"`
-	ActionType int8  `gorm:"type:tinyint;not null"`
+	UserId     int64     `gorm:"not null"`
+	VideoId    int64     `gorm:"not null"`
+	ActionType int8      `gorm:"type:tinyint;not null"`
+	CreateDate time.Time `gorm:"not null"`
 }

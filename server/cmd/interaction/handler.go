@@ -62,6 +62,7 @@ func (s *InteractionServerImpl) Favorite(ctx context.Context, req *interaction.D
 		UserId:     req.UserId,
 		VideoId:    req.VideoId,
 		ActionType: req.ActionType,
+		CreateDate: time.Now(),
 	})
 	if err != nil {
 		klog.Error("action publish error", err)
@@ -276,7 +277,7 @@ func (s *InteractionServerImpl) getInteractInfo(ctx context.Context, videoId, vi
 	}
 	if info.FavoriteCount, err = s.FavoriteRedisManager.FavoriteCountByVideoId(ctx, videoId); err != nil {
 		klog.Error("get favorite count by redis err", err)
-		if info.FavoriteCount, err = s.FavoriteDao.FavoriteCountByVideoId(videoId); err != nil {
+		if info.FavoriteCount, err = s.FavoriteDao.GetFavoriteCountByVideoId(videoId); err != nil {
 			return nil, err
 		}
 	}
