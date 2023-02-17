@@ -13,9 +13,9 @@ type InteractionManager struct {
 	InteractionService interactionserver.Client
 }
 
-// GetInteractInfo get video interactInfo.
-func (i *InteractionManager) GetInteractInfo(ctx context.Context, videoId, viewerId int64) (*base.InteractInfo, error) {
-	resp, err := i.InteractionService.GetInteractInfo(ctx, &interaction.DouyinGetInteractInfoRequest{
+// GetVideoInteractInfo get video interactInfo.
+func (i *InteractionManager) GetVideoInteractInfo(ctx context.Context, videoId, viewerId int64) (*base.VideoInteractInfo, error) {
+	resp, err := i.InteractionService.GetVideoInteractInfo(ctx, &interaction.DouyinGetVideoInteractInfoRequest{
 		VideoId:  videoId,
 		ViewerId: viewerId,
 	})
@@ -40,8 +40,8 @@ func (i *InteractionManager) GetFavoriteVideoIdList(ctx context.Context, userId 
 	return resp.VideoIdList, nil
 }
 
-// BatchGetInteractInfo batch get video interactInfo.
-func (i *InteractionManager) BatchGetInteractInfo(ctx context.Context, videoIdList []int64, viewerId int64) ([]*base.InteractInfo, error) {
+// BatchGetVideoInteractInfo batch get video interactInfo.
+func (i *InteractionManager) BatchGetVideoInteractInfo(ctx context.Context, videoIdList []int64, viewerId int64) ([]*base.VideoInteractInfo, error) {
 	resp, err := i.InteractionService.BatchGetInteractInfo(ctx, &interaction.DouyinBatchGetInteractInfoRequest{
 		VideoIdList: videoIdList,
 		ViewerId:    viewerId,

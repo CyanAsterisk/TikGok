@@ -19,10 +19,11 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	serviceName := "VideoService"
 	handlerType := (*video.VideoService)(nil)
 	methods := map[string]kitex.MethodInfo{
-		"Feed":                  kitex.NewMethodInfo(feedHandler, newVideoServiceFeedArgs, newVideoServiceFeedResult, false),
-		"PublishVideo":          kitex.NewMethodInfo(publishVideoHandler, newVideoServicePublishVideoArgs, newVideoServicePublishVideoResult, false),
-		"GetPublishedVideoList": kitex.NewMethodInfo(getPublishedVideoListHandler, newVideoServiceGetPublishedVideoListArgs, newVideoServiceGetPublishedVideoListResult, false),
-		"GetFavoriteVideoList":  kitex.NewMethodInfo(getFavoriteVideoListHandler, newVideoServiceGetFavoriteVideoListArgs, newVideoServiceGetFavoriteVideoListResult, false),
+		"Feed":                    kitex.NewMethodInfo(feedHandler, newVideoServiceFeedArgs, newVideoServiceFeedResult, false),
+		"PublishVideo":            kitex.NewMethodInfo(publishVideoHandler, newVideoServicePublishVideoArgs, newVideoServicePublishVideoResult, false),
+		"GetPublishedVideoList":   kitex.NewMethodInfo(getPublishedVideoListHandler, newVideoServiceGetPublishedVideoListArgs, newVideoServiceGetPublishedVideoListResult, false),
+		"GetFavoriteVideoList":    kitex.NewMethodInfo(getFavoriteVideoListHandler, newVideoServiceGetFavoriteVideoListArgs, newVideoServiceGetFavoriteVideoListResult, false),
+		"GetPublishedVideoIdList": kitex.NewMethodInfo(getPublishedVideoIdListHandler, newVideoServiceGetPublishedVideoIdListArgs, newVideoServiceGetPublishedVideoIdListResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName": "video",
@@ -110,6 +111,24 @@ func newVideoServiceGetFavoriteVideoListResult() interface{} {
 	return video.NewVideoServiceGetFavoriteVideoListResult()
 }
 
+func getPublishedVideoIdListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*video.VideoServiceGetPublishedVideoIdListArgs)
+	realResult := result.(*video.VideoServiceGetPublishedVideoIdListResult)
+	success, err := handler.(video.VideoService).GetPublishedVideoIdList(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newVideoServiceGetPublishedVideoIdListArgs() interface{} {
+	return video.NewVideoServiceGetPublishedVideoIdListArgs()
+}
+
+func newVideoServiceGetPublishedVideoIdListResult() interface{} {
+	return video.NewVideoServiceGetPublishedVideoIdListResult()
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -155,6 +174,16 @@ func (p *kClient) GetFavoriteVideoList(ctx context.Context, req *video.DouyinGet
 	_args.Req = req
 	var _result video.VideoServiceGetFavoriteVideoListResult
 	if err = p.c.Call(ctx, "GetFavoriteVideoList", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetPublishedVideoIdList(ctx context.Context, req *video.DouyinGetPublishedVideoIdListRequest) (r *video.DouyinGetPublishedVideoIdListResponse, err error) {
+	var _args video.VideoServiceGetPublishedVideoIdListArgs
+	_args.Req = req
+	var _result video.VideoServiceGetPublishedVideoIdListResult
+	if err = p.c.Call(ctx, "GetPublishedVideoIdList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

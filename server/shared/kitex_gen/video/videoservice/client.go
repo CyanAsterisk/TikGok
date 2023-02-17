@@ -15,6 +15,7 @@ type Client interface {
 	PublishVideo(ctx context.Context, req *video.DouyinPublishActionRequest, callOptions ...callopt.Option) (r *video.DouyinPublishActionResponse, err error)
 	GetPublishedVideoList(ctx context.Context, req *video.DouyinGetPublishedListRequest, callOptions ...callopt.Option) (r *video.DouyinGetPublishedListResponse, err error)
 	GetFavoriteVideoList(ctx context.Context, req *video.DouyinGetFavoriteListRequest, callOptions ...callopt.Option) (r *video.DouyinGetFavoriteListResponse, err error)
+	GetPublishedVideoIdList(ctx context.Context, req *video.DouyinGetPublishedVideoIdListRequest, callOptions ...callopt.Option) (r *video.DouyinGetPublishedVideoIdListResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -64,4 +65,9 @@ func (p *kVideoServiceClient) GetPublishedVideoList(ctx context.Context, req *vi
 func (p *kVideoServiceClient) GetFavoriteVideoList(ctx context.Context, req *video.DouyinGetFavoriteListRequest, callOptions ...callopt.Option) (r *video.DouyinGetFavoriteListResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.GetFavoriteVideoList(ctx, req)
+}
+
+func (p *kVideoServiceClient) GetPublishedVideoIdList(ctx context.Context, req *video.DouyinGetPublishedVideoIdListRequest, callOptions ...callopt.Option) (r *video.DouyinGetPublishedVideoIdListResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetPublishedVideoIdList(ctx, req)
 }

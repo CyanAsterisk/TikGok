@@ -18,12 +18,24 @@ struct User {
     3: i64 follow_count // Total number of followings
     4: i64 follower_count // Total number of followers
     5: bool is_follow // true-followed, false-not followed
+    6: string avatar,           // user avatar
+    7: string background_image, // Image at the top of the user's personal page
+    8: string signature,        // Personal signatrue
+    9: i64 total_favorited,     // Number of Likes
+    10: i64 work_count,         // Number of published videos
+    11: i64 favorite_count,     // Total video likes
 }
 
 struct SocialInfo{
     1: i64 follow_count // Total number of followings
     2: i64 follower_count // Total number of followers
     3: bool is_follow // true-followed, false-not followed
+}
+
+struct UserInteractInfo{
+    1: i64 total_favorited,     // Number of Likes
+    2: i64 work_count,         // Number of published videos
+    3: i64 favorite_count,     // Total video likes
 }
 
 struct Video {
@@ -37,7 +49,7 @@ struct Video {
     8: string title // Video title
 }
 
-struct InteractInfo{
+struct VideoInteractInfo{
     1: i64 favorite_count // Total number of likes for the video
     2: i64 comment_count // Total number of comments on the video
     3: bool is_favorite // true-liked, false-not liked

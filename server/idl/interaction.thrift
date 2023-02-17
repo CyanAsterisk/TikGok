@@ -42,14 +42,24 @@ struct douyin_get_comment_list_response {
     1: base.douyin_base_response base_resp,
     2: list<base.Comment> comment_list,     // List of comments
 }
-struct douyin_get_interact_info_request{
+
+struct douyin_get_video_interact_info_request{
     1: i64 video_id, // Video Id
     2: i64 viewer_id, // viewer_id,
 }
 
-struct douyin_get_interact_info_response {
+struct douyin_get_video_interact_info_response {
     1: base.douyin_base_response base_resp,
-    2: base.InteractInfo interact_info,
+    2: base.VideoInteractInfo interact_info,
+}
+
+struct douyin_get_user_interact_info_request{
+    1: i64 user_id,
+}
+
+struct douyin_get_user_interact_info_response {
+    1: base.douyin_base_response base_resp,
+    2: base.UserInteractInfo interact_info,
 }
 
 struct douyin_batch_get_interact_info_request{
@@ -59,7 +69,7 @@ struct douyin_batch_get_interact_info_request{
 
 struct douyin_batch_get_interact_info_response {
     1: base.douyin_base_response base_resp,
-    2: list<base.InteractInfo> interact_info_list,
+    2: list<base.VideoInteractInfo> interact_info_list,
 }
 
 service InteractionServer {
@@ -67,6 +77,7 @@ service InteractionServer {
     douyin_get_favorite_video_id_list_response GetFavoriteVideoIdList(1: douyin_get_favorite_video_id_list_request req),
     douyin_comment_action_response Comment(1: douyin_comment_action_request req),
     douyin_get_comment_list_response GetCommentList(1: douyin_get_comment_list_request req),
-    douyin_get_interact_info_response GetInteractInfo (1: douyin_get_interact_info_request req),
+    douyin_get_video_interact_info_response GetVideoInteractInfo (1: douyin_get_video_interact_info_request req),
+     douyin_get_user_interact_info_response GetUserInteractInfo (1: douyin_get_user_interact_info_request req),
     douyin_batch_get_interact_info_response BatchGetInteractInfo (1: douyin_batch_get_interact_info_request req),
 }

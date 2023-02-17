@@ -26,6 +26,7 @@ struct douyin_message_action_response {
 struct douyin_message_get_latest_request {
     1: i64 user_id // User Id
     2: i64 to_user_id // The other party's user id
+    3: i64 pre_msg_time // The time of time of last latest message
 }
 
 struct douyin_message_get_latest_response {
@@ -36,6 +37,7 @@ struct douyin_message_get_latest_response {
 struct douyin_message_batch_get_latest_request {
     1: i64 user_id // User Id
     2: list<i64> to_user_id_list // The other party's user ids
+    3: list<i64> pre_msg_time // The time of time of last latest message
 }
 
 struct douyin_message_batch_get_latest_response {

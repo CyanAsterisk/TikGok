@@ -239,9 +239,9 @@ func (s *InteractionServerImpl) GetCommentList(ctx context.Context, req *interac
 	//return resp, nil
 }
 
-// GetInteractInfo implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) GetInteractInfo(ctx context.Context, req *interaction.DouyinGetInteractInfoRequest) (resp *interaction.DouyinGetInteractInfoResponse, err error) {
-	resp = new(interaction.DouyinGetInteractInfoResponse)
+// GetVideoInteractInfo implements the InteractionServerImpl interface.
+func (s *InteractionServerImpl) GetVideoInteractInfo(ctx context.Context, req *interaction.DouyinGetVideoInteractInfoRequest) (resp *interaction.DouyinGetVideoInteractInfoResponse, err error) {
+	resp = new(interaction.DouyinGetVideoInteractInfoResponse)
 	if resp.InteractInfo, err = s.getInteractInfo(ctx, req.VideoId, req.ViewerId); err != nil {
 		klog.Error("get interact info err", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr)
@@ -267,8 +267,8 @@ func (s *InteractionServerImpl) BatchGetInteractInfo(ctx context.Context, req *i
 	return resp, nil
 }
 
-func (s *InteractionServerImpl) getInteractInfo(ctx context.Context, videoId, viewerId int64) (info *base.InteractInfo, err error) {
-	info = new(base.InteractInfo)
+func (s *InteractionServerImpl) getInteractInfo(ctx context.Context, videoId, viewerId int64) (info *base.VideoInteractInfo, err error) {
+	info = new(base.VideoInteractInfo)
 	if info.CommentCount, err = s.CommentRedisManager.CommentCountByVideoId(ctx, videoId); err != nil {
 		klog.Error("get comment count by redis err", err)
 		if info.CommentCount, err = s.CommentDao.CommentCountByVideoId(videoId); err != nil {
@@ -315,4 +315,10 @@ func (s *InteractionServerImpl) getInteractInfo(ctx context.Context, videoId, vi
 	//	info.IsFavorite = false
 	//}
 	//return info, nil
+}
+
+// GetUserInteractInfo implements the InteractionServerImpl interface.
+func (s *InteractionServerImpl) GetUserInteractInfo(ctx context.Context, req *interaction.DouyinGetUserInteractInfoRequest) (resp *interaction.DouyinGetUserInteractInfoResponse, err error) {
+	// TODO: Your code here...
+	return
 }

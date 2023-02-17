@@ -36,7 +36,7 @@ type UserManager interface {
 // for get interaction logic.
 type InteractionManager interface {
 	GetFavoriteVideoIdList(ctx context.Context, userId int64) ([]int64, error)
-	BatchGetInteractInfo(ctx context.Context, videoIdList []int64, viewerId int64) ([]*base.InteractInfo, error)
+	BatchGetVideoInteractInfo(ctx context.Context, videoIdList []int64, viewerId int64) ([]*base.VideoInteractInfo, error)
 }
 
 // Publisher defines the publisher video interface.
@@ -184,9 +184,15 @@ func (s *VideoServiceImpl) fillVideoList(ctx context.Context, videoList []*model
 	if err != nil {
 		return nil, err
 	}
-	InfoList, err := s.InteractionManager.BatchGetInteractInfo(ctx, videoIdList, viewerId)
+	InfoList, err := s.InteractionManager.BatchGetVideoInteractInfo(ctx, videoIdList, viewerId)
 	if err != nil {
 		return nil, err
 	}
 	return pkg.PackVideos(videoList, authorList, InfoList), nil
+}
+
+// GetPublishedVideoIdList implements the VideoServiceImpl interface.
+func (s *VideoServiceImpl) GetPublishedVideoIdList(ctx context.Context, req *video.DouyinGetPublishedVideoIdListRequest) (resp *video.DouyinGetPublishedVideoIdListResponse, err error) {
+	// TODO: Your code here...
+	return
 }

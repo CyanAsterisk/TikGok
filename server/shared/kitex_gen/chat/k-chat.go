@@ -852,6 +852,20 @@ func (p *DouyinMessageGetLatestRequest) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
+		case 3:
+			if fieldTypeId == thrift.I64 {
+				l, err = p.FastReadField3(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 			offset += l
@@ -915,6 +929,20 @@ func (p *DouyinMessageGetLatestRequest) FastReadField2(buf []byte) (int, error) 
 	return offset, nil
 }
 
+func (p *DouyinMessageGetLatestRequest) FastReadField3(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.PreMsgTime = v
+
+	}
+	return offset, nil
+}
+
 // for compatibility
 func (p *DouyinMessageGetLatestRequest) FastWrite(buf []byte) int {
 	return 0
@@ -926,6 +954,7 @@ func (p *DouyinMessageGetLatestRequest) FastWriteNocopy(buf []byte, binaryWriter
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
+		offset += p.fastWriteField3(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
 	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
@@ -938,6 +967,7 @@ func (p *DouyinMessageGetLatestRequest) BLength() int {
 	if p != nil {
 		l += p.field1Length()
 		l += p.field2Length()
+		l += p.field3Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -962,6 +992,15 @@ func (p *DouyinMessageGetLatestRequest) fastWriteField2(buf []byte, binaryWriter
 	return offset
 }
 
+func (p *DouyinMessageGetLatestRequest) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "pre_msg_time", thrift.I64, 3)
+	offset += bthrift.Binary.WriteI64(buf[offset:], p.PreMsgTime)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
 func (p *DouyinMessageGetLatestRequest) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("user_id", thrift.I64, 1)
@@ -975,6 +1014,15 @@ func (p *DouyinMessageGetLatestRequest) field2Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("to_user_id", thrift.I64, 2)
 	l += bthrift.Binary.I64Length(p.ToUserId)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *DouyinMessageGetLatestRequest) field3Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("pre_msg_time", thrift.I64, 3)
+	l += bthrift.Binary.I64Length(p.PreMsgTime)
 
 	l += bthrift.Binary.FieldEndLength()
 	return l
@@ -1202,6 +1250,20 @@ func (p *DouyinMessageBatchGetLatestRequest) FastRead(buf []byte) (int, error) {
 					goto SkipFieldError
 				}
 			}
+		case 3:
+			if fieldTypeId == thrift.LIST {
+				l, err = p.FastReadField3(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 			offset += l
@@ -1281,6 +1343,36 @@ func (p *DouyinMessageBatchGetLatestRequest) FastReadField2(buf []byte) (int, er
 	return offset, nil
 }
 
+func (p *DouyinMessageBatchGetLatestRequest) FastReadField3(buf []byte) (int, error) {
+	offset := 0
+
+	_, size, l, err := bthrift.Binary.ReadListBegin(buf[offset:])
+	offset += l
+	if err != nil {
+		return offset, err
+	}
+	p.PreMsgTime = make([]int64, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem int64
+		if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
+			return offset, err
+		} else {
+			offset += l
+
+			_elem = v
+
+		}
+
+		p.PreMsgTime = append(p.PreMsgTime, _elem)
+	}
+	if l, err := bthrift.Binary.ReadListEnd(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	return offset, nil
+}
+
 // for compatibility
 func (p *DouyinMessageBatchGetLatestRequest) FastWrite(buf []byte) int {
 	return 0
@@ -1292,6 +1384,7 @@ func (p *DouyinMessageBatchGetLatestRequest) FastWriteNocopy(buf []byte, binaryW
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
+		offset += p.fastWriteField3(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
 	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
@@ -1304,6 +1397,7 @@ func (p *DouyinMessageBatchGetLatestRequest) BLength() int {
 	if p != nil {
 		l += p.field1Length()
 		l += p.field2Length()
+		l += p.field3Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -1336,6 +1430,23 @@ func (p *DouyinMessageBatchGetLatestRequest) fastWriteField2(buf []byte, binaryW
 	return offset
 }
 
+func (p *DouyinMessageBatchGetLatestRequest) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "pre_msg_time", thrift.LIST, 3)
+	listBeginOffset := offset
+	offset += bthrift.Binary.ListBeginLength(thrift.I64, 0)
+	var length int
+	for _, v := range p.PreMsgTime {
+		length++
+		offset += bthrift.Binary.WriteI64(buf[offset:], v)
+
+	}
+	bthrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.I64, length)
+	offset += bthrift.Binary.WriteListEnd(buf[offset:])
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
 func (p *DouyinMessageBatchGetLatestRequest) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("user_id", thrift.I64, 1)
@@ -1351,6 +1462,17 @@ func (p *DouyinMessageBatchGetLatestRequest) field2Length() int {
 	l += bthrift.Binary.ListBeginLength(thrift.I64, len(p.ToUserIdList))
 	var tmpV int64
 	l += bthrift.Binary.I64Length(int64(tmpV)) * len(p.ToUserIdList)
+	l += bthrift.Binary.ListEndLength()
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *DouyinMessageBatchGetLatestRequest) field3Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("pre_msg_time", thrift.LIST, 3)
+	l += bthrift.Binary.ListBeginLength(thrift.I64, len(p.PreMsgTime))
+	var tmpV int64
+	l += bthrift.Binary.I64Length(int64(tmpV)) * len(p.PreMsgTime)
 	l += bthrift.Binary.ListEndLength()
 	l += bthrift.Binary.FieldEndLength()
 	return l

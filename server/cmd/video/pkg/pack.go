@@ -5,7 +5,7 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 )
 
-func PackVideo(video *model.Video, author *base.User, info *base.InteractInfo) *base.Video {
+func PackVideo(video *model.Video, author *base.User, info *base.VideoInteractInfo) *base.Video {
 	if video == nil {
 		return nil
 	}
@@ -21,7 +21,7 @@ func PackVideo(video *model.Video, author *base.User, info *base.InteractInfo) *
 	}
 }
 
-func PackVideos(videoList []*model.Video, authorList []*base.User, infoList []*base.InteractInfo) []*base.Video {
+func PackVideos(videoList []*model.Video, authorList []*base.User, infoList []*base.VideoInteractInfo) []*base.Video {
 	if videoList == nil {
 		return nil
 	}

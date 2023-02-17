@@ -23,7 +23,8 @@ func NewServiceInfo() *kitex.ServiceInfo {
 		"GetFavoriteVideoIdList": kitex.NewMethodInfo(getFavoriteVideoIdListHandler, newInteractionServerGetFavoriteVideoIdListArgs, newInteractionServerGetFavoriteVideoIdListResult, false),
 		"Comment":                kitex.NewMethodInfo(commentHandler, newInteractionServerCommentArgs, newInteractionServerCommentResult, false),
 		"GetCommentList":         kitex.NewMethodInfo(getCommentListHandler, newInteractionServerGetCommentListArgs, newInteractionServerGetCommentListResult, false),
-		"GetInteractInfo":        kitex.NewMethodInfo(getInteractInfoHandler, newInteractionServerGetInteractInfoArgs, newInteractionServerGetInteractInfoResult, false),
+		"GetVideoInteractInfo":   kitex.NewMethodInfo(getVideoInteractInfoHandler, newInteractionServerGetVideoInteractInfoArgs, newInteractionServerGetVideoInteractInfoResult, false),
+		"GetUserInteractInfo":    kitex.NewMethodInfo(getUserInteractInfoHandler, newInteractionServerGetUserInteractInfoArgs, newInteractionServerGetUserInteractInfoResult, false),
 		"BatchGetInteractInfo":   kitex.NewMethodInfo(batchGetInteractInfoHandler, newInteractionServerBatchGetInteractInfoArgs, newInteractionServerBatchGetInteractInfoResult, false),
 	}
 	extra := map[string]interface{}{
@@ -112,22 +113,40 @@ func newInteractionServerGetCommentListResult() interface{} {
 	return interaction.NewInteractionServerGetCommentListResult()
 }
 
-func getInteractInfoHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*interaction.InteractionServerGetInteractInfoArgs)
-	realResult := result.(*interaction.InteractionServerGetInteractInfoResult)
-	success, err := handler.(interaction.InteractionServer).GetInteractInfo(ctx, realArg.Req)
+func getVideoInteractInfoHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*interaction.InteractionServerGetVideoInteractInfoArgs)
+	realResult := result.(*interaction.InteractionServerGetVideoInteractInfoResult)
+	success, err := handler.(interaction.InteractionServer).GetVideoInteractInfo(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
 	realResult.Success = success
 	return nil
 }
-func newInteractionServerGetInteractInfoArgs() interface{} {
-	return interaction.NewInteractionServerGetInteractInfoArgs()
+func newInteractionServerGetVideoInteractInfoArgs() interface{} {
+	return interaction.NewInteractionServerGetVideoInteractInfoArgs()
 }
 
-func newInteractionServerGetInteractInfoResult() interface{} {
-	return interaction.NewInteractionServerGetInteractInfoResult()
+func newInteractionServerGetVideoInteractInfoResult() interface{} {
+	return interaction.NewInteractionServerGetVideoInteractInfoResult()
+}
+
+func getUserInteractInfoHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*interaction.InteractionServerGetUserInteractInfoArgs)
+	realResult := result.(*interaction.InteractionServerGetUserInteractInfoResult)
+	success, err := handler.(interaction.InteractionServer).GetUserInteractInfo(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newInteractionServerGetUserInteractInfoArgs() interface{} {
+	return interaction.NewInteractionServerGetUserInteractInfoArgs()
+}
+
+func newInteractionServerGetUserInteractInfoResult() interface{} {
+	return interaction.NewInteractionServerGetUserInteractInfoResult()
 }
 
 func batchGetInteractInfoHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
@@ -198,11 +217,21 @@ func (p *kClient) GetCommentList(ctx context.Context, req *interaction.DouyinGet
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetInteractInfo(ctx context.Context, req *interaction.DouyinGetInteractInfoRequest) (r *interaction.DouyinGetInteractInfoResponse, err error) {
-	var _args interaction.InteractionServerGetInteractInfoArgs
+func (p *kClient) GetVideoInteractInfo(ctx context.Context, req *interaction.DouyinGetVideoInteractInfoRequest) (r *interaction.DouyinGetVideoInteractInfoResponse, err error) {
+	var _args interaction.InteractionServerGetVideoInteractInfoArgs
 	_args.Req = req
-	var _result interaction.InteractionServerGetInteractInfoResult
-	if err = p.c.Call(ctx, "GetInteractInfo", &_args, &_result); err != nil {
+	var _result interaction.InteractionServerGetVideoInteractInfoResult
+	if err = p.c.Call(ctx, "GetVideoInteractInfo", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetUserInteractInfo(ctx context.Context, req *interaction.DouyinGetUserInteractInfoRequest) (r *interaction.DouyinGetUserInteractInfoResponse, err error) {
+	var _args interaction.InteractionServerGetUserInteractInfoArgs
+	_args.Req = req
+	var _result interaction.InteractionServerGetUserInteractInfoResult
+	if err = p.c.Call(ctx, "GetUserInteractInfo", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

@@ -44,9 +44,18 @@ struct douyin_get_favorite_list_response {
     2: list<base.Video> video_list,         // List of videos posted by the user
 }
 
+struct douyin_get_published_video_id_list_request{
+    1: i64 user_id,
+}
+
+struct douyin_get_published_video_id_list_response{
+    2: list<i64> video_id_list,
+}
+
 service VideoService {
     douyin_feed_response Feed(1: douyin_feed_request req),
     douyin_publish_action_response PublishVideo(1: douyin_publish_action_request req),
     douyin_get_published_list_response GetPublishedVideoList(1: douyin_get_published_list_request req),
     douyin_get_favorite_list_response GetFavoriteVideoList(1: douyin_get_favorite_list_request req),
+    douyin_get_published_video_id_list_response GetPublishedVideoIdList(1: douyin_get_published_video_id_list_request req),
 }

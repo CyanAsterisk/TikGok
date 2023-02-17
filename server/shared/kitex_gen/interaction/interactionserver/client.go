@@ -15,7 +15,8 @@ type Client interface {
 	GetFavoriteVideoIdList(ctx context.Context, req *interaction.DouyinGetFavoriteVideoIdListRequest, callOptions ...callopt.Option) (r *interaction.DouyinGetFavoriteVideoIdListResponse, err error)
 	Comment(ctx context.Context, req *interaction.DouyinCommentActionRequest, callOptions ...callopt.Option) (r *interaction.DouyinCommentActionResponse, err error)
 	GetCommentList(ctx context.Context, req *interaction.DouyinGetCommentListRequest, callOptions ...callopt.Option) (r *interaction.DouyinGetCommentListResponse, err error)
-	GetInteractInfo(ctx context.Context, req *interaction.DouyinGetInteractInfoRequest, callOptions ...callopt.Option) (r *interaction.DouyinGetInteractInfoResponse, err error)
+	GetVideoInteractInfo(ctx context.Context, req *interaction.DouyinGetVideoInteractInfoRequest, callOptions ...callopt.Option) (r *interaction.DouyinGetVideoInteractInfoResponse, err error)
+	GetUserInteractInfo(ctx context.Context, req *interaction.DouyinGetUserInteractInfoRequest, callOptions ...callopt.Option) (r *interaction.DouyinGetUserInteractInfoResponse, err error)
 	BatchGetInteractInfo(ctx context.Context, req *interaction.DouyinBatchGetInteractInfoRequest, callOptions ...callopt.Option) (r *interaction.DouyinBatchGetInteractInfoResponse, err error)
 }
 
@@ -68,9 +69,14 @@ func (p *kInteractionServerClient) GetCommentList(ctx context.Context, req *inte
 	return p.kClient.GetCommentList(ctx, req)
 }
 
-func (p *kInteractionServerClient) GetInteractInfo(ctx context.Context, req *interaction.DouyinGetInteractInfoRequest, callOptions ...callopt.Option) (r *interaction.DouyinGetInteractInfoResponse, err error) {
+func (p *kInteractionServerClient) GetVideoInteractInfo(ctx context.Context, req *interaction.DouyinGetVideoInteractInfoRequest, callOptions ...callopt.Option) (r *interaction.DouyinGetVideoInteractInfoResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetInteractInfo(ctx, req)
+	return p.kClient.GetVideoInteractInfo(ctx, req)
+}
+
+func (p *kInteractionServerClient) GetUserInteractInfo(ctx context.Context, req *interaction.DouyinGetUserInteractInfoRequest, callOptions ...callopt.Option) (r *interaction.DouyinGetUserInteractInfoResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetUserInteractInfo(ctx, req)
 }
 
 func (p *kInteractionServerClient) BatchGetInteractInfo(ctx context.Context, req *interaction.DouyinBatchGetInteractInfoRequest, callOptions ...callopt.Option) (r *interaction.DouyinBatchGetInteractInfoResponse, err error) {

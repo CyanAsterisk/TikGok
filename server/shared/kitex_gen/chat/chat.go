@@ -1003,8 +1003,9 @@ func (p *DouyinMessageActionResponse) Field1DeepEqual(src *base.DouyinBaseRespon
 }
 
 type DouyinMessageGetLatestRequest struct {
-	UserId   int64 `thrift:"user_id,1" frugal:"1,default,i64" json:"user_id"`
-	ToUserId int64 `thrift:"to_user_id,2" frugal:"2,default,i64" json:"to_user_id"`
+	UserId     int64 `thrift:"user_id,1" frugal:"1,default,i64" json:"user_id"`
+	ToUserId   int64 `thrift:"to_user_id,2" frugal:"2,default,i64" json:"to_user_id"`
+	PreMsgTime int64 `thrift:"pre_msg_time,3" frugal:"3,default,i64" json:"pre_msg_time"`
 }
 
 func NewDouyinMessageGetLatestRequest() *DouyinMessageGetLatestRequest {
@@ -1022,16 +1023,24 @@ func (p *DouyinMessageGetLatestRequest) GetUserId() (v int64) {
 func (p *DouyinMessageGetLatestRequest) GetToUserId() (v int64) {
 	return p.ToUserId
 }
+
+func (p *DouyinMessageGetLatestRequest) GetPreMsgTime() (v int64) {
+	return p.PreMsgTime
+}
 func (p *DouyinMessageGetLatestRequest) SetUserId(val int64) {
 	p.UserId = val
 }
 func (p *DouyinMessageGetLatestRequest) SetToUserId(val int64) {
 	p.ToUserId = val
 }
+func (p *DouyinMessageGetLatestRequest) SetPreMsgTime(val int64) {
+	p.PreMsgTime = val
+}
 
 var fieldIDToName_DouyinMessageGetLatestRequest = map[int16]string{
 	1: "user_id",
 	2: "to_user_id",
+	3: "pre_msg_time",
 }
 
 func (p *DouyinMessageGetLatestRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -1066,6 +1075,16 @@ func (p *DouyinMessageGetLatestRequest) Read(iprot thrift.TProtocol) (err error)
 		case 2:
 			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 3:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -1121,6 +1140,15 @@ func (p *DouyinMessageGetLatestRequest) ReadField2(iprot thrift.TProtocol) error
 	return nil
 }
 
+func (p *DouyinMessageGetLatestRequest) ReadField3(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		p.PreMsgTime = v
+	}
+	return nil
+}
+
 func (p *DouyinMessageGetLatestRequest) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("douyin_message_get_latest_request"); err != nil {
@@ -1133,6 +1161,10 @@ func (p *DouyinMessageGetLatestRequest) Write(oprot thrift.TProtocol) (err error
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
 			goto WriteFieldError
 		}
 
@@ -1188,6 +1220,23 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
+func (p *DouyinMessageGetLatestRequest) writeField3(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("pre_msg_time", thrift.I64, 3); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.PreMsgTime); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
 func (p *DouyinMessageGetLatestRequest) String() string {
 	if p == nil {
 		return "<nil>"
@@ -1207,6 +1256,9 @@ func (p *DouyinMessageGetLatestRequest) DeepEqual(ano *DouyinMessageGetLatestReq
 	if !p.Field2DeepEqual(ano.ToUserId) {
 		return false
 	}
+	if !p.Field3DeepEqual(ano.PreMsgTime) {
+		return false
+	}
 	return true
 }
 
@@ -1220,6 +1272,13 @@ func (p *DouyinMessageGetLatestRequest) Field1DeepEqual(src int64) bool {
 func (p *DouyinMessageGetLatestRequest) Field2DeepEqual(src int64) bool {
 
 	if p.ToUserId != src {
+		return false
+	}
+	return true
+}
+func (p *DouyinMessageGetLatestRequest) Field3DeepEqual(src int64) bool {
+
+	if p.PreMsgTime != src {
 		return false
 	}
 	return true
@@ -1467,6 +1526,7 @@ func (p *DouyinMessageGetLatestResponse) Field2DeepEqual(src *base.LatestMsg) bo
 type DouyinMessageBatchGetLatestRequest struct {
 	UserId       int64   `thrift:"user_id,1" frugal:"1,default,i64" json:"user_id"`
 	ToUserIdList []int64 `thrift:"to_user_id_list,2" frugal:"2,default,list<i64>" json:"to_user_id_list"`
+	PreMsgTime   []int64 `thrift:"pre_msg_time,3" frugal:"3,default,list<i64>" json:"pre_msg_time"`
 }
 
 func NewDouyinMessageBatchGetLatestRequest() *DouyinMessageBatchGetLatestRequest {
@@ -1484,16 +1544,24 @@ func (p *DouyinMessageBatchGetLatestRequest) GetUserId() (v int64) {
 func (p *DouyinMessageBatchGetLatestRequest) GetToUserIdList() (v []int64) {
 	return p.ToUserIdList
 }
+
+func (p *DouyinMessageBatchGetLatestRequest) GetPreMsgTime() (v []int64) {
+	return p.PreMsgTime
+}
 func (p *DouyinMessageBatchGetLatestRequest) SetUserId(val int64) {
 	p.UserId = val
 }
 func (p *DouyinMessageBatchGetLatestRequest) SetToUserIdList(val []int64) {
 	p.ToUserIdList = val
 }
+func (p *DouyinMessageBatchGetLatestRequest) SetPreMsgTime(val []int64) {
+	p.PreMsgTime = val
+}
 
 var fieldIDToName_DouyinMessageBatchGetLatestRequest = map[int16]string{
 	1: "user_id",
 	2: "to_user_id_list",
+	3: "pre_msg_time",
 }
 
 func (p *DouyinMessageBatchGetLatestRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -1528,6 +1596,16 @@ func (p *DouyinMessageBatchGetLatestRequest) Read(iprot thrift.TProtocol) (err e
 		case 2:
 			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 3:
+			if fieldTypeId == thrift.LIST {
+				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -1596,6 +1674,28 @@ func (p *DouyinMessageBatchGetLatestRequest) ReadField2(iprot thrift.TProtocol) 
 	return nil
 }
 
+func (p *DouyinMessageBatchGetLatestRequest) ReadField3(iprot thrift.TProtocol) error {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
+		return err
+	}
+	p.PreMsgTime = make([]int64, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem int64
+		if v, err := iprot.ReadI64(); err != nil {
+			return err
+		} else {
+			_elem = v
+		}
+
+		p.PreMsgTime = append(p.PreMsgTime, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (p *DouyinMessageBatchGetLatestRequest) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("douyin_message_batch_get_latest_request"); err != nil {
@@ -1608,6 +1708,10 @@ func (p *DouyinMessageBatchGetLatestRequest) Write(oprot thrift.TProtocol) (err 
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
 			goto WriteFieldError
 		}
 
@@ -1671,6 +1775,31 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
+func (p *DouyinMessageBatchGetLatestRequest) writeField3(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("pre_msg_time", thrift.LIST, 3); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteListBegin(thrift.I64, len(p.PreMsgTime)); err != nil {
+		return err
+	}
+	for _, v := range p.PreMsgTime {
+		if err := oprot.WriteI64(v); err != nil {
+			return err
+		}
+	}
+	if err := oprot.WriteListEnd(); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
 func (p *DouyinMessageBatchGetLatestRequest) String() string {
 	if p == nil {
 		return "<nil>"
@@ -1690,6 +1819,9 @@ func (p *DouyinMessageBatchGetLatestRequest) DeepEqual(ano *DouyinMessageBatchGe
 	if !p.Field2DeepEqual(ano.ToUserIdList) {
 		return false
 	}
+	if !p.Field3DeepEqual(ano.PreMsgTime) {
+		return false
+	}
 	return true
 }
 
@@ -1706,6 +1838,19 @@ func (p *DouyinMessageBatchGetLatestRequest) Field2DeepEqual(src []int64) bool {
 		return false
 	}
 	for i, v := range p.ToUserIdList {
+		_src := src[i]
+		if v != _src {
+			return false
+		}
+	}
+	return true
+}
+func (p *DouyinMessageBatchGetLatestRequest) Field3DeepEqual(src []int64) bool {
+
+	if len(p.PreMsgTime) != len(src) {
+		return false
+	}
+	for i, v := range p.PreMsgTime {
 		_src := src[i]
 		if v != _src {
 			return false
