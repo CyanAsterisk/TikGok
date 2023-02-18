@@ -6,7 +6,6 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/pkg/uploadService"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/streadway/amqp"
 )
@@ -16,7 +15,7 @@ func initMq() {
 	info := global.ServerConfig.UploadServiceInfo.RabbitMqInfo
 	amqpConn, err := amqp.Dial(fmt.Sprintf(consts.RabbitMqURI, info.User, info.Password, info.Host, info.Port))
 	if err != nil {
-		hlog.Fatal("cannot dial amqp", err)
+		klog.Fatal("cannot dial amqp", err)
 	}
 	if publisher, err = uploadService.NewPublisher(amqpConn, info.Exchange); err != nil {
 		klog.Fatal("create publisher err", err)

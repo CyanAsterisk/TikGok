@@ -4,14 +4,12 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/CyanAsterisk/TikGok/server/shared/tools"
-
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/global"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
+	"github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/bwmarrin/snowflake"
 	"github.com/bytedance/sonic"
 	"github.com/cloudwego/hertz/pkg/app/server/registry"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/hertz-contrib/registry/nacos"
@@ -26,12 +24,12 @@ func InitNacos() (registry.Registry, *registry.Info) {
 	v := viper.New()
 	v.SetConfigFile(consts.ApiConfigPath)
 	if err := v.ReadInConfig(); err != nil {
-		hlog.Fatalf("read viper config failed: %s", err.Error())
+		klog.Fatalf("read viper config failed: %s", err.Error())
 	}
 	if err := v.Unmarshal(&global.NacosConfig); err != nil {
-		hlog.Fatalf("unmarshal err failed: %s", err.Error())
+		klog.Fatalf("unmarshal err failed: %s", err.Error())
 	}
-	hlog.Infof("Config Info: %v", global.NacosConfig)
+	klog.Infof("Config Info: %v", global.NacosConfig)
 
 	// Read configuration information from nacos
 	sc := []constant.ServerConfig{
@@ -55,7 +53,7 @@ func InitNacos() (registry.Registry, *registry.Info) {
 		"clientConfig":  cc,
 	})
 	if err != nil {
-		hlog.Fatalf("create config client failed: %s", err.Error())
+		klog.Fatalf("create config client failed: %s", err.Error())
 	}
 
 	content, err := configClient.GetConfig(vo.ConfigParam{
@@ -63,12 +61,12 @@ func InitNacos() (registry.Registry, *registry.Info) {
 		Group:  global.NacosConfig.Group,
 	})
 	if err != nil {
-		hlog.Fatalf("get config failed: %s", err.Error())
+		klog.Fatalf("get config failed: %s", err.Error())
 	}
 
 	err = sonic.Unmarshal([]byte(content), &global.ServerConfig)
 	if err != nil {
-		hlog.Fatalf("nacos config failed: %s", err.Error())
+		klog.Fatalf("nacos config failed: %s", err.Error())
 	}
 
 	if global.ServerConfig.Host == "" {
@@ -85,14 +83,14 @@ func InitNacos() (registry.Registry, *registry.Info) {
 		},
 	)
 	if err != nil {
-		hlog.Fatal("create registryClient err: %s", err.Error())
+		klog.Fatal("create registryClient err: %s", err.Error())
 	}
 
 	r := nacos.NewNacosRegistry(registryClient, nacos.WithRegistryGroup(consts.ApiGroup))
 
 	sf, err := snowflake.NewNode(2)
 	if err != nil {
-		hlog.Fatalf("generate service name failed: %s", err.Error())
+		klog.Fatalf("generate service name failed: %s", err.Error())
 	}
 	info := &registry.Info{
 		ServiceName: global.ServerConfig.Name,
