@@ -10,7 +10,7 @@ import (
 	"github.com/bytedance/sonic"
 )
 
-func TestFavorite(t *testing.T) {
+func TestFavoriteLifeCycle(t *testing.T) {
 	cleanUpFunc, db, err := test.RunWithMySQLInDocker(t)
 	defer cleanUpFunc()
 	if err != nil {
