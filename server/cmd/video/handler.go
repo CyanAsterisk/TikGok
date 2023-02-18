@@ -138,6 +138,19 @@ func (s *VideoServiceImpl) GetPublishedVideoList(ctx context.Context, req *video
 	return resp, nil
 }
 
+// GetPublishedVideoIdList implements the VideoServiceImpl interface.
+func (s *VideoServiceImpl) GetPublishedVideoIdList(ctx context.Context, req *video.DouyinGetPublishedVideoIdListRequest) (resp *video.DouyinGetPublishedVideoIdListResponse, err error) {
+	resp = new(video.DouyinGetPublishedVideoIdListResponse)
+
+	if resp.VideoIdList, err = s.Dao.GetVideoIdListByAuthorId(req.UserId); err != nil {
+		klog.Error("get published video id list by author id err", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("get published video id list err"))
+		return resp, nil
+	}
+	resp.BaseResp = tools.BuildBaseResp(nil)
+	return resp, nil
+}
+
 // GetFavoriteVideoList implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) GetFavoriteVideoList(ctx context.Context, req *video.DouyinGetFavoriteListRequest) (resp *video.DouyinGetFavoriteListResponse, err error) {
 	resp = new(video.DouyinGetFavoriteListResponse)
@@ -189,10 +202,4 @@ func (s *VideoServiceImpl) fillVideoList(ctx context.Context, videoList []*model
 		return nil, err
 	}
 	return pkg.PackVideos(videoList, authorList, InfoList), nil
-}
-
-// GetPublishedVideoIdList implements the VideoServiceImpl interface.
-func (s *VideoServiceImpl) GetPublishedVideoIdList(ctx context.Context, req *video.DouyinGetPublishedVideoIdListRequest) (resp *video.DouyinGetPublishedVideoIdListResponse, err error) {
-	// TODO: Your code here...
-	return
 }

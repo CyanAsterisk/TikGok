@@ -49,6 +49,7 @@ struct douyin_get_published_video_id_list_request{
 }
 
 struct douyin_get_published_video_id_list_response{
+    1: base.douyin_base_response base_resp,
     2: list<i64> video_id_list,
 }
 

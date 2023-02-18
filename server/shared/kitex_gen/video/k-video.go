@@ -1754,6 +1754,20 @@ func (p *DouyinGetPublishedVideoIdListResponse) FastRead(buf []byte) (int, error
 			break
 		}
 		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				l, err = p.FastReadField1(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
 		case 2:
 			if fieldTypeId == thrift.LIST {
 				l, err = p.FastReadField2(buf[offset:])
@@ -1803,6 +1817,19 @@ ReadStructEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
+func (p *DouyinGetPublishedVideoIdListResponse) FastReadField1(buf []byte) (int, error) {
+	offset := 0
+
+	tmp := base.NewDouyinBaseResponse()
+	if l, err := tmp.FastRead(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	p.BaseResp = tmp
+	return offset, nil
+}
+
 func (p *DouyinGetPublishedVideoIdListResponse) FastReadField2(buf []byte) (int, error) {
 	offset := 0
 
@@ -1842,6 +1869,7 @@ func (p *DouyinGetPublishedVideoIdListResponse) FastWriteNocopy(buf []byte, bina
 	offset := 0
 	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "douyin_get_published_video_id_list_response")
 	if p != nil {
+		offset += p.fastWriteField1(buf[offset:], binaryWriter)
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
@@ -1853,11 +1881,20 @@ func (p *DouyinGetPublishedVideoIdListResponse) BLength() int {
 	l := 0
 	l += bthrift.Binary.StructBeginLength("douyin_get_published_video_id_list_response")
 	if p != nil {
+		l += p.field1Length()
 		l += p.field2Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
 	return l
+}
+
+func (p *DouyinGetPublishedVideoIdListResponse) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "base_resp", thrift.STRUCT, 1)
+	offset += p.BaseResp.FastWriteNocopy(buf[offset:], binaryWriter)
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
 }
 
 func (p *DouyinGetPublishedVideoIdListResponse) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
@@ -1875,6 +1912,14 @@ func (p *DouyinGetPublishedVideoIdListResponse) fastWriteField2(buf []byte, bina
 	offset += bthrift.Binary.WriteListEnd(buf[offset:])
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
+}
+
+func (p *DouyinGetPublishedVideoIdListResponse) field1Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("base_resp", thrift.STRUCT, 1)
+	l += p.BaseResp.BLength()
+	l += bthrift.Binary.FieldEndLength()
+	return l
 }
 
 func (p *DouyinGetPublishedVideoIdListResponse) field2Length() int {

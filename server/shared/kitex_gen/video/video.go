@@ -2184,7 +2184,8 @@ func (p *DouyinGetPublishedVideoIdListRequest) Field1DeepEqual(src int64) bool {
 }
 
 type DouyinGetPublishedVideoIdListResponse struct {
-	VideoIdList []int64 `thrift:"video_id_list,2" frugal:"2,default,list<i64>" json:"video_id_list"`
+	BaseResp    *base.DouyinBaseResponse `thrift:"base_resp,1" frugal:"1,default,base.DouyinBaseResponse" json:"base_resp"`
+	VideoIdList []int64                  `thrift:"video_id_list,2" frugal:"2,default,list<i64>" json:"video_id_list"`
 }
 
 func NewDouyinGetPublishedVideoIdListResponse() *DouyinGetPublishedVideoIdListResponse {
@@ -2195,15 +2196,32 @@ func (p *DouyinGetPublishedVideoIdListResponse) InitDefault() {
 	*p = DouyinGetPublishedVideoIdListResponse{}
 }
 
+var DouyinGetPublishedVideoIdListResponse_BaseResp_DEFAULT *base.DouyinBaseResponse
+
+func (p *DouyinGetPublishedVideoIdListResponse) GetBaseResp() (v *base.DouyinBaseResponse) {
+	if !p.IsSetBaseResp() {
+		return DouyinGetPublishedVideoIdListResponse_BaseResp_DEFAULT
+	}
+	return p.BaseResp
+}
+
 func (p *DouyinGetPublishedVideoIdListResponse) GetVideoIdList() (v []int64) {
 	return p.VideoIdList
+}
+func (p *DouyinGetPublishedVideoIdListResponse) SetBaseResp(val *base.DouyinBaseResponse) {
+	p.BaseResp = val
 }
 func (p *DouyinGetPublishedVideoIdListResponse) SetVideoIdList(val []int64) {
 	p.VideoIdList = val
 }
 
 var fieldIDToName_DouyinGetPublishedVideoIdListResponse = map[int16]string{
+	1: "base_resp",
 	2: "video_id_list",
+}
+
+func (p *DouyinGetPublishedVideoIdListResponse) IsSetBaseResp() bool {
+	return p.BaseResp != nil
 }
 
 func (p *DouyinGetPublishedVideoIdListResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -2225,6 +2243,16 @@ func (p *DouyinGetPublishedVideoIdListResponse) Read(iprot thrift.TProtocol) (er
 		}
 
 		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
 		case 2:
 			if fieldTypeId == thrift.LIST {
 				if err = p.ReadField2(iprot); err != nil {
@@ -2265,6 +2293,14 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
+func (p *DouyinGetPublishedVideoIdListResponse) ReadField1(iprot thrift.TProtocol) error {
+	p.BaseResp = base.NewDouyinBaseResponse()
+	if err := p.BaseResp.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (p *DouyinGetPublishedVideoIdListResponse) ReadField2(iprot thrift.TProtocol) error {
 	_, size, err := iprot.ReadListBegin()
 	if err != nil {
@@ -2293,6 +2329,10 @@ func (p *DouyinGetPublishedVideoIdListResponse) Write(oprot thrift.TProtocol) (e
 		goto WriteStructBeginError
 	}
 	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
 			goto WriteFieldError
@@ -2314,6 +2354,23 @@ WriteFieldStopError:
 	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
 WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *DouyinGetPublishedVideoIdListResponse) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("base_resp", thrift.STRUCT, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.BaseResp.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
 func (p *DouyinGetPublishedVideoIdListResponse) writeField2(oprot thrift.TProtocol) (err error) {
@@ -2354,12 +2411,22 @@ func (p *DouyinGetPublishedVideoIdListResponse) DeepEqual(ano *DouyinGetPublishe
 	} else if p == nil || ano == nil {
 		return false
 	}
+	if !p.Field1DeepEqual(ano.BaseResp) {
+		return false
+	}
 	if !p.Field2DeepEqual(ano.VideoIdList) {
 		return false
 	}
 	return true
 }
 
+func (p *DouyinGetPublishedVideoIdListResponse) Field1DeepEqual(src *base.DouyinBaseResponse) bool {
+
+	if !p.BaseResp.DeepEqual(src) {
+		return false
+	}
+	return true
+}
 func (p *DouyinGetPublishedVideoIdListResponse) Field2DeepEqual(src []int64) bool {
 
 	if len(p.VideoIdList) != len(src) {
