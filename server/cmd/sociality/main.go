@@ -55,7 +55,6 @@ func main() {
 			ChatService: global.ChatClient,
 		},
 		Publisher:    publisher,
-		Subscriber:   subscriber,
 		RedisManager: pkg.NewRedisManager(global.RedisClient),
 		Dao:          followDao,
 	}
