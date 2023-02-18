@@ -54,22 +54,24 @@ type CommentRedisManager interface {
 
 // FavoriteRedisManager defines the favorite redis interface.
 type FavoriteRedisManager interface {
-	FavoriteCountByVideoId(ctx context.Context, videoId int64) (int64, error)
-	Like(ctx context.Context, userId, videoId int64) error
+	GetFavoriteCountByVideoId(ctx context.Context, videoId int64) (int64, error)
+	Like(ctx context.Context, userId, videoId, time int64) error
 	Unlike(ctx context.Context, userId, videoId int64) error
 	Check(ctx context.Context, userId, videoId int64) (bool, error)
 	GetFavoriteVideoIdListByUserId(ctx context.Context, userId int64) ([]int64, error)
+	GetFavoriteVideoCountByUserId(ctx context.Context, userId int64) (int64, error)
 }
 
 // Favorite implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) Favorite(ctx context.Context, req *interaction.DouyinFavoriteActionRequest) (resp *interaction.DouyinFavoriteActionResponse, err error) {
 	resp = new(interaction.DouyinFavoriteActionResponse)
-	err = s.FavoritePublisher.Publish(ctx, &model.Favorite{
+	fav := &model.Favorite{
 		UserId:     req.UserId,
 		VideoId:    req.VideoId,
 		ActionType: req.ActionType,
 		CreateDate: time.Now(),
-	})
+	}
+	err = s.FavoritePublisher.Publish(ctx, fav)
 	if err != nil {
 		klog.Error("action publish error", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite action error"))
@@ -83,7 +85,7 @@ func (s *InteractionServerImpl) Favorite(ctx context.Context, req *interaction.D
 	}
 	if req.ActionType == consts.Like {
 		if !liked {
-			if err = s.FavoriteRedisManager.Like(ctx, req.UserId, req.VideoId); err != nil {
+			if err = s.FavoriteRedisManager.Like(ctx, fav.UserId, fav.VideoId, fav.CreateDate.UnixNano()); err != nil {
 				klog.Error("like by redis error", err)
 				resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("like by redis error"))
 				return resp, nil
@@ -281,7 +283,7 @@ func (s *InteractionServerImpl) getVideoInteractInfo(ctx context.Context, videoI
 			return nil, err
 		}
 	}
-	if info.FavoriteCount, err = s.FavoriteRedisManager.FavoriteCountByVideoId(ctx, videoId); err != nil {
+	if info.FavoriteCount, err = s.FavoriteRedisManager.GetFavoriteCountByVideoId(ctx, videoId); err != nil {
 		klog.Error("get favorite count by redis err", err)
 		if info.FavoriteCount, err = s.FavoriteDao.GetFavoriteCountByVideoId(videoId); err != nil {
 			return nil, err
