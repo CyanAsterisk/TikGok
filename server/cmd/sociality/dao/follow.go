@@ -116,9 +116,12 @@ func (f *Follow) GetFriendsList(userId int64) ([]int64, error) {
 		Where(&model.Follow{FollowerId: userId, ActionType: consts.IsFollow}).Pluck("user_id", &followingList).
 		FindInBatches(&followingList, 100, func(tx *gorm.DB, batch int) error {
 			for _, c := range followingList {
-				_, err := f.FindRecord(userId, c)
+				r, err := f.FindRecord(userId, c)
 				if err != nil {
 					return err
+				}
+				if r == nil {
+					continue
 				}
 				friendsList = append(friendsList, c)
 			}
