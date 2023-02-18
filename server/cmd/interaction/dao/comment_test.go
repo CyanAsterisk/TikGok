@@ -97,7 +97,7 @@ func TestCommentLifecycle(t *testing.T) {
 			wantResult: `["100000","100002","100004","100006"]`,
 		},
 		{
-			name: "delete comment",
+			name: "delete comment by id",
 			op: func() (string, error) {
 				err = dao.DeleteComment(commentList[0].ID)
 				return "", err
@@ -122,7 +122,7 @@ func TestCommentLifecycle(t *testing.T) {
 			wantResult: `["100002","100004","100006"]`,
 		},
 		{
-			name: "duplicate delete video by id",
+			name: "duplicate delete comment by id",
 			op: func() (string, error) {
 				err = dao.DeleteComment(commentList[0].ID)
 				return "", err
