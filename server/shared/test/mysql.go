@@ -71,7 +71,7 @@ func RunWithMySQLInDocker(t *testing.T) (cleanUpFunc func(), db *gorm.DB, err er
 	port, _ := strconv.Atoi(hostPort.HostPort)
 	mysqlDSN := fmt.Sprintf(consts.MySqlDSN, consts.MySQLAdmin, consts.DockerTestMySQLPwd, hostPort.HostIP, port, consts.TikGok)
 	// Init mysql
-	time.Sleep(10 * time.Second)
+	time.Sleep(20 * time.Second)
 	db, err = gorm.Open(mysql.Open(mysqlDSN), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
@@ -90,7 +90,4 @@ func RunWithMySQLInDocker(t *testing.T) (cleanUpFunc func(), db *gorm.DB, err er
 		return cleanUpFunc, nil, err
 	}
 	return cleanUpFunc, db, nil
-}
-
-func SetupDatabase() {
 }
