@@ -10,11 +10,15 @@ import (
 )
 
 type ChatManager struct {
-	ChatService chatservice.Client
+	client chatservice.Client
+}
+
+func NewChatManager(client chatservice.Client) *ChatManager {
+	return &ChatManager{client: client}
 }
 
 func (m *ChatManager) BatchGetLatestMessage(ctx context.Context, userId int64, toUserIdList []int64) ([]*base.LatestMsg, error) {
-	resp, err := m.ChatService.BatchGetLatestMessage(ctx, &chat.DouyinMessageBatchGetLatestRequest{
+	resp, err := m.client.BatchGetLatestMessage(ctx, &chat.DouyinMessageBatchGetLatestRequest{
 		UserId:       userId,
 		ToUserIdList: toUserIdList,
 	})

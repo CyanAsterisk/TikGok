@@ -36,13 +36,15 @@ func main() {
 	initialize.InitRedis()
 	initialize.InitSocial()
 	initialize.InitChat()
+	initialize.InitInteract()
 
 	impl := &UserServiceImpl{
-		jwt:           middleware.NewJWT(global.ServerConfig.JWTInfo.SigningKey),
-		SocialManager: &pkg.SocialManager{SocialService: global.SocialClient},
-		ChatManager:   &pkg.ChatManager{ChatService: global.ChatClient},
-		RedisManager:  pkg.NewRedisManager(global.RedisClient),
-		Dao:           dao.NewUser(global.DB),
+		Jwt:                middleware.NewJWT(global.ServerConfig.JWTInfo.SigningKey),
+		SocialManager:      pkg.NewSocialManager(global.SocialClient),
+		InteractionManager: pkg.NewInteractionManager(global.InteractClient),
+		ChatManager:        pkg.NewChatManager(global.ChatClient),
+		RedisManager:       pkg.NewRedisManager(global.RedisClient),
+		Dao:                dao.NewUser(global.DB),
 	}
 	// Create new server.
 	srv := user.NewServer(impl,

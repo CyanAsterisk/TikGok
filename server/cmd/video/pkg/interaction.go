@@ -42,7 +42,7 @@ func (i *InteractionManager) GetFavoriteVideoIdList(ctx context.Context, userId 
 
 // BatchGetVideoInteractInfo batch get video interactInfo.
 func (i *InteractionManager) BatchGetVideoInteractInfo(ctx context.Context, videoIdList []int64, viewerId int64) ([]*base.VideoInteractInfo, error) {
-	resp, err := i.InteractionService.BatchGetInteractInfo(ctx, &interaction.DouyinBatchGetInteractInfoRequest{
+	resp, err := i.InteractionService.BatchGetVideoInteractInfo(ctx, &interaction.DouyinBatchGetVideoInteractInfoRequest{
 		VideoIdList: videoIdList,
 		ViewerId:    viewerId,
 	})

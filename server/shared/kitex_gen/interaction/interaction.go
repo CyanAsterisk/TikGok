@@ -2407,6 +2407,512 @@ func (p *DouyinGetVideoInteractInfoResponse) Field2DeepEqual(src *base.VideoInte
 	return true
 }
 
+type DouyinBatchGetVideoInteractInfoRequest struct {
+	VideoIdList []int64 `thrift:"video_id_list,1" frugal:"1,default,list<i64>" json:"video_id_list"`
+	ViewerId    int64   `thrift:"viewer_id,2" frugal:"2,default,i64" json:"viewer_id"`
+}
+
+func NewDouyinBatchGetVideoInteractInfoRequest() *DouyinBatchGetVideoInteractInfoRequest {
+	return &DouyinBatchGetVideoInteractInfoRequest{}
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) InitDefault() {
+	*p = DouyinBatchGetVideoInteractInfoRequest{}
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) GetVideoIdList() (v []int64) {
+	return p.VideoIdList
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) GetViewerId() (v int64) {
+	return p.ViewerId
+}
+func (p *DouyinBatchGetVideoInteractInfoRequest) SetVideoIdList(val []int64) {
+	p.VideoIdList = val
+}
+func (p *DouyinBatchGetVideoInteractInfoRequest) SetViewerId(val int64) {
+	p.ViewerId = val
+}
+
+var fieldIDToName_DouyinBatchGetVideoInteractInfoRequest = map[int16]string{
+	1: "video_id_list",
+	2: "viewer_id",
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.LIST {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 2:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinBatchGetVideoInteractInfoRequest[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) ReadField1(iprot thrift.TProtocol) error {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
+		return err
+	}
+	p.VideoIdList = make([]int64, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem int64
+		if v, err := iprot.ReadI64(); err != nil {
+			return err
+		} else {
+			_elem = v
+		}
+
+		p.VideoIdList = append(p.VideoIdList, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) ReadField2(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		p.ViewerId = v
+	}
+	return nil
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("douyin_batch_get_video_interact_info_request"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
+			goto WriteFieldError
+		}
+
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("video_id_list", thrift.LIST, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteListBegin(thrift.I64, len(p.VideoIdList)); err != nil {
+		return err
+	}
+	for _, v := range p.VideoIdList {
+		if err := oprot.WriteI64(v); err != nil {
+			return err
+		}
+	}
+	if err := oprot.WriteListEnd(); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) writeField2(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("viewer_id", thrift.I64, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.ViewerId); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("DouyinBatchGetVideoInteractInfoRequest(%+v)", *p)
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) DeepEqual(ano *DouyinBatchGetVideoInteractInfoRequest) bool {
+	if p == ano {
+		return true
+	} else if p == nil || ano == nil {
+		return false
+	}
+	if !p.Field1DeepEqual(ano.VideoIdList) {
+		return false
+	}
+	if !p.Field2DeepEqual(ano.ViewerId) {
+		return false
+	}
+	return true
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) Field1DeepEqual(src []int64) bool {
+
+	if len(p.VideoIdList) != len(src) {
+		return false
+	}
+	for i, v := range p.VideoIdList {
+		_src := src[i]
+		if v != _src {
+			return false
+		}
+	}
+	return true
+}
+func (p *DouyinBatchGetVideoInteractInfoRequest) Field2DeepEqual(src int64) bool {
+
+	if p.ViewerId != src {
+		return false
+	}
+	return true
+}
+
+type DouyinBatchGetVideoInteractInfoResponse struct {
+	BaseResp         *base.DouyinBaseResponse  `thrift:"base_resp,1" frugal:"1,default,base.DouyinBaseResponse" json:"base_resp"`
+	InteractInfoList []*base.VideoInteractInfo `thrift:"interact_info_list,2" frugal:"2,default,list<base.VideoInteractInfo>" json:"interact_info_list"`
+}
+
+func NewDouyinBatchGetVideoInteractInfoResponse() *DouyinBatchGetVideoInteractInfoResponse {
+	return &DouyinBatchGetVideoInteractInfoResponse{}
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) InitDefault() {
+	*p = DouyinBatchGetVideoInteractInfoResponse{}
+}
+
+var DouyinBatchGetVideoInteractInfoResponse_BaseResp_DEFAULT *base.DouyinBaseResponse
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) GetBaseResp() (v *base.DouyinBaseResponse) {
+	if !p.IsSetBaseResp() {
+		return DouyinBatchGetVideoInteractInfoResponse_BaseResp_DEFAULT
+	}
+	return p.BaseResp
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) GetInteractInfoList() (v []*base.VideoInteractInfo) {
+	return p.InteractInfoList
+}
+func (p *DouyinBatchGetVideoInteractInfoResponse) SetBaseResp(val *base.DouyinBaseResponse) {
+	p.BaseResp = val
+}
+func (p *DouyinBatchGetVideoInteractInfoResponse) SetInteractInfoList(val []*base.VideoInteractInfo) {
+	p.InteractInfoList = val
+}
+
+var fieldIDToName_DouyinBatchGetVideoInteractInfoResponse = map[int16]string{
+	1: "base_resp",
+	2: "interact_info_list",
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) IsSetBaseResp() bool {
+	return p.BaseResp != nil
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 2:
+			if fieldTypeId == thrift.LIST {
+				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinBatchGetVideoInteractInfoResponse[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) ReadField1(iprot thrift.TProtocol) error {
+	p.BaseResp = base.NewDouyinBaseResponse()
+	if err := p.BaseResp.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) ReadField2(iprot thrift.TProtocol) error {
+	_, size, err := iprot.ReadListBegin()
+	if err != nil {
+		return err
+	}
+	p.InteractInfoList = make([]*base.VideoInteractInfo, 0, size)
+	for i := 0; i < size; i++ {
+		_elem := base.NewVideoInteractInfo()
+		if err := _elem.Read(iprot); err != nil {
+			return err
+		}
+
+		p.InteractInfoList = append(p.InteractInfoList, _elem)
+	}
+	if err := iprot.ReadListEnd(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("douyin_batch_get_video_interact_info_response"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
+			goto WriteFieldError
+		}
+
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("base_resp", thrift.STRUCT, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.BaseResp.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) writeField2(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("interact_info_list", thrift.LIST, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteListBegin(thrift.STRUCT, len(p.InteractInfoList)); err != nil {
+		return err
+	}
+	for _, v := range p.InteractInfoList {
+		if err := v.Write(oprot); err != nil {
+			return err
+		}
+	}
+	if err := oprot.WriteListEnd(); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("DouyinBatchGetVideoInteractInfoResponse(%+v)", *p)
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) DeepEqual(ano *DouyinBatchGetVideoInteractInfoResponse) bool {
+	if p == ano {
+		return true
+	} else if p == nil || ano == nil {
+		return false
+	}
+	if !p.Field1DeepEqual(ano.BaseResp) {
+		return false
+	}
+	if !p.Field2DeepEqual(ano.InteractInfoList) {
+		return false
+	}
+	return true
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) Field1DeepEqual(src *base.DouyinBaseResponse) bool {
+
+	if !p.BaseResp.DeepEqual(src) {
+		return false
+	}
+	return true
+}
+func (p *DouyinBatchGetVideoInteractInfoResponse) Field2DeepEqual(src []*base.VideoInteractInfo) bool {
+
+	if len(p.InteractInfoList) != len(src) {
+		return false
+	}
+	for i, v := range p.InteractInfoList {
+		_src := src[i]
+		if !v.DeepEqual(_src) {
+			return false
+		}
+	}
+	return true
+}
+
 type DouyinGetUserInteractInfoRequest struct {
 	UserId int64 `thrift:"user_id,1" frugal:"1,default,i64" json:"user_id"`
 }
@@ -2810,39 +3316,30 @@ func (p *DouyinGetUserInteractInfoResponse) Field2DeepEqual(src *base.UserIntera
 	return true
 }
 
-type DouyinBatchGetInteractInfoRequest struct {
-	VideoIdList []int64 `thrift:"video_id_list,1" frugal:"1,default,list<i64>" json:"video_id_list"`
-	ViewerId    int64   `thrift:"viewer_id,2" frugal:"2,default,i64" json:"viewer_id"`
+type DouyinBatchGetUserInteractInfoRequest struct {
+	UserIdList []int64 `thrift:"user_id_list,1" frugal:"1,default,list<i64>" json:"user_id_list"`
 }
 
-func NewDouyinBatchGetInteractInfoRequest() *DouyinBatchGetInteractInfoRequest {
-	return &DouyinBatchGetInteractInfoRequest{}
+func NewDouyinBatchGetUserInteractInfoRequest() *DouyinBatchGetUserInteractInfoRequest {
+	return &DouyinBatchGetUserInteractInfoRequest{}
 }
 
-func (p *DouyinBatchGetInteractInfoRequest) InitDefault() {
-	*p = DouyinBatchGetInteractInfoRequest{}
+func (p *DouyinBatchGetUserInteractInfoRequest) InitDefault() {
+	*p = DouyinBatchGetUserInteractInfoRequest{}
 }
 
-func (p *DouyinBatchGetInteractInfoRequest) GetVideoIdList() (v []int64) {
-	return p.VideoIdList
+func (p *DouyinBatchGetUserInteractInfoRequest) GetUserIdList() (v []int64) {
+	return p.UserIdList
+}
+func (p *DouyinBatchGetUserInteractInfoRequest) SetUserIdList(val []int64) {
+	p.UserIdList = val
 }
 
-func (p *DouyinBatchGetInteractInfoRequest) GetViewerId() (v int64) {
-	return p.ViewerId
-}
-func (p *DouyinBatchGetInteractInfoRequest) SetVideoIdList(val []int64) {
-	p.VideoIdList = val
-}
-func (p *DouyinBatchGetInteractInfoRequest) SetViewerId(val int64) {
-	p.ViewerId = val
+var fieldIDToName_DouyinBatchGetUserInteractInfoRequest = map[int16]string{
+	1: "user_id_list",
 }
 
-var fieldIDToName_DouyinBatchGetInteractInfoRequest = map[int16]string{
-	1: "video_id_list",
-	2: "viewer_id",
-}
-
-func (p *DouyinBatchGetInteractInfoRequest) Read(iprot thrift.TProtocol) (err error) {
+func (p *DouyinBatchGetUserInteractInfoRequest) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -2871,16 +3368,6 @@ func (p *DouyinBatchGetInteractInfoRequest) Read(iprot thrift.TProtocol) (err er
 					goto SkipFieldError
 				}
 			}
-		case 2:
-			if fieldTypeId == thrift.I64 {
-				if err = p.ReadField2(iprot); err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				if err = iprot.Skip(fieldTypeId); err != nil {
-					goto SkipFieldError
-				}
-			}
 		default:
 			if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
@@ -2901,7 +3388,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinBatchGetInteractInfoRequest[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinBatchGetUserInteractInfoRequest[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -2911,12 +3398,12 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *DouyinBatchGetInteractInfoRequest) ReadField1(iprot thrift.TProtocol) error {
+func (p *DouyinBatchGetUserInteractInfoRequest) ReadField1(iprot thrift.TProtocol) error {
 	_, size, err := iprot.ReadListBegin()
 	if err != nil {
 		return err
 	}
-	p.VideoIdList = make([]int64, 0, size)
+	p.UserIdList = make([]int64, 0, size)
 	for i := 0; i < size; i++ {
 		var _elem int64
 		if v, err := iprot.ReadI64(); err != nil {
@@ -2925,7 +3412,7 @@ func (p *DouyinBatchGetInteractInfoRequest) ReadField1(iprot thrift.TProtocol) e
 			_elem = v
 		}
 
-		p.VideoIdList = append(p.VideoIdList, _elem)
+		p.UserIdList = append(p.UserIdList, _elem)
 	}
 	if err := iprot.ReadListEnd(); err != nil {
 		return err
@@ -2933,27 +3420,14 @@ func (p *DouyinBatchGetInteractInfoRequest) ReadField1(iprot thrift.TProtocol) e
 	return nil
 }
 
-func (p *DouyinBatchGetInteractInfoRequest) ReadField2(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadI64(); err != nil {
-		return err
-	} else {
-		p.ViewerId = v
-	}
-	return nil
-}
-
-func (p *DouyinBatchGetInteractInfoRequest) Write(oprot thrift.TProtocol) (err error) {
+func (p *DouyinBatchGetUserInteractInfoRequest) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("douyin_batch_get_interact_info_request"); err != nil {
+	if err = oprot.WriteStructBegin("douyin_batch_get_user_interact_info_request"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
 		if err = p.writeField1(oprot); err != nil {
 			fieldId = 1
-			goto WriteFieldError
-		}
-		if err = p.writeField2(oprot); err != nil {
-			fieldId = 2
 			goto WriteFieldError
 		}
 
@@ -2975,14 +3449,14 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *DouyinBatchGetInteractInfoRequest) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("video_id_list", thrift.LIST, 1); err != nil {
+func (p *DouyinBatchGetUserInteractInfoRequest) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("user_id_list", thrift.LIST, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteListBegin(thrift.I64, len(p.VideoIdList)); err != nil {
+	if err := oprot.WriteListBegin(thrift.I64, len(p.UserIdList)); err != nil {
 		return err
 	}
-	for _, v := range p.VideoIdList {
+	for _, v := range p.UserIdList {
 		if err := oprot.WriteI64(v); err != nil {
 			return err
 		}
@@ -3000,51 +3474,31 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *DouyinBatchGetInteractInfoRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("viewer_id", thrift.I64, 2); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteI64(p.ViewerId); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
-	}
-	return nil
-WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
-WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
-}
-
-func (p *DouyinBatchGetInteractInfoRequest) String() string {
+func (p *DouyinBatchGetUserInteractInfoRequest) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("DouyinBatchGetInteractInfoRequest(%+v)", *p)
+	return fmt.Sprintf("DouyinBatchGetUserInteractInfoRequest(%+v)", *p)
 }
 
-func (p *DouyinBatchGetInteractInfoRequest) DeepEqual(ano *DouyinBatchGetInteractInfoRequest) bool {
+func (p *DouyinBatchGetUserInteractInfoRequest) DeepEqual(ano *DouyinBatchGetUserInteractInfoRequest) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
 		return false
 	}
-	if !p.Field1DeepEqual(ano.VideoIdList) {
-		return false
-	}
-	if !p.Field2DeepEqual(ano.ViewerId) {
+	if !p.Field1DeepEqual(ano.UserIdList) {
 		return false
 	}
 	return true
 }
 
-func (p *DouyinBatchGetInteractInfoRequest) Field1DeepEqual(src []int64) bool {
+func (p *DouyinBatchGetUserInteractInfoRequest) Field1DeepEqual(src []int64) bool {
 
-	if len(p.VideoIdList) != len(src) {
+	if len(p.UserIdList) != len(src) {
 		return false
 	}
-	for i, v := range p.VideoIdList {
+	for i, v := range p.UserIdList {
 		_src := src[i]
 		if v != _src {
 			return false
@@ -3052,56 +3506,49 @@ func (p *DouyinBatchGetInteractInfoRequest) Field1DeepEqual(src []int64) bool {
 	}
 	return true
 }
-func (p *DouyinBatchGetInteractInfoRequest) Field2DeepEqual(src int64) bool {
 
-	if p.ViewerId != src {
-		return false
-	}
-	return true
+type DouyinBatchGetUserInteractInfoResponse struct {
+	BaseResp         *base.DouyinBaseResponse `thrift:"base_resp,1" frugal:"1,default,base.DouyinBaseResponse" json:"base_resp"`
+	InteractInfoList []*base.UserInteractInfo `thrift:"interact_info_list,2" frugal:"2,default,list<base.UserInteractInfo>" json:"interact_info_list"`
 }
 
-type DouyinBatchGetInteractInfoResponse struct {
-	BaseResp         *base.DouyinBaseResponse  `thrift:"base_resp,1" frugal:"1,default,base.DouyinBaseResponse" json:"base_resp"`
-	InteractInfoList []*base.VideoInteractInfo `thrift:"interact_info_list,2" frugal:"2,default,list<base.VideoInteractInfo>" json:"interact_info_list"`
+func NewDouyinBatchGetUserInteractInfoResponse() *DouyinBatchGetUserInteractInfoResponse {
+	return &DouyinBatchGetUserInteractInfoResponse{}
 }
 
-func NewDouyinBatchGetInteractInfoResponse() *DouyinBatchGetInteractInfoResponse {
-	return &DouyinBatchGetInteractInfoResponse{}
+func (p *DouyinBatchGetUserInteractInfoResponse) InitDefault() {
+	*p = DouyinBatchGetUserInteractInfoResponse{}
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) InitDefault() {
-	*p = DouyinBatchGetInteractInfoResponse{}
-}
+var DouyinBatchGetUserInteractInfoResponse_BaseResp_DEFAULT *base.DouyinBaseResponse
 
-var DouyinBatchGetInteractInfoResponse_BaseResp_DEFAULT *base.DouyinBaseResponse
-
-func (p *DouyinBatchGetInteractInfoResponse) GetBaseResp() (v *base.DouyinBaseResponse) {
+func (p *DouyinBatchGetUserInteractInfoResponse) GetBaseResp() (v *base.DouyinBaseResponse) {
 	if !p.IsSetBaseResp() {
-		return DouyinBatchGetInteractInfoResponse_BaseResp_DEFAULT
+		return DouyinBatchGetUserInteractInfoResponse_BaseResp_DEFAULT
 	}
 	return p.BaseResp
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) GetInteractInfoList() (v []*base.VideoInteractInfo) {
+func (p *DouyinBatchGetUserInteractInfoResponse) GetInteractInfoList() (v []*base.UserInteractInfo) {
 	return p.InteractInfoList
 }
-func (p *DouyinBatchGetInteractInfoResponse) SetBaseResp(val *base.DouyinBaseResponse) {
+func (p *DouyinBatchGetUserInteractInfoResponse) SetBaseResp(val *base.DouyinBaseResponse) {
 	p.BaseResp = val
 }
-func (p *DouyinBatchGetInteractInfoResponse) SetInteractInfoList(val []*base.VideoInteractInfo) {
+func (p *DouyinBatchGetUserInteractInfoResponse) SetInteractInfoList(val []*base.UserInteractInfo) {
 	p.InteractInfoList = val
 }
 
-var fieldIDToName_DouyinBatchGetInteractInfoResponse = map[int16]string{
+var fieldIDToName_DouyinBatchGetUserInteractInfoResponse = map[int16]string{
 	1: "base_resp",
 	2: "interact_info_list",
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) IsSetBaseResp() bool {
+func (p *DouyinBatchGetUserInteractInfoResponse) IsSetBaseResp() bool {
 	return p.BaseResp != nil
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) Read(iprot thrift.TProtocol) (err error) {
+func (p *DouyinBatchGetUserInteractInfoResponse) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -3160,7 +3607,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinBatchGetInteractInfoResponse[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinBatchGetUserInteractInfoResponse[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -3170,7 +3617,7 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) ReadField1(iprot thrift.TProtocol) error {
+func (p *DouyinBatchGetUserInteractInfoResponse) ReadField1(iprot thrift.TProtocol) error {
 	p.BaseResp = base.NewDouyinBaseResponse()
 	if err := p.BaseResp.Read(iprot); err != nil {
 		return err
@@ -3178,14 +3625,14 @@ func (p *DouyinBatchGetInteractInfoResponse) ReadField1(iprot thrift.TProtocol) 
 	return nil
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) ReadField2(iprot thrift.TProtocol) error {
+func (p *DouyinBatchGetUserInteractInfoResponse) ReadField2(iprot thrift.TProtocol) error {
 	_, size, err := iprot.ReadListBegin()
 	if err != nil {
 		return err
 	}
-	p.InteractInfoList = make([]*base.VideoInteractInfo, 0, size)
+	p.InteractInfoList = make([]*base.UserInteractInfo, 0, size)
 	for i := 0; i < size; i++ {
-		_elem := base.NewVideoInteractInfo()
+		_elem := base.NewUserInteractInfo()
 		if err := _elem.Read(iprot); err != nil {
 			return err
 		}
@@ -3198,9 +3645,9 @@ func (p *DouyinBatchGetInteractInfoResponse) ReadField2(iprot thrift.TProtocol) 
 	return nil
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) Write(oprot thrift.TProtocol) (err error) {
+func (p *DouyinBatchGetUserInteractInfoResponse) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("douyin_batch_get_interact_info_response"); err != nil {
+	if err = oprot.WriteStructBegin("douyin_batch_get_user_interact_info_response"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -3231,7 +3678,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *DouyinBatchGetUserInteractInfoResponse) writeField1(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("base_resp", thrift.STRUCT, 1); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -3248,7 +3695,7 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) writeField2(oprot thrift.TProtocol) (err error) {
+func (p *DouyinBatchGetUserInteractInfoResponse) writeField2(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("interact_info_list", thrift.LIST, 2); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -3273,14 +3720,14 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) String() string {
+func (p *DouyinBatchGetUserInteractInfoResponse) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("DouyinBatchGetInteractInfoResponse(%+v)", *p)
+	return fmt.Sprintf("DouyinBatchGetUserInteractInfoResponse(%+v)", *p)
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) DeepEqual(ano *DouyinBatchGetInteractInfoResponse) bool {
+func (p *DouyinBatchGetUserInteractInfoResponse) DeepEqual(ano *DouyinBatchGetUserInteractInfoResponse) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -3295,14 +3742,14 @@ func (p *DouyinBatchGetInteractInfoResponse) DeepEqual(ano *DouyinBatchGetIntera
 	return true
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) Field1DeepEqual(src *base.DouyinBaseResponse) bool {
+func (p *DouyinBatchGetUserInteractInfoResponse) Field1DeepEqual(src *base.DouyinBaseResponse) bool {
 
 	if !p.BaseResp.DeepEqual(src) {
 		return false
 	}
 	return true
 }
-func (p *DouyinBatchGetInteractInfoResponse) Field2DeepEqual(src []*base.VideoInteractInfo) bool {
+func (p *DouyinBatchGetUserInteractInfoResponse) Field2DeepEqual(src []*base.UserInteractInfo) bool {
 
 	if len(p.InteractInfoList) != len(src) {
 		return false
@@ -3327,9 +3774,11 @@ type InteractionServer interface {
 
 	GetVideoInteractInfo(ctx context.Context, req *DouyinGetVideoInteractInfoRequest) (r *DouyinGetVideoInteractInfoResponse, err error)
 
+	BatchGetVideoInteractInfo(ctx context.Context, req *DouyinBatchGetVideoInteractInfoRequest) (r *DouyinBatchGetVideoInteractInfoResponse, err error)
+
 	GetUserInteractInfo(ctx context.Context, req *DouyinGetUserInteractInfoRequest) (r *DouyinGetUserInteractInfoResponse, err error)
 
-	BatchGetInteractInfo(ctx context.Context, req *DouyinBatchGetInteractInfoRequest) (r *DouyinBatchGetInteractInfoResponse, err error)
+	BatchGetUserInteractInfo(ctx context.Context, req *DouyinBatchGetUserInteractInfoRequest) (r *DouyinBatchGetUserInteractInfoResponse, err error)
 }
 
 type InteractionServerClient struct {
@@ -3403,6 +3852,15 @@ func (p *InteractionServerClient) GetVideoInteractInfo(ctx context.Context, req 
 	}
 	return _result.GetSuccess(), nil
 }
+func (p *InteractionServerClient) BatchGetVideoInteractInfo(ctx context.Context, req *DouyinBatchGetVideoInteractInfoRequest) (r *DouyinBatchGetVideoInteractInfoResponse, err error) {
+	var _args InteractionServerBatchGetVideoInteractInfoArgs
+	_args.Req = req
+	var _result InteractionServerBatchGetVideoInteractInfoResult
+	if err = p.Client_().Call(ctx, "BatchGetVideoInteractInfo", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
 func (p *InteractionServerClient) GetUserInteractInfo(ctx context.Context, req *DouyinGetUserInteractInfoRequest) (r *DouyinGetUserInteractInfoResponse, err error) {
 	var _args InteractionServerGetUserInteractInfoArgs
 	_args.Req = req
@@ -3412,11 +3870,11 @@ func (p *InteractionServerClient) GetUserInteractInfo(ctx context.Context, req *
 	}
 	return _result.GetSuccess(), nil
 }
-func (p *InteractionServerClient) BatchGetInteractInfo(ctx context.Context, req *DouyinBatchGetInteractInfoRequest) (r *DouyinBatchGetInteractInfoResponse, err error) {
-	var _args InteractionServerBatchGetInteractInfoArgs
+func (p *InteractionServerClient) BatchGetUserInteractInfo(ctx context.Context, req *DouyinBatchGetUserInteractInfoRequest) (r *DouyinBatchGetUserInteractInfoResponse, err error) {
+	var _args InteractionServerBatchGetUserInteractInfoArgs
 	_args.Req = req
-	var _result InteractionServerBatchGetInteractInfoResult
-	if err = p.Client_().Call(ctx, "BatchGetInteractInfo", &_args, &_result); err != nil {
+	var _result InteractionServerBatchGetUserInteractInfoResult
+	if err = p.Client_().Call(ctx, "BatchGetUserInteractInfo", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
@@ -3447,8 +3905,9 @@ func NewInteractionServerProcessor(handler InteractionServer) *InteractionServer
 	self.AddToProcessorMap("Comment", &interactionServerProcessorComment{handler: handler})
 	self.AddToProcessorMap("GetCommentList", &interactionServerProcessorGetCommentList{handler: handler})
 	self.AddToProcessorMap("GetVideoInteractInfo", &interactionServerProcessorGetVideoInteractInfo{handler: handler})
+	self.AddToProcessorMap("BatchGetVideoInteractInfo", &interactionServerProcessorBatchGetVideoInteractInfo{handler: handler})
 	self.AddToProcessorMap("GetUserInteractInfo", &interactionServerProcessorGetUserInteractInfo{handler: handler})
-	self.AddToProcessorMap("BatchGetInteractInfo", &interactionServerProcessorBatchGetInteractInfo{handler: handler})
+	self.AddToProcessorMap("BatchGetUserInteractInfo", &interactionServerProcessorBatchGetUserInteractInfo{handler: handler})
 	return self
 }
 func (p *InteractionServerProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -3709,6 +4168,54 @@ func (p *interactionServerProcessorGetVideoInteractInfo) Process(ctx context.Con
 	return true, err
 }
 
+type interactionServerProcessorBatchGetVideoInteractInfo struct {
+	handler InteractionServer
+}
+
+func (p *interactionServerProcessorBatchGetVideoInteractInfo) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := InteractionServerBatchGetVideoInteractInfoArgs{}
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+		oprot.WriteMessageBegin("BatchGetVideoInteractInfo", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return false, err
+	}
+
+	iprot.ReadMessageEnd()
+	var err2 error
+	result := InteractionServerBatchGetVideoInteractInfoResult{}
+	var retval *DouyinBatchGetVideoInteractInfoResponse
+	if retval, err2 = p.handler.BatchGetVideoInteractInfo(ctx, args.Req); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing BatchGetVideoInteractInfo: "+err2.Error())
+		oprot.WriteMessageBegin("BatchGetVideoInteractInfo", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return true, err2
+	} else {
+		result.Success = retval
+	}
+	if err2 = oprot.WriteMessageBegin("BatchGetVideoInteractInfo", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 = result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
+}
+
 type interactionServerProcessorGetUserInteractInfo struct {
 	handler InteractionServer
 }
@@ -3757,16 +4264,16 @@ func (p *interactionServerProcessorGetUserInteractInfo) Process(ctx context.Cont
 	return true, err
 }
 
-type interactionServerProcessorBatchGetInteractInfo struct {
+type interactionServerProcessorBatchGetUserInteractInfo struct {
 	handler InteractionServer
 }
 
-func (p *interactionServerProcessorBatchGetInteractInfo) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := InteractionServerBatchGetInteractInfoArgs{}
+func (p *interactionServerProcessorBatchGetUserInteractInfo) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := InteractionServerBatchGetUserInteractInfoArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("BatchGetInteractInfo", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("BatchGetUserInteractInfo", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush(ctx)
@@ -3775,11 +4282,11 @@ func (p *interactionServerProcessorBatchGetInteractInfo) Process(ctx context.Con
 
 	iprot.ReadMessageEnd()
 	var err2 error
-	result := InteractionServerBatchGetInteractInfoResult{}
-	var retval *DouyinBatchGetInteractInfoResponse
-	if retval, err2 = p.handler.BatchGetInteractInfo(ctx, args.Req); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing BatchGetInteractInfo: "+err2.Error())
-		oprot.WriteMessageBegin("BatchGetInteractInfo", thrift.EXCEPTION, seqId)
+	result := InteractionServerBatchGetUserInteractInfoResult{}
+	var retval *DouyinBatchGetUserInteractInfoResponse
+	if retval, err2 = p.handler.BatchGetUserInteractInfo(ctx, args.Req); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing BatchGetUserInteractInfo: "+err2.Error())
+		oprot.WriteMessageBegin("BatchGetUserInteractInfo", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush(ctx)
@@ -3787,7 +4294,7 @@ func (p *interactionServerProcessorBatchGetInteractInfo) Process(ctx context.Con
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("BatchGetInteractInfo", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("BatchGetUserInteractInfo", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -5535,6 +6042,352 @@ func (p *InteractionServerGetVideoInteractInfoResult) Field0DeepEqual(src *Douyi
 	return true
 }
 
+type InteractionServerBatchGetVideoInteractInfoArgs struct {
+	Req *DouyinBatchGetVideoInteractInfoRequest `thrift:"req,1" frugal:"1,default,DouyinBatchGetVideoInteractInfoRequest" json:"req"`
+}
+
+func NewInteractionServerBatchGetVideoInteractInfoArgs() *InteractionServerBatchGetVideoInteractInfoArgs {
+	return &InteractionServerBatchGetVideoInteractInfoArgs{}
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoArgs) InitDefault() {
+	*p = InteractionServerBatchGetVideoInteractInfoArgs{}
+}
+
+var InteractionServerBatchGetVideoInteractInfoArgs_Req_DEFAULT *DouyinBatchGetVideoInteractInfoRequest
+
+func (p *InteractionServerBatchGetVideoInteractInfoArgs) GetReq() (v *DouyinBatchGetVideoInteractInfoRequest) {
+	if !p.IsSetReq() {
+		return InteractionServerBatchGetVideoInteractInfoArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *InteractionServerBatchGetVideoInteractInfoArgs) SetReq(val *DouyinBatchGetVideoInteractInfoRequest) {
+	p.Req = val
+}
+
+var fieldIDToName_InteractionServerBatchGetVideoInteractInfoArgs = map[int16]string{
+	1: "req",
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoArgs) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_InteractionServerBatchGetVideoInteractInfoArgs[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoArgs) ReadField1(iprot thrift.TProtocol) error {
+	p.Req = NewDouyinBatchGetVideoInteractInfoRequest()
+	if err := p.Req.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoArgs) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("BatchGetVideoInteractInfo_args"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoArgs) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.Req.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("InteractionServerBatchGetVideoInteractInfoArgs(%+v)", *p)
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoArgs) DeepEqual(ano *InteractionServerBatchGetVideoInteractInfoArgs) bool {
+	if p == ano {
+		return true
+	} else if p == nil || ano == nil {
+		return false
+	}
+	if !p.Field1DeepEqual(ano.Req) {
+		return false
+	}
+	return true
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoArgs) Field1DeepEqual(src *DouyinBatchGetVideoInteractInfoRequest) bool {
+
+	if !p.Req.DeepEqual(src) {
+		return false
+	}
+	return true
+}
+
+type InteractionServerBatchGetVideoInteractInfoResult struct {
+	Success *DouyinBatchGetVideoInteractInfoResponse `thrift:"success,0,optional" frugal:"0,optional,DouyinBatchGetVideoInteractInfoResponse" json:"success,omitempty"`
+}
+
+func NewInteractionServerBatchGetVideoInteractInfoResult() *InteractionServerBatchGetVideoInteractInfoResult {
+	return &InteractionServerBatchGetVideoInteractInfoResult{}
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoResult) InitDefault() {
+	*p = InteractionServerBatchGetVideoInteractInfoResult{}
+}
+
+var InteractionServerBatchGetVideoInteractInfoResult_Success_DEFAULT *DouyinBatchGetVideoInteractInfoResponse
+
+func (p *InteractionServerBatchGetVideoInteractInfoResult) GetSuccess() (v *DouyinBatchGetVideoInteractInfoResponse) {
+	if !p.IsSetSuccess() {
+		return InteractionServerBatchGetVideoInteractInfoResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *InteractionServerBatchGetVideoInteractInfoResult) SetSuccess(x interface{}) {
+	p.Success = x.(*DouyinBatchGetVideoInteractInfoResponse)
+}
+
+var fieldIDToName_InteractionServerBatchGetVideoInteractInfoResult = map[int16]string{
+	0: "success",
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoResult) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField0(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_InteractionServerBatchGetVideoInteractInfoResult[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoResult) ReadField0(iprot thrift.TProtocol) error {
+	p.Success = NewDouyinBatchGetVideoInteractInfoResponse()
+	if err := p.Success.Read(iprot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoResult) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("BatchGetVideoInteractInfo_result"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField0(oprot); err != nil {
+			fieldId = 0
+			goto WriteFieldError
+		}
+
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoResult) writeField0(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSuccess() {
+		if err = oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.Success.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("InteractionServerBatchGetVideoInteractInfoResult(%+v)", *p)
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoResult) DeepEqual(ano *InteractionServerBatchGetVideoInteractInfoResult) bool {
+	if p == ano {
+		return true
+	} else if p == nil || ano == nil {
+		return false
+	}
+	if !p.Field0DeepEqual(ano.Success) {
+		return false
+	}
+	return true
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoResult) Field0DeepEqual(src *DouyinBatchGetVideoInteractInfoResponse) bool {
+
+	if !p.Success.DeepEqual(src) {
+		return false
+	}
+	return true
+}
+
 type InteractionServerGetUserInteractInfoArgs struct {
 	Req *DouyinGetUserInteractInfoRequest `thrift:"req,1" frugal:"1,default,DouyinGetUserInteractInfoRequest" json:"req"`
 }
@@ -5881,39 +6734,39 @@ func (p *InteractionServerGetUserInteractInfoResult) Field0DeepEqual(src *Douyin
 	return true
 }
 
-type InteractionServerBatchGetInteractInfoArgs struct {
-	Req *DouyinBatchGetInteractInfoRequest `thrift:"req,1" frugal:"1,default,DouyinBatchGetInteractInfoRequest" json:"req"`
+type InteractionServerBatchGetUserInteractInfoArgs struct {
+	Req *DouyinBatchGetUserInteractInfoRequest `thrift:"req,1" frugal:"1,default,DouyinBatchGetUserInteractInfoRequest" json:"req"`
 }
 
-func NewInteractionServerBatchGetInteractInfoArgs() *InteractionServerBatchGetInteractInfoArgs {
-	return &InteractionServerBatchGetInteractInfoArgs{}
+func NewInteractionServerBatchGetUserInteractInfoArgs() *InteractionServerBatchGetUserInteractInfoArgs {
+	return &InteractionServerBatchGetUserInteractInfoArgs{}
 }
 
-func (p *InteractionServerBatchGetInteractInfoArgs) InitDefault() {
-	*p = InteractionServerBatchGetInteractInfoArgs{}
+func (p *InteractionServerBatchGetUserInteractInfoArgs) InitDefault() {
+	*p = InteractionServerBatchGetUserInteractInfoArgs{}
 }
 
-var InteractionServerBatchGetInteractInfoArgs_Req_DEFAULT *DouyinBatchGetInteractInfoRequest
+var InteractionServerBatchGetUserInteractInfoArgs_Req_DEFAULT *DouyinBatchGetUserInteractInfoRequest
 
-func (p *InteractionServerBatchGetInteractInfoArgs) GetReq() (v *DouyinBatchGetInteractInfoRequest) {
+func (p *InteractionServerBatchGetUserInteractInfoArgs) GetReq() (v *DouyinBatchGetUserInteractInfoRequest) {
 	if !p.IsSetReq() {
-		return InteractionServerBatchGetInteractInfoArgs_Req_DEFAULT
+		return InteractionServerBatchGetUserInteractInfoArgs_Req_DEFAULT
 	}
 	return p.Req
 }
-func (p *InteractionServerBatchGetInteractInfoArgs) SetReq(val *DouyinBatchGetInteractInfoRequest) {
+func (p *InteractionServerBatchGetUserInteractInfoArgs) SetReq(val *DouyinBatchGetUserInteractInfoRequest) {
 	p.Req = val
 }
 
-var fieldIDToName_InteractionServerBatchGetInteractInfoArgs = map[int16]string{
+var fieldIDToName_InteractionServerBatchGetUserInteractInfoArgs = map[int16]string{
 	1: "req",
 }
 
-func (p *InteractionServerBatchGetInteractInfoArgs) IsSetReq() bool {
+func (p *InteractionServerBatchGetUserInteractInfoArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-func (p *InteractionServerBatchGetInteractInfoArgs) Read(iprot thrift.TProtocol) (err error) {
+func (p *InteractionServerBatchGetUserInteractInfoArgs) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -5962,7 +6815,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_InteractionServerBatchGetInteractInfoArgs[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_InteractionServerBatchGetUserInteractInfoArgs[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -5972,17 +6825,17 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *InteractionServerBatchGetInteractInfoArgs) ReadField1(iprot thrift.TProtocol) error {
-	p.Req = NewDouyinBatchGetInteractInfoRequest()
+func (p *InteractionServerBatchGetUserInteractInfoArgs) ReadField1(iprot thrift.TProtocol) error {
+	p.Req = NewDouyinBatchGetUserInteractInfoRequest()
 	if err := p.Req.Read(iprot); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (p *InteractionServerBatchGetInteractInfoArgs) Write(oprot thrift.TProtocol) (err error) {
+func (p *InteractionServerBatchGetUserInteractInfoArgs) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("BatchGetInteractInfo_args"); err != nil {
+	if err = oprot.WriteStructBegin("BatchGetUserInteractInfo_args"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -6009,7 +6862,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *InteractionServerBatchGetInteractInfoArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *InteractionServerBatchGetUserInteractInfoArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -6026,14 +6879,14 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *InteractionServerBatchGetInteractInfoArgs) String() string {
+func (p *InteractionServerBatchGetUserInteractInfoArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("InteractionServerBatchGetInteractInfoArgs(%+v)", *p)
+	return fmt.Sprintf("InteractionServerBatchGetUserInteractInfoArgs(%+v)", *p)
 }
 
-func (p *InteractionServerBatchGetInteractInfoArgs) DeepEqual(ano *InteractionServerBatchGetInteractInfoArgs) bool {
+func (p *InteractionServerBatchGetUserInteractInfoArgs) DeepEqual(ano *InteractionServerBatchGetUserInteractInfoArgs) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -6045,7 +6898,7 @@ func (p *InteractionServerBatchGetInteractInfoArgs) DeepEqual(ano *InteractionSe
 	return true
 }
 
-func (p *InteractionServerBatchGetInteractInfoArgs) Field1DeepEqual(src *DouyinBatchGetInteractInfoRequest) bool {
+func (p *InteractionServerBatchGetUserInteractInfoArgs) Field1DeepEqual(src *DouyinBatchGetUserInteractInfoRequest) bool {
 
 	if !p.Req.DeepEqual(src) {
 		return false
@@ -6053,39 +6906,39 @@ func (p *InteractionServerBatchGetInteractInfoArgs) Field1DeepEqual(src *DouyinB
 	return true
 }
 
-type InteractionServerBatchGetInteractInfoResult struct {
-	Success *DouyinBatchGetInteractInfoResponse `thrift:"success,0,optional" frugal:"0,optional,DouyinBatchGetInteractInfoResponse" json:"success,omitempty"`
+type InteractionServerBatchGetUserInteractInfoResult struct {
+	Success *DouyinBatchGetUserInteractInfoResponse `thrift:"success,0,optional" frugal:"0,optional,DouyinBatchGetUserInteractInfoResponse" json:"success,omitempty"`
 }
 
-func NewInteractionServerBatchGetInteractInfoResult() *InteractionServerBatchGetInteractInfoResult {
-	return &InteractionServerBatchGetInteractInfoResult{}
+func NewInteractionServerBatchGetUserInteractInfoResult() *InteractionServerBatchGetUserInteractInfoResult {
+	return &InteractionServerBatchGetUserInteractInfoResult{}
 }
 
-func (p *InteractionServerBatchGetInteractInfoResult) InitDefault() {
-	*p = InteractionServerBatchGetInteractInfoResult{}
+func (p *InteractionServerBatchGetUserInteractInfoResult) InitDefault() {
+	*p = InteractionServerBatchGetUserInteractInfoResult{}
 }
 
-var InteractionServerBatchGetInteractInfoResult_Success_DEFAULT *DouyinBatchGetInteractInfoResponse
+var InteractionServerBatchGetUserInteractInfoResult_Success_DEFAULT *DouyinBatchGetUserInteractInfoResponse
 
-func (p *InteractionServerBatchGetInteractInfoResult) GetSuccess() (v *DouyinBatchGetInteractInfoResponse) {
+func (p *InteractionServerBatchGetUserInteractInfoResult) GetSuccess() (v *DouyinBatchGetUserInteractInfoResponse) {
 	if !p.IsSetSuccess() {
-		return InteractionServerBatchGetInteractInfoResult_Success_DEFAULT
+		return InteractionServerBatchGetUserInteractInfoResult_Success_DEFAULT
 	}
 	return p.Success
 }
-func (p *InteractionServerBatchGetInteractInfoResult) SetSuccess(x interface{}) {
-	p.Success = x.(*DouyinBatchGetInteractInfoResponse)
+func (p *InteractionServerBatchGetUserInteractInfoResult) SetSuccess(x interface{}) {
+	p.Success = x.(*DouyinBatchGetUserInteractInfoResponse)
 }
 
-var fieldIDToName_InteractionServerBatchGetInteractInfoResult = map[int16]string{
+var fieldIDToName_InteractionServerBatchGetUserInteractInfoResult = map[int16]string{
 	0: "success",
 }
 
-func (p *InteractionServerBatchGetInteractInfoResult) IsSetSuccess() bool {
+func (p *InteractionServerBatchGetUserInteractInfoResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *InteractionServerBatchGetInteractInfoResult) Read(iprot thrift.TProtocol) (err error) {
+func (p *InteractionServerBatchGetUserInteractInfoResult) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -6134,7 +6987,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_InteractionServerBatchGetInteractInfoResult[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_InteractionServerBatchGetUserInteractInfoResult[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -6144,17 +6997,17 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *InteractionServerBatchGetInteractInfoResult) ReadField0(iprot thrift.TProtocol) error {
-	p.Success = NewDouyinBatchGetInteractInfoResponse()
+func (p *InteractionServerBatchGetUserInteractInfoResult) ReadField0(iprot thrift.TProtocol) error {
+	p.Success = NewDouyinBatchGetUserInteractInfoResponse()
 	if err := p.Success.Read(iprot); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (p *InteractionServerBatchGetInteractInfoResult) Write(oprot thrift.TProtocol) (err error) {
+func (p *InteractionServerBatchGetUserInteractInfoResult) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("BatchGetInteractInfo_result"); err != nil {
+	if err = oprot.WriteStructBegin("BatchGetUserInteractInfo_result"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -6181,7 +7034,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *InteractionServerBatchGetInteractInfoResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *InteractionServerBatchGetUserInteractInfoResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err = oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
 			goto WriteFieldBeginError
@@ -6200,14 +7053,14 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
 }
 
-func (p *InteractionServerBatchGetInteractInfoResult) String() string {
+func (p *InteractionServerBatchGetUserInteractInfoResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("InteractionServerBatchGetInteractInfoResult(%+v)", *p)
+	return fmt.Sprintf("InteractionServerBatchGetUserInteractInfoResult(%+v)", *p)
 }
 
-func (p *InteractionServerBatchGetInteractInfoResult) DeepEqual(ano *InteractionServerBatchGetInteractInfoResult) bool {
+func (p *InteractionServerBatchGetUserInteractInfoResult) DeepEqual(ano *InteractionServerBatchGetUserInteractInfoResult) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -6219,7 +7072,7 @@ func (p *InteractionServerBatchGetInteractInfoResult) DeepEqual(ano *Interaction
 	return true
 }
 
-func (p *InteractionServerBatchGetInteractInfoResult) Field0DeepEqual(src *DouyinBatchGetInteractInfoResponse) bool {
+func (p *InteractionServerBatchGetUserInteractInfoResult) Field0DeepEqual(src *DouyinBatchGetUserInteractInfoResponse) bool {
 
 	if !p.Success.DeepEqual(src) {
 		return false

@@ -53,6 +53,16 @@ struct douyin_get_video_interact_info_response {
     2: base.VideoInteractInfo interact_info,
 }
 
+struct douyin_batch_get_video_interact_info_request{
+    1: list<i64> video_id_list, // Video Id list.
+    2: i64 viewer_id, // viewer_id,
+}
+
+struct douyin_batch_get_video_interact_info_response {
+    1: base.douyin_base_response base_resp,
+    2: list<base.VideoInteractInfo> interact_info_list,
+}
+
 struct douyin_get_user_interact_info_request{
     1: i64 user_id,
 }
@@ -62,15 +72,15 @@ struct douyin_get_user_interact_info_response {
     2: base.UserInteractInfo interact_info,
 }
 
-struct douyin_batch_get_interact_info_request{
-    1: list<i64> video_id_list, // Video Id list.
-    2: i64 viewer_id, // viewer_id,
+struct douyin_batch_get_user_interact_info_request{
+    1: list<i64> user_id_list, // user Id list.
 }
 
-struct douyin_batch_get_interact_info_response {
+struct douyin_batch_get_user_interact_info_response {
     1: base.douyin_base_response base_resp,
-    2: list<base.VideoInteractInfo> interact_info_list,
+    2: list<base.UserInteractInfo> interact_info_list,
 }
+
 
 service InteractionServer {
     douyin_favorite_action_response Favorite(1: douyin_favorite_action_request req),
@@ -78,6 +88,7 @@ service InteractionServer {
     douyin_comment_action_response Comment(1: douyin_comment_action_request req),
     douyin_get_comment_list_response GetCommentList(1: douyin_get_comment_list_request req),
     douyin_get_video_interact_info_response GetVideoInteractInfo (1: douyin_get_video_interact_info_request req),
-     douyin_get_user_interact_info_response GetUserInteractInfo (1: douyin_get_user_interact_info_request req),
-    douyin_batch_get_interact_info_response BatchGetInteractInfo (1: douyin_batch_get_interact_info_request req),
+    douyin_batch_get_video_interact_info_response BatchGetVideoInteractInfo (1: douyin_batch_get_video_interact_info_request req),
+    douyin_get_user_interact_info_response GetUserInteractInfo (1: douyin_get_user_interact_info_request req),
+    douyin_batch_get_user_interact_info_response BatchGetUserInteractInfo (1: douyin_batch_get_user_interact_info_request req),
 }

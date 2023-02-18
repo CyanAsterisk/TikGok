@@ -1881,6 +1881,408 @@ func (p *DouyinGetVideoInteractInfoResponse) field2Length() int {
 	return l
 }
 
+func (p *DouyinBatchGetVideoInteractInfoRequest) FastRead(buf []byte) (int, error) {
+	var err error
+	var offset int
+	var l int
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	_, l, err = bthrift.Binary.ReadStructBegin(buf)
+	offset += l
+	if err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, l, err = bthrift.Binary.ReadFieldBegin(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.LIST {
+				l, err = p.FastReadField1(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 2:
+			if fieldTypeId == thrift.I64 {
+				l, err = p.FastReadField2(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+			offset += l
+			if err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		l, err = bthrift.Binary.ReadFieldEnd(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	l, err = bthrift.Binary.ReadStructEnd(buf[offset:])
+	offset += l
+	if err != nil {
+		goto ReadStructEndError
+	}
+
+	return offset, nil
+ReadStructBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinBatchGetVideoInteractInfoRequest[fieldId]), err)
+SkipFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+ReadFieldEndError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) FastReadField1(buf []byte) (int, error) {
+	offset := 0
+
+	_, size, l, err := bthrift.Binary.ReadListBegin(buf[offset:])
+	offset += l
+	if err != nil {
+		return offset, err
+	}
+	p.VideoIdList = make([]int64, 0, size)
+	for i := 0; i < size; i++ {
+		var _elem int64
+		if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
+			return offset, err
+		} else {
+			offset += l
+
+			_elem = v
+
+		}
+
+		p.VideoIdList = append(p.VideoIdList, _elem)
+	}
+	if l, err := bthrift.Binary.ReadListEnd(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	return offset, nil
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) FastReadField2(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+
+		p.ViewerId = v
+
+	}
+	return offset, nil
+}
+
+// for compatibility
+func (p *DouyinBatchGetVideoInteractInfoRequest) FastWrite(buf []byte) int {
+	return 0
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "douyin_batch_get_video_interact_info_request")
+	if p != nil {
+		offset += p.fastWriteField2(buf[offset:], binaryWriter)
+		offset += p.fastWriteField1(buf[offset:], binaryWriter)
+	}
+	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
+	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
+	return offset
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) BLength() int {
+	l := 0
+	l += bthrift.Binary.StructBeginLength("douyin_batch_get_video_interact_info_request")
+	if p != nil {
+		l += p.field1Length()
+		l += p.field2Length()
+	}
+	l += bthrift.Binary.FieldStopLength()
+	l += bthrift.Binary.StructEndLength()
+	return l
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "video_id_list", thrift.LIST, 1)
+	listBeginOffset := offset
+	offset += bthrift.Binary.ListBeginLength(thrift.I64, 0)
+	var length int
+	for _, v := range p.VideoIdList {
+		length++
+		offset += bthrift.Binary.WriteI64(buf[offset:], v)
+
+	}
+	bthrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.I64, length)
+	offset += bthrift.Binary.WriteListEnd(buf[offset:])
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "viewer_id", thrift.I64, 2)
+	offset += bthrift.Binary.WriteI64(buf[offset:], p.ViewerId)
+
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) field1Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("video_id_list", thrift.LIST, 1)
+	l += bthrift.Binary.ListBeginLength(thrift.I64, len(p.VideoIdList))
+	var tmpV int64
+	l += bthrift.Binary.I64Length(int64(tmpV)) * len(p.VideoIdList)
+	l += bthrift.Binary.ListEndLength()
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *DouyinBatchGetVideoInteractInfoRequest) field2Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("viewer_id", thrift.I64, 2)
+	l += bthrift.Binary.I64Length(p.ViewerId)
+
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) FastRead(buf []byte) (int, error) {
+	var err error
+	var offset int
+	var l int
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	_, l, err = bthrift.Binary.ReadStructBegin(buf)
+	offset += l
+	if err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, l, err = bthrift.Binary.ReadFieldBegin(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				l, err = p.FastReadField1(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 2:
+			if fieldTypeId == thrift.LIST {
+				l, err = p.FastReadField2(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+			offset += l
+			if err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		l, err = bthrift.Binary.ReadFieldEnd(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	l, err = bthrift.Binary.ReadStructEnd(buf[offset:])
+	offset += l
+	if err != nil {
+		goto ReadStructEndError
+	}
+
+	return offset, nil
+ReadStructBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinBatchGetVideoInteractInfoResponse[fieldId]), err)
+SkipFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+ReadFieldEndError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) FastReadField1(buf []byte) (int, error) {
+	offset := 0
+
+	tmp := base.NewDouyinBaseResponse()
+	if l, err := tmp.FastRead(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	p.BaseResp = tmp
+	return offset, nil
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) FastReadField2(buf []byte) (int, error) {
+	offset := 0
+
+	_, size, l, err := bthrift.Binary.ReadListBegin(buf[offset:])
+	offset += l
+	if err != nil {
+		return offset, err
+	}
+	p.InteractInfoList = make([]*base.VideoInteractInfo, 0, size)
+	for i := 0; i < size; i++ {
+		_elem := base.NewVideoInteractInfo()
+		if l, err := _elem.FastRead(buf[offset:]); err != nil {
+			return offset, err
+		} else {
+			offset += l
+		}
+
+		p.InteractInfoList = append(p.InteractInfoList, _elem)
+	}
+	if l, err := bthrift.Binary.ReadListEnd(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	return offset, nil
+}
+
+// for compatibility
+func (p *DouyinBatchGetVideoInteractInfoResponse) FastWrite(buf []byte) int {
+	return 0
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "douyin_batch_get_video_interact_info_response")
+	if p != nil {
+		offset += p.fastWriteField1(buf[offset:], binaryWriter)
+		offset += p.fastWriteField2(buf[offset:], binaryWriter)
+	}
+	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
+	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
+	return offset
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) BLength() int {
+	l := 0
+	l += bthrift.Binary.StructBeginLength("douyin_batch_get_video_interact_info_response")
+	if p != nil {
+		l += p.field1Length()
+		l += p.field2Length()
+	}
+	l += bthrift.Binary.FieldStopLength()
+	l += bthrift.Binary.StructEndLength()
+	return l
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "base_resp", thrift.STRUCT, 1)
+	offset += p.BaseResp.FastWriteNocopy(buf[offset:], binaryWriter)
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "interact_info_list", thrift.LIST, 2)
+	listBeginOffset := offset
+	offset += bthrift.Binary.ListBeginLength(thrift.STRUCT, 0)
+	var length int
+	for _, v := range p.InteractInfoList {
+		length++
+		offset += v.FastWriteNocopy(buf[offset:], binaryWriter)
+	}
+	bthrift.Binary.WriteListBegin(buf[listBeginOffset:], thrift.STRUCT, length)
+	offset += bthrift.Binary.WriteListEnd(buf[offset:])
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) field1Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("base_resp", thrift.STRUCT, 1)
+	l += p.BaseResp.BLength()
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *DouyinBatchGetVideoInteractInfoResponse) field2Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("interact_info_list", thrift.LIST, 2)
+	l += bthrift.Binary.ListBeginLength(thrift.STRUCT, len(p.InteractInfoList))
+	for _, v := range p.InteractInfoList {
+		l += v.BLength()
+	}
+	l += bthrift.Binary.ListEndLength()
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
 func (p *DouyinGetUserInteractInfoRequest) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
@@ -2183,7 +2585,7 @@ func (p *DouyinGetUserInteractInfoResponse) field2Length() int {
 	return l
 }
 
-func (p *DouyinBatchGetInteractInfoRequest) FastRead(buf []byte) (int, error) {
+func (p *DouyinBatchGetUserInteractInfoRequest) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -2208,20 +2610,6 @@ func (p *DouyinBatchGetInteractInfoRequest) FastRead(buf []byte) (int, error) {
 		case 1:
 			if fieldTypeId == thrift.LIST {
 				l, err = p.FastReadField1(buf[offset:])
-				offset += l
-				if err != nil {
-					goto ReadFieldError
-				}
-			} else {
-				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
-				offset += l
-				if err != nil {
-					goto SkipFieldError
-				}
-			}
-		case 2:
-			if fieldTypeId == thrift.I64 {
-				l, err = p.FastReadField2(buf[offset:])
 				offset += l
 				if err != nil {
 					goto ReadFieldError
@@ -2259,7 +2647,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinBatchGetInteractInfoRequest[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinBatchGetUserInteractInfoRequest[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 ReadFieldEndError:
@@ -2268,7 +2656,7 @@ ReadStructEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *DouyinBatchGetInteractInfoRequest) FastReadField1(buf []byte) (int, error) {
+func (p *DouyinBatchGetUserInteractInfoRequest) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
 	_, size, l, err := bthrift.Binary.ReadListBegin(buf[offset:])
@@ -2276,7 +2664,7 @@ func (p *DouyinBatchGetInteractInfoRequest) FastReadField1(buf []byte) (int, err
 	if err != nil {
 		return offset, err
 	}
-	p.VideoIdList = make([]int64, 0, size)
+	p.UserIdList = make([]int64, 0, size)
 	for i := 0; i < size; i++ {
 		var _elem int64
 		if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
@@ -2288,7 +2676,7 @@ func (p *DouyinBatchGetInteractInfoRequest) FastReadField1(buf []byte) (int, err
 
 		}
 
-		p.VideoIdList = append(p.VideoIdList, _elem)
+		p.UserIdList = append(p.UserIdList, _elem)
 	}
 	if l, err := bthrift.Binary.ReadListEnd(buf[offset:]); err != nil {
 		return offset, err
@@ -2298,30 +2686,15 @@ func (p *DouyinBatchGetInteractInfoRequest) FastReadField1(buf []byte) (int, err
 	return offset, nil
 }
 
-func (p *DouyinBatchGetInteractInfoRequest) FastReadField2(buf []byte) (int, error) {
-	offset := 0
-
-	if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
-		return offset, err
-	} else {
-		offset += l
-
-		p.ViewerId = v
-
-	}
-	return offset, nil
-}
-
 // for compatibility
-func (p *DouyinBatchGetInteractInfoRequest) FastWrite(buf []byte) int {
+func (p *DouyinBatchGetUserInteractInfoRequest) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *DouyinBatchGetInteractInfoRequest) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *DouyinBatchGetUserInteractInfoRequest) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "douyin_batch_get_interact_info_request")
+	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "douyin_batch_get_user_interact_info_request")
 	if p != nil {
-		offset += p.fastWriteField2(buf[offset:], binaryWriter)
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
@@ -2329,25 +2702,24 @@ func (p *DouyinBatchGetInteractInfoRequest) FastWriteNocopy(buf []byte, binaryWr
 	return offset
 }
 
-func (p *DouyinBatchGetInteractInfoRequest) BLength() int {
+func (p *DouyinBatchGetUserInteractInfoRequest) BLength() int {
 	l := 0
-	l += bthrift.Binary.StructBeginLength("douyin_batch_get_interact_info_request")
+	l += bthrift.Binary.StructBeginLength("douyin_batch_get_user_interact_info_request")
 	if p != nil {
 		l += p.field1Length()
-		l += p.field2Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
 	return l
 }
 
-func (p *DouyinBatchGetInteractInfoRequest) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *DouyinBatchGetUserInteractInfoRequest) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "video_id_list", thrift.LIST, 1)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "user_id_list", thrift.LIST, 1)
 	listBeginOffset := offset
 	offset += bthrift.Binary.ListBeginLength(thrift.I64, 0)
 	var length int
-	for _, v := range p.VideoIdList {
+	for _, v := range p.UserIdList {
 		length++
 		offset += bthrift.Binary.WriteI64(buf[offset:], v)
 
@@ -2358,36 +2730,18 @@ func (p *DouyinBatchGetInteractInfoRequest) fastWriteField1(buf []byte, binaryWr
 	return offset
 }
 
-func (p *DouyinBatchGetInteractInfoRequest) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
-	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "viewer_id", thrift.I64, 2)
-	offset += bthrift.Binary.WriteI64(buf[offset:], p.ViewerId)
-
-	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
-	return offset
-}
-
-func (p *DouyinBatchGetInteractInfoRequest) field1Length() int {
+func (p *DouyinBatchGetUserInteractInfoRequest) field1Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("video_id_list", thrift.LIST, 1)
-	l += bthrift.Binary.ListBeginLength(thrift.I64, len(p.VideoIdList))
+	l += bthrift.Binary.FieldBeginLength("user_id_list", thrift.LIST, 1)
+	l += bthrift.Binary.ListBeginLength(thrift.I64, len(p.UserIdList))
 	var tmpV int64
-	l += bthrift.Binary.I64Length(int64(tmpV)) * len(p.VideoIdList)
+	l += bthrift.Binary.I64Length(int64(tmpV)) * len(p.UserIdList)
 	l += bthrift.Binary.ListEndLength()
 	l += bthrift.Binary.FieldEndLength()
 	return l
 }
 
-func (p *DouyinBatchGetInteractInfoRequest) field2Length() int {
-	l := 0
-	l += bthrift.Binary.FieldBeginLength("viewer_id", thrift.I64, 2)
-	l += bthrift.Binary.I64Length(p.ViewerId)
-
-	l += bthrift.Binary.FieldEndLength()
-	return l
-}
-
-func (p *DouyinBatchGetInteractInfoResponse) FastRead(buf []byte) (int, error) {
+func (p *DouyinBatchGetUserInteractInfoResponse) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -2463,7 +2817,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinBatchGetInteractInfoResponse[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DouyinBatchGetUserInteractInfoResponse[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 ReadFieldEndError:
@@ -2472,7 +2826,7 @@ ReadStructEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) FastReadField1(buf []byte) (int, error) {
+func (p *DouyinBatchGetUserInteractInfoResponse) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
 	tmp := base.NewDouyinBaseResponse()
@@ -2485,7 +2839,7 @@ func (p *DouyinBatchGetInteractInfoResponse) FastReadField1(buf []byte) (int, er
 	return offset, nil
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) FastReadField2(buf []byte) (int, error) {
+func (p *DouyinBatchGetUserInteractInfoResponse) FastReadField2(buf []byte) (int, error) {
 	offset := 0
 
 	_, size, l, err := bthrift.Binary.ReadListBegin(buf[offset:])
@@ -2493,9 +2847,9 @@ func (p *DouyinBatchGetInteractInfoResponse) FastReadField2(buf []byte) (int, er
 	if err != nil {
 		return offset, err
 	}
-	p.InteractInfoList = make([]*base.VideoInteractInfo, 0, size)
+	p.InteractInfoList = make([]*base.UserInteractInfo, 0, size)
 	for i := 0; i < size; i++ {
-		_elem := base.NewVideoInteractInfo()
+		_elem := base.NewUserInteractInfo()
 		if l, err := _elem.FastRead(buf[offset:]); err != nil {
 			return offset, err
 		} else {
@@ -2513,13 +2867,13 @@ func (p *DouyinBatchGetInteractInfoResponse) FastReadField2(buf []byte) (int, er
 }
 
 // for compatibility
-func (p *DouyinBatchGetInteractInfoResponse) FastWrite(buf []byte) int {
+func (p *DouyinBatchGetUserInteractInfoResponse) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *DouyinBatchGetUserInteractInfoResponse) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "douyin_batch_get_interact_info_response")
+	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "douyin_batch_get_user_interact_info_response")
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
@@ -2529,9 +2883,9 @@ func (p *DouyinBatchGetInteractInfoResponse) FastWriteNocopy(buf []byte, binaryW
 	return offset
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) BLength() int {
+func (p *DouyinBatchGetUserInteractInfoResponse) BLength() int {
 	l := 0
-	l += bthrift.Binary.StructBeginLength("douyin_batch_get_interact_info_response")
+	l += bthrift.Binary.StructBeginLength("douyin_batch_get_user_interact_info_response")
 	if p != nil {
 		l += p.field1Length()
 		l += p.field2Length()
@@ -2541,7 +2895,7 @@ func (p *DouyinBatchGetInteractInfoResponse) BLength() int {
 	return l
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *DouyinBatchGetUserInteractInfoResponse) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
 	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "base_resp", thrift.STRUCT, 1)
 	offset += p.BaseResp.FastWriteNocopy(buf[offset:], binaryWriter)
@@ -2549,7 +2903,7 @@ func (p *DouyinBatchGetInteractInfoResponse) fastWriteField1(buf []byte, binaryW
 	return offset
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *DouyinBatchGetUserInteractInfoResponse) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
 	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "interact_info_list", thrift.LIST, 2)
 	listBeginOffset := offset
@@ -2565,7 +2919,7 @@ func (p *DouyinBatchGetInteractInfoResponse) fastWriteField2(buf []byte, binaryW
 	return offset
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) field1Length() int {
+func (p *DouyinBatchGetUserInteractInfoResponse) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("base_resp", thrift.STRUCT, 1)
 	l += p.BaseResp.BLength()
@@ -2573,7 +2927,7 @@ func (p *DouyinBatchGetInteractInfoResponse) field1Length() int {
 	return l
 }
 
-func (p *DouyinBatchGetInteractInfoResponse) field2Length() int {
+func (p *DouyinBatchGetUserInteractInfoResponse) field2Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("interact_info_list", thrift.LIST, 2)
 	l += bthrift.Binary.ListBeginLength(thrift.STRUCT, len(p.InteractInfoList))
@@ -3875,6 +4229,264 @@ func (p *InteractionServerGetVideoInteractInfoResult) field0Length() int {
 	return l
 }
 
+func (p *InteractionServerBatchGetVideoInteractInfoArgs) FastRead(buf []byte) (int, error) {
+	var err error
+	var offset int
+	var l int
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	_, l, err = bthrift.Binary.ReadStructBegin(buf)
+	offset += l
+	if err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, l, err = bthrift.Binary.ReadFieldBegin(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				l, err = p.FastReadField1(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+			offset += l
+			if err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		l, err = bthrift.Binary.ReadFieldEnd(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	l, err = bthrift.Binary.ReadStructEnd(buf[offset:])
+	offset += l
+	if err != nil {
+		goto ReadStructEndError
+	}
+
+	return offset, nil
+ReadStructBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_InteractionServerBatchGetVideoInteractInfoArgs[fieldId]), err)
+SkipFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+ReadFieldEndError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoArgs) FastReadField1(buf []byte) (int, error) {
+	offset := 0
+
+	tmp := NewDouyinBatchGetVideoInteractInfoRequest()
+	if l, err := tmp.FastRead(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	p.Req = tmp
+	return offset, nil
+}
+
+// for compatibility
+func (p *InteractionServerBatchGetVideoInteractInfoArgs) FastWrite(buf []byte) int {
+	return 0
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoArgs) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "BatchGetVideoInteractInfo_args")
+	if p != nil {
+		offset += p.fastWriteField1(buf[offset:], binaryWriter)
+	}
+	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
+	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
+	return offset
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoArgs) BLength() int {
+	l := 0
+	l += bthrift.Binary.StructBeginLength("BatchGetVideoInteractInfo_args")
+	if p != nil {
+		l += p.field1Length()
+	}
+	l += bthrift.Binary.FieldStopLength()
+	l += bthrift.Binary.StructEndLength()
+	return l
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoArgs) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "req", thrift.STRUCT, 1)
+	offset += p.Req.FastWriteNocopy(buf[offset:], binaryWriter)
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	return offset
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoArgs) field1Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("req", thrift.STRUCT, 1)
+	l += p.Req.BLength()
+	l += bthrift.Binary.FieldEndLength()
+	return l
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoResult) FastRead(buf []byte) (int, error) {
+	var err error
+	var offset int
+	var l int
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	_, l, err = bthrift.Binary.ReadStructBegin(buf)
+	offset += l
+	if err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, l, err = bthrift.Binary.ReadFieldBegin(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.STRUCT {
+				l, err = p.FastReadField0(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		default:
+			l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+			offset += l
+			if err != nil {
+				goto SkipFieldError
+			}
+		}
+
+		l, err = bthrift.Binary.ReadFieldEnd(buf[offset:])
+		offset += l
+		if err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	l, err = bthrift.Binary.ReadStructEnd(buf[offset:])
+	offset += l
+	if err != nil {
+		goto ReadStructEndError
+	}
+
+	return offset, nil
+ReadStructBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_InteractionServerBatchGetVideoInteractInfoResult[fieldId]), err)
+SkipFieldError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+ReadFieldEndError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoResult) FastReadField0(buf []byte) (int, error) {
+	offset := 0
+
+	tmp := NewDouyinBatchGetVideoInteractInfoResponse()
+	if l, err := tmp.FastRead(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+	}
+	p.Success = tmp
+	return offset, nil
+}
+
+// for compatibility
+func (p *InteractionServerBatchGetVideoInteractInfoResult) FastWrite(buf []byte) int {
+	return 0
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoResult) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "BatchGetVideoInteractInfo_result")
+	if p != nil {
+		offset += p.fastWriteField0(buf[offset:], binaryWriter)
+	}
+	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
+	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
+	return offset
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoResult) BLength() int {
+	l := 0
+	l += bthrift.Binary.StructBeginLength("BatchGetVideoInteractInfo_result")
+	if p != nil {
+		l += p.field0Length()
+	}
+	l += bthrift.Binary.FieldStopLength()
+	l += bthrift.Binary.StructEndLength()
+	return l
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoResult) fastWriteField0(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	if p.IsSetSuccess() {
+		offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "success", thrift.STRUCT, 0)
+		offset += p.Success.FastWriteNocopy(buf[offset:], binaryWriter)
+		offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	}
+	return offset
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoResult) field0Length() int {
+	l := 0
+	if p.IsSetSuccess() {
+		l += bthrift.Binary.FieldBeginLength("success", thrift.STRUCT, 0)
+		l += p.Success.BLength()
+		l += bthrift.Binary.FieldEndLength()
+	}
+	return l
+}
+
 func (p *InteractionServerGetUserInteractInfoArgs) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
@@ -4133,7 +4745,7 @@ func (p *InteractionServerGetUserInteractInfoResult) field0Length() int {
 	return l
 }
 
-func (p *InteractionServerBatchGetInteractInfoArgs) FastRead(buf []byte) (int, error) {
+func (p *InteractionServerBatchGetUserInteractInfoArgs) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -4195,7 +4807,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_InteractionServerBatchGetInteractInfoArgs[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_InteractionServerBatchGetUserInteractInfoArgs[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 ReadFieldEndError:
@@ -4204,10 +4816,10 @@ ReadStructEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *InteractionServerBatchGetInteractInfoArgs) FastReadField1(buf []byte) (int, error) {
+func (p *InteractionServerBatchGetUserInteractInfoArgs) FastReadField1(buf []byte) (int, error) {
 	offset := 0
 
-	tmp := NewDouyinBatchGetInteractInfoRequest()
+	tmp := NewDouyinBatchGetUserInteractInfoRequest()
 	if l, err := tmp.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -4218,13 +4830,13 @@ func (p *InteractionServerBatchGetInteractInfoArgs) FastReadField1(buf []byte) (
 }
 
 // for compatibility
-func (p *InteractionServerBatchGetInteractInfoArgs) FastWrite(buf []byte) int {
+func (p *InteractionServerBatchGetUserInteractInfoArgs) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *InteractionServerBatchGetInteractInfoArgs) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *InteractionServerBatchGetUserInteractInfoArgs) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "BatchGetInteractInfo_args")
+	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "BatchGetUserInteractInfo_args")
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
 	}
@@ -4233,9 +4845,9 @@ func (p *InteractionServerBatchGetInteractInfoArgs) FastWriteNocopy(buf []byte, 
 	return offset
 }
 
-func (p *InteractionServerBatchGetInteractInfoArgs) BLength() int {
+func (p *InteractionServerBatchGetUserInteractInfoArgs) BLength() int {
 	l := 0
-	l += bthrift.Binary.StructBeginLength("BatchGetInteractInfo_args")
+	l += bthrift.Binary.StructBeginLength("BatchGetUserInteractInfo_args")
 	if p != nil {
 		l += p.field1Length()
 	}
@@ -4244,7 +4856,7 @@ func (p *InteractionServerBatchGetInteractInfoArgs) BLength() int {
 	return l
 }
 
-func (p *InteractionServerBatchGetInteractInfoArgs) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *InteractionServerBatchGetUserInteractInfoArgs) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
 	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "req", thrift.STRUCT, 1)
 	offset += p.Req.FastWriteNocopy(buf[offset:], binaryWriter)
@@ -4252,7 +4864,7 @@ func (p *InteractionServerBatchGetInteractInfoArgs) fastWriteField1(buf []byte, 
 	return offset
 }
 
-func (p *InteractionServerBatchGetInteractInfoArgs) field1Length() int {
+func (p *InteractionServerBatchGetUserInteractInfoArgs) field1Length() int {
 	l := 0
 	l += bthrift.Binary.FieldBeginLength("req", thrift.STRUCT, 1)
 	l += p.Req.BLength()
@@ -4260,7 +4872,7 @@ func (p *InteractionServerBatchGetInteractInfoArgs) field1Length() int {
 	return l
 }
 
-func (p *InteractionServerBatchGetInteractInfoResult) FastRead(buf []byte) (int, error) {
+func (p *InteractionServerBatchGetUserInteractInfoResult) FastRead(buf []byte) (int, error) {
 	var err error
 	var offset int
 	var l int
@@ -4322,7 +4934,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_InteractionServerBatchGetInteractInfoResult[fieldId]), err)
+	return offset, thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_InteractionServerBatchGetUserInteractInfoResult[fieldId]), err)
 SkipFieldError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 ReadFieldEndError:
@@ -4331,10 +4943,10 @@ ReadStructEndError:
 	return offset, thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *InteractionServerBatchGetInteractInfoResult) FastReadField0(buf []byte) (int, error) {
+func (p *InteractionServerBatchGetUserInteractInfoResult) FastReadField0(buf []byte) (int, error) {
 	offset := 0
 
-	tmp := NewDouyinBatchGetInteractInfoResponse()
+	tmp := NewDouyinBatchGetUserInteractInfoResponse()
 	if l, err := tmp.FastRead(buf[offset:]); err != nil {
 		return offset, err
 	} else {
@@ -4345,13 +4957,13 @@ func (p *InteractionServerBatchGetInteractInfoResult) FastReadField0(buf []byte)
 }
 
 // for compatibility
-func (p *InteractionServerBatchGetInteractInfoResult) FastWrite(buf []byte) int {
+func (p *InteractionServerBatchGetUserInteractInfoResult) FastWrite(buf []byte) int {
 	return 0
 }
 
-func (p *InteractionServerBatchGetInteractInfoResult) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *InteractionServerBatchGetUserInteractInfoResult) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "BatchGetInteractInfo_result")
+	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "BatchGetUserInteractInfo_result")
 	if p != nil {
 		offset += p.fastWriteField0(buf[offset:], binaryWriter)
 	}
@@ -4360,9 +4972,9 @@ func (p *InteractionServerBatchGetInteractInfoResult) FastWriteNocopy(buf []byte
 	return offset
 }
 
-func (p *InteractionServerBatchGetInteractInfoResult) BLength() int {
+func (p *InteractionServerBatchGetUserInteractInfoResult) BLength() int {
 	l := 0
-	l += bthrift.Binary.StructBeginLength("BatchGetInteractInfo_result")
+	l += bthrift.Binary.StructBeginLength("BatchGetUserInteractInfo_result")
 	if p != nil {
 		l += p.field0Length()
 	}
@@ -4371,7 +4983,7 @@ func (p *InteractionServerBatchGetInteractInfoResult) BLength() int {
 	return l
 }
 
-func (p *InteractionServerBatchGetInteractInfoResult) fastWriteField0(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+func (p *InteractionServerBatchGetUserInteractInfoResult) fastWriteField0(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
 	if p.IsSetSuccess() {
 		offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "success", thrift.STRUCT, 0)
@@ -4381,7 +4993,7 @@ func (p *InteractionServerBatchGetInteractInfoResult) fastWriteField0(buf []byte
 	return offset
 }
 
-func (p *InteractionServerBatchGetInteractInfoResult) field0Length() int {
+func (p *InteractionServerBatchGetUserInteractInfoResult) field0Length() int {
 	l := 0
 	if p.IsSetSuccess() {
 		l += bthrift.Binary.FieldBeginLength("success", thrift.STRUCT, 0)
@@ -4431,6 +5043,14 @@ func (p *InteractionServerGetVideoInteractInfoResult) GetResult() interface{} {
 	return p.Success
 }
 
+func (p *InteractionServerBatchGetVideoInteractInfoArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+func (p *InteractionServerBatchGetVideoInteractInfoResult) GetResult() interface{} {
+	return p.Success
+}
+
 func (p *InteractionServerGetUserInteractInfoArgs) GetFirstArgument() interface{} {
 	return p.Req
 }
@@ -4439,10 +5059,10 @@ func (p *InteractionServerGetUserInteractInfoResult) GetResult() interface{} {
 	return p.Success
 }
 
-func (p *InteractionServerBatchGetInteractInfoArgs) GetFirstArgument() interface{} {
+func (p *InteractionServerBatchGetUserInteractInfoArgs) GetFirstArgument() interface{} {
 	return p.Req
 }
 
-func (p *InteractionServerBatchGetInteractInfoResult) GetResult() interface{} {
+func (p *InteractionServerBatchGetUserInteractInfoResult) GetResult() interface{} {
 	return p.Success
 }

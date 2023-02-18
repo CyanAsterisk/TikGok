@@ -252,8 +252,8 @@ func (s *InteractionServerImpl) GetVideoInteractInfo(ctx context.Context, req *i
 }
 
 // BatchGetInteractInfo implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) BatchGetInteractInfo(ctx context.Context, req *interaction.DouyinBatchGetInteractInfoRequest) (resp *interaction.DouyinBatchGetInteractInfoResponse, err error) {
-	resp = new(interaction.DouyinBatchGetInteractInfoResponse)
+func (s *InteractionServerImpl) BatchGetInteractInfo(ctx context.Context, req *interaction.DouyinBatchGetVideoInteractInfoRequest) (resp *interaction.DouyinBatchGetVideoInteractInfoResponse, err error) {
+	resp = new(interaction.DouyinBatchGetVideoInteractInfoResponse)
 	for _, vid := range req.VideoIdList {
 		info, err := s.getInteractInfo(ctx, vid, req.ViewerId)
 		if err != nil {
@@ -319,6 +319,18 @@ func (s *InteractionServerImpl) getInteractInfo(ctx context.Context, videoId, vi
 
 // GetUserInteractInfo implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) GetUserInteractInfo(ctx context.Context, req *interaction.DouyinGetUserInteractInfoRequest) (resp *interaction.DouyinGetUserInteractInfoResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// BatchGetVideoInteractInfo implements the InteractionServerImpl interface.
+func (s *InteractionServerImpl) BatchGetVideoInteractInfo(ctx context.Context, req *interaction.DouyinBatchGetVideoInteractInfoRequest) (resp *interaction.DouyinBatchGetVideoInteractInfoResponse, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// BatchGetUserInteractInfo implements the InteractionServerImpl interface.
+func (s *InteractionServerImpl) BatchGetUserInteractInfo(ctx context.Context, req *interaction.DouyinBatchGetUserInteractInfoRequest) (resp *interaction.DouyinBatchGetUserInteractInfoResponse, err error) {
 	// TODO: Your code here...
 	return
 }

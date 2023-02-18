@@ -10,11 +10,15 @@ import (
 )
 
 type SocialManager struct {
-	SocialService socialityservice.Client
+	client socialityservice.Client
+}
+
+func NewSocialManager(client socialityservice.Client) *SocialManager {
+	return &SocialManager{client: client}
 }
 
 func (s *SocialManager) GetSocialInfo(ctx context.Context, viewerId, ownerId int64) (*base.SocialInfo, error) {
-	resp, err := s.SocialService.GetSocialInfo(ctx, &sociality.DouyinGetSocialInfoRequest{
+	resp, err := s.client.GetSocialInfo(ctx, &sociality.DouyinGetSocialInfoRequest{
 		ViewerId: viewerId,
 		OwnerId:  ownerId,
 	})
@@ -28,7 +32,7 @@ func (s *SocialManager) GetSocialInfo(ctx context.Context, viewerId, ownerId int
 }
 
 func (s *SocialManager) BatchGetSocialInfo(ctx context.Context, viewerId int64, ownerIdList []int64) ([]*base.SocialInfo, error) {
-	resp, err := s.SocialService.BatchGetSocialInfo(ctx, &sociality.DouyinBatchGetSocialInfoRequest{
+	resp, err := s.client.BatchGetSocialInfo(ctx, &sociality.DouyinBatchGetSocialInfoRequest{
 		ViewerId:    viewerId,
 		OwnerIdList: ownerIdList,
 	})
@@ -42,7 +46,7 @@ func (s *SocialManager) BatchGetSocialInfo(ctx context.Context, viewerId int64, 
 }
 
 func (s *SocialManager) GetRelationList(ctx context.Context, viewerId, ownerId int64, option int8) ([]int64, error) {
-	resp, err := s.SocialService.GetRelationIdList(ctx, &sociality.DouyinGetRelationIdListRequest{
+	resp, err := s.client.GetRelationIdList(ctx, &sociality.DouyinGetRelationIdListRequest{
 		ViewerId: viewerId,
 		OwnerId:  ownerId,
 		Option:   option,

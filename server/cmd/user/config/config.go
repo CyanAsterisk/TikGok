@@ -34,20 +34,17 @@ type JWTConfig struct {
 }
 
 type ServerConfig struct {
-	Name             string             `mapstructure:"name" json:"name"`
-	Host             string             `mapstructure:"host" json:"host"`
-	JWTInfo          JWTConfig          `mapstructure:"jwt" json:"jwt"`
-	MysqlInfo        MysqlConfig        `mapstructure:"mysql" json:"mysql"`
-	RedisInfo        RedisConfig        `mapstructure:"redis" json:"redis"`
-	OtelInfo         OtelConfig         `mapstructure:"otel" json:"otel"`
-	SocialitySrvInfo SocialitySrvConfig `mapstructure:"sociality_srv" json:"sociality_srv"`
-	ChatSrvInfo      ChatSrvConfig      `mapstructure:"chat_srv" json:"chat_srv"`
+	Name               string       `mapstructure:"name" json:"name"`
+	Host               string       `mapstructure:"host" json:"host"`
+	JWTInfo            JWTConfig    `mapstructure:"jwt" json:"jwt"`
+	MysqlInfo          MysqlConfig  `mapstructure:"mysql" json:"mysql"`
+	RedisInfo          RedisConfig  `mapstructure:"redis" json:"redis"`
+	OtelInfo           OtelConfig   `mapstructure:"otel" json:"otel"`
+	SocialitySrvInfo   RPCSrvConfig `mapstructure:"sociality_srv" json:"sociality_srv"`
+	ChatSrvInfo        RPCSrvConfig `mapstructure:"chat_srv" json:"chat_srv"`
+	InteractionSrvInfo RPCSrvConfig `mapstructure:"interaction_srv" json:"interaction_srv"`
 }
 
-type SocialitySrvConfig struct {
-	Name string `mapstructure:"name" json:"name"`
-}
-
-type ChatSrvConfig struct {
+type RPCSrvConfig struct {
 	Name string `mapstructure:"name" json:"name"`
 }

@@ -61,8 +61,14 @@ struct FriendUser {
     3: i64 follow_count // Total number of followings
     4: i64 follower_count // Total number of followers
     5: bool is_follow // true-followed, false-not followed
-    7: string message // Latest chat messages with this friend
-    8: i64 msgType // message type, 0 => the message received by the current requesting user, 1 => the message sent by the current requesting user
+    6: string avatar,           // user avatar
+    7: string background_image, // Image at the top of the user's personal page
+    8: string signature,        // Personal signatrue
+    9: i64 total_favorited,     // Number of Likes
+    10: i64 work_count,         // Number of published videos
+    11: i64 favorite_count,     // Total video likes
+    12: string message // Latest chat messages with this friend
+    13: i64 msgType // message type, 0 => the message received by the current requesting user, 1 => the message sent by the current requesting user
 }
 
 struct Message {
