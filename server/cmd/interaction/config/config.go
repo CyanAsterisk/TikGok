@@ -39,13 +39,13 @@ type OtelConfig struct {
 }
 
 type ServerConfig struct {
-	Name           string         `mapstructure:"name" json:"name"`
-	Host           string         `mapstructure:"host" json:"host"`
-	MysqlInfo      MysqlConfig    `mapstructure:"mysql" json:"mysql"`
-	RedisInfo      RedisConfig    `mapstructure:"redis" json:"redis"`
-	RabbitMqInfo   RabbitMqConfig `mapstructure:"rabbitmq" json:"rabbitmq"`
-	OtelInfo       OtelConfig     `mapstructure:"otel" json:"otel"`
-	VideoSrcConfig VideoSrvConfig `mapstructure:"video_srv" json:"video_srv"`
+	Name         string         `mapstructure:"name" json:"name"`
+	Host         string         `mapstructure:"host" json:"host"`
+	MysqlInfo    MysqlConfig    `mapstructure:"mysql" json:"mysql"`
+	RedisInfo    RedisConfig    `mapstructure:"redis" json:"redis"`
+	RabbitMqInfo RabbitMqConfig `mapstructure:"rabbitmq" json:"rabbitmq"`
+	OtelInfo     OtelConfig     `mapstructure:"otel" json:"otel"`
+	VideoSrvInfo VideoSrvConfig `mapstructure:"video_srv" json:"video_srv"`
 }
 
 type VideoSrvConfig struct {

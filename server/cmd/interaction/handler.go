@@ -18,6 +18,8 @@ import (
 
 // InteractionServerImpl implements the last service interface defined in the IDL.
 type InteractionServerImpl struct {
+	VideoManager
+
 	CommentPublisher
 	FavoritePublisher
 
@@ -26,6 +28,10 @@ type InteractionServerImpl struct {
 
 	CommentDao  *dao.Comment
 	FavoriteDao *dao.Favorite
+}
+
+type VideoManager interface {
+	GetPublishedVideoIdList(ctx context.Context, userId int64) ([]int64, error)
 }
 
 // CommentPublisher defines the comment action publisher interface.
@@ -242,8 +248,8 @@ func (s *InteractionServerImpl) GetCommentList(ctx context.Context, req *interac
 // GetVideoInteractInfo implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) GetVideoInteractInfo(ctx context.Context, req *interaction.DouyinGetVideoInteractInfoRequest) (resp *interaction.DouyinGetVideoInteractInfoResponse, err error) {
 	resp = new(interaction.DouyinGetVideoInteractInfoResponse)
-	if resp.InteractInfo, err = s.getInteractInfo(ctx, req.VideoId, req.ViewerId); err != nil {
-		klog.Error("get interact info err", err)
+	if resp.InteractInfo, err = s.getVideoInteractInfo(ctx, req.VideoId, req.ViewerId); err != nil {
+		klog.Error("get video interact info err", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr)
 		return resp, nil
 	}
@@ -251,13 +257,13 @@ func (s *InteractionServerImpl) GetVideoInteractInfo(ctx context.Context, req *i
 	return resp, nil
 }
 
-// BatchGetInteractInfo implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) BatchGetInteractInfo(ctx context.Context, req *interaction.DouyinBatchGetVideoInteractInfoRequest) (resp *interaction.DouyinBatchGetVideoInteractInfoResponse, err error) {
+// BatchGetVideoInteractInfo implements the InteractionServerImpl interface.
+func (s *InteractionServerImpl) BatchGetVideoInteractInfo(ctx context.Context, req *interaction.DouyinBatchGetVideoInteractInfoRequest) (resp *interaction.DouyinBatchGetVideoInteractInfoResponse, err error) {
 	resp = new(interaction.DouyinBatchGetVideoInteractInfoResponse)
 	for _, vid := range req.VideoIdList {
-		info, err := s.getInteractInfo(ctx, vid, req.ViewerId)
+		info, err := s.getVideoInteractInfo(ctx, vid, req.ViewerId)
 		if err != nil {
-			klog.Error("get interact info err", err)
+			klog.Error("get video interact info err", err)
 			resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr)
 			return resp, nil
 		}
@@ -267,7 +273,7 @@ func (s *InteractionServerImpl) BatchGetInteractInfo(ctx context.Context, req *i
 	return resp, nil
 }
 
-func (s *InteractionServerImpl) getInteractInfo(ctx context.Context, videoId, viewerId int64) (info *base.VideoInteractInfo, err error) {
+func (s *InteractionServerImpl) getVideoInteractInfo(ctx context.Context, videoId, viewerId int64) (info *base.VideoInteractInfo, err error) {
 	info = new(base.VideoInteractInfo)
 	if info.CommentCount, err = s.CommentRedisManager.CommentCountByVideoId(ctx, videoId); err != nil {
 		klog.Error("get comment count by redis err", err)
@@ -319,18 +325,51 @@ func (s *InteractionServerImpl) getInteractInfo(ctx context.Context, videoId, vi
 
 // GetUserInteractInfo implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) GetUserInteractInfo(ctx context.Context, req *interaction.DouyinGetUserInteractInfoRequest) (resp *interaction.DouyinGetUserInteractInfoResponse, err error) {
-	// TODO: Your code here...
-	return
-}
-
-// BatchGetVideoInteractInfo implements the InteractionServerImpl interface.
-func (s *InteractionServerImpl) BatchGetVideoInteractInfo(ctx context.Context, req *interaction.DouyinBatchGetVideoInteractInfoRequest) (resp *interaction.DouyinBatchGetVideoInteractInfoResponse, err error) {
-	// TODO: Your code here...
-	return
+	resp = new(interaction.DouyinGetUserInteractInfoResponse)
+	resp.InteractInfo, err = s.getUserInteractInfo(ctx, req.UserId)
+	if err != nil {
+		klog.Error("get user interact info err", err)
+		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get user interact info err"))
+		return resp, nil
+	}
+	resp.BaseResp = tools.BuildBaseResp(nil)
+	return resp, nil
 }
 
 // BatchGetUserInteractInfo implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) BatchGetUserInteractInfo(ctx context.Context, req *interaction.DouyinBatchGetUserInteractInfoRequest) (resp *interaction.DouyinBatchGetUserInteractInfoResponse, err error) {
-	// TODO: Your code here...
-	return
+	resp = new(interaction.DouyinBatchGetUserInteractInfoResponse)
+	for _, uid := range req.UserIdList {
+		info, err := s.getUserInteractInfo(ctx, uid)
+		if err != nil {
+			klog.Error("get user interact info err", err)
+			resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr)
+			return resp, nil
+		}
+		resp.InteractInfoList = append(resp.InteractInfoList, info)
+	}
+	resp.BaseResp = tools.BuildBaseResp(nil)
+	return resp, nil
+}
+
+func (s *InteractionServerImpl) getUserInteractInfo(ctx context.Context, userId int64) (info *base.UserInteractInfo, err error) {
+	info = new(base.UserInteractInfo)
+	videoIdList, err := s.VideoManager.GetPublishedVideoIdList(ctx, userId)
+	if err != nil {
+		return nil, err
+	}
+	info.WorkCount = int64(len(videoIdList))
+	for _, vid := range videoIdList {
+		count, err := s.FavoriteDao.GetFavoriteCountByVideoId(vid)
+		if err != nil {
+			return nil, err
+		}
+		info.TotalFavorited += count
+	}
+
+	info.FavoriteCount, err = s.FavoriteDao.GetFavoriteVideoCountByUserId(userId)
+	if err != nil {
+		return nil, err
+	}
+	return info, nil
 }

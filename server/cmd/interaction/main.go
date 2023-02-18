@@ -34,6 +34,7 @@ func main() {
 	defer p.Shutdown(context.Background())
 	initialize.InitRedis()
 	initialize.InitMq()
+	initialize.InitVideo()
 
 	mqInfo := global.ServerConfig.RabbitMqInfo
 	commentPublisher, err := pkg.NewCommentPublisher(global.AmqpConn, mqInfo.CommentExchange)
@@ -69,6 +70,7 @@ func main() {
 	}()
 
 	impl := &InteractionServerImpl{
+		VideoManager:         pkg.NewVideoManager(global.VideoClient),
 		CommentPublisher:     commentPublisher,
 		FavoritePublisher:    favoritePublisher,
 		CommentRedisManager:  pkg.NewCommentRedisManager(global.RedisCommentClient),

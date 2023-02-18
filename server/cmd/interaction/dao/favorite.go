@@ -98,3 +98,15 @@ func (f *Favorite) GetFavoriteVideoIdListByUserId(userId int64) ([]int64, error)
 	}
 	return videoList, nil
 }
+
+// GetFavoriteVideoCountByUserId gets a user's favorite video count.
+func (f *Favorite) GetFavoriteVideoCountByUserId(userId int64) (int64, error) {
+	var count int64
+	err := f.db.Model(model.Favorite{}).
+		Where(&model.Favorite{UserId: userId, ActionType: consts.IsLike}).
+		Count(&count).Error
+	if err != nil {
+		return -1, err
+	}
+	return count, nil
+}
