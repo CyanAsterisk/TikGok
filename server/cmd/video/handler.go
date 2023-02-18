@@ -49,6 +49,7 @@ type RedisManager interface {
 	CreateVideo(ctx context.Context, video *model.Video) error
 	GetVideoListByLatestTime(ctx context.Context, latestTime int64) ([]*model.Video, error)
 	GetVideoListByAuthorId(ctx context.Context, authorId int64) ([]*model.Video, error)
+	GetVideoIdListByAuthorId(ctx context.Context, authorId int64) ([]int64, error)
 	GetVideoByVideoId(ctx context.Context, videoId int64) (*model.Video, error)
 	BatchGetVideoByVideoId(ctx context.Context, videoIdList []int64) ([]*model.Video, error)
 }
@@ -141,11 +142,14 @@ func (s *VideoServiceImpl) GetPublishedVideoList(ctx context.Context, req *video
 // GetPublishedVideoIdList implements the VideoServiceImpl interface.
 func (s *VideoServiceImpl) GetPublishedVideoIdList(ctx context.Context, req *video.DouyinGetPublishedVideoIdListRequest) (resp *video.DouyinGetPublishedVideoIdListResponse, err error) {
 	resp = new(video.DouyinGetPublishedVideoIdListResponse)
-
-	if resp.VideoIdList, err = s.Dao.GetVideoIdListByAuthorId(req.UserId); err != nil {
+	if resp.VideoIdList, err = s.RedisManager.GetVideoIdListByAuthorId(ctx, req.UserId); err != nil {
 		klog.Error("get published video id list by author id err", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("get published video id list err"))
-		return resp, nil
+		resp.VideoIdList, err = s.Dao.GetVideoIdListByAuthorId(req.UserId)
+		if err != nil {
+			klog.Error("get published video id list list err", err)
+			resp.BaseResp = tools.BuildBaseResp(errno.VideoServerErr.WithMessage("get published video id list err"))
+			return resp, nil
+		}
 	}
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil

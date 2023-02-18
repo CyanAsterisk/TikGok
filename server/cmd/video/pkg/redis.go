@@ -105,6 +105,15 @@ func (r *RedisManager) GetVideoListByAuthorId(ctx context.Context, authorId int6
 	return videoList, nil
 }
 
+func (r *RedisManager) GetVideoIdListByAuthorId(ctx context.Context, authorId int64) ([]int64, error) {
+	vidList := make([]int64, 0)
+	err := r.RedisClient.ZRevRange(ctx, fmt.Sprintf("%d", authorId), 0, -1).ScanSlice(&vidList)
+	if err != nil {
+		return nil, err
+	}
+	return vidList, nil
+}
+
 func (r *RedisManager) GetVideoByVideoId(ctx context.Context, videoId int64) (*model.Video, error) {
 	videoIdStr := fmt.Sprintf("%d", videoId)
 	videoJSONStr, err := r.RedisClient.Get(ctx, videoIdStr).Result()
