@@ -65,12 +65,12 @@ func (v *Video) GetVideoListByAuthorId(AuthorId int64) ([]*model.Video, error) {
 
 // GetVideoIdListByAuthorId gets videos by userId of author.
 func (v *Video) GetVideoIdListByAuthorId(AuthorId int64) ([]int64, error) {
-	res := make([]int64, 0)
-	if err := v.db.Where(&model.Video{AuthorId: AuthorId}).
-		Pluck("author_id", &res).Error; err != nil {
+	var list []int64
+	if err := v.db.Model(model.Video{}).Where(&model.Video{AuthorId: AuthorId}).
+		Pluck("id", &list).Error; err != nil {
 		return nil, err
 	}
-	return res, nil
+	return list, nil
 }
 
 // GetVideoByVideoId gets video by videoId
