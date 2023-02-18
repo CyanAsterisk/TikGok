@@ -94,6 +94,22 @@ func TestVideoLifecycle(t *testing.T) {
 			wantResult: `[{"ID":100004,"AuthorId":200000,"PlayUrl":"vidoe4-fake-play-url","CoverUrl":"vidoe4-fake-cover-url","Title":"video4-tiltle","CreateTime":1676323218},{"ID":100002,"AuthorId":200000,"PlayUrl":"vidoe2-fake-play-url","CoverUrl":"vidoe2-fake-cover-url","Title":"video2-tiltle","CreateTime":1676323216},{"ID":100000,"AuthorId":200000,"PlayUrl":"vidoe0-fake-play-url","CoverUrl":"vidoe0-fake-cover-url","Title":"video0-tiltle","CreateTime":1676323214}]`,
 		},
 		{
+			name: "get videoIdList by Author id",
+			op: func() (string, error) {
+				vidList, err := manager.GetVideoIdListByAuthorId(c, videoList[0].AuthorId)
+				if err != nil {
+					return "", err
+				}
+				result, err := sonic.Marshal(vidList)
+				if err != nil {
+					return "", err
+				}
+				return string(result), nil
+			},
+			wantErr:    false,
+			wantResult: `[100004,100002,100000]`,
+		},
+		{
 			name: "get video list by last time",
 			op: func() (string, error) {
 				videos, err := manager.GetVideoListByLatestTime(c, timeStamp+2)
