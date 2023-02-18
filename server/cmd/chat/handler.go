@@ -31,7 +31,7 @@ type Subscriber interface {
 // GetChatHistory implements the ChatServiceImpl interface.
 func (s *ChatServiceImpl) GetChatHistory(_ context.Context, req *chat.DouyinMessageGetChatHistoryRequest) (resp *chat.DouyinMessageGetChatHistoryResponse, err error) {
 	resp = new(chat.DouyinMessageGetChatHistoryResponse)
-	msgs, err := s.Dao.GetMessages(req.UserId, req.ToUserId)
+	msgs, err := s.Dao.GetMessages(req.UserId, req.ToUserId, req.PreMsgTime)
 	if err != nil {
 		klog.Error("get chat history by mysql error", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.ChatServerErr.WithMessage("get chat history error"))

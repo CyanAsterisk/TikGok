@@ -76,7 +76,7 @@ struct Message {
     2: i64 to_user_id // The id of the recipient of the message
     3: i64 from_user_id // The id of the sender of the message
     4: string content // Message content
-    5: string create_time // Message creation time
+    5: i64 create_time // Message creation time
 }
 
 struct LatestMsg{
