@@ -30,9 +30,12 @@ func TestUserLifecycle(t *testing.T) {
 			name: "create account1",
 			op: func() (string, error) {
 				err := dao.CreateUser(&model.User{
-					ID:       aid1,
-					Username: "account1",
-					Password: "12345",
+					ID:              aid1,
+					Username:        "account1",
+					Password:        "12345",
+					Avatar:          "avatar1-url",
+					BackGroundImage: "backgroundImage-url1",
+					Signature:       "signature1",
 				})
 				return "", err
 			},
@@ -43,9 +46,12 @@ func TestUserLifecycle(t *testing.T) {
 			name: "duplicate create account1",
 			op: func() (string, error) {
 				err := dao.CreateUser(&model.User{
-					ID:       aid1,
-					Username: "account1",
-					Password: "12345",
+					ID:              aid1,
+					Username:        "account1",
+					Password:        "12345",
+					Avatar:          "avatar2-url",
+					BackGroundImage: "backgroundImage-url2",
+					Signature:       "signature2",
 				})
 				return "", err
 			},
@@ -78,7 +84,7 @@ func TestUserLifecycle(t *testing.T) {
 				return string(result), nil
 			},
 			wantErr:    false,
-			wantResult: `{"ID":1024,"Username":"account1","Password":"12345"}`,
+			wantResult: `{"ID":1024,"Username":"account1","Password":"12345","Avatar":"avatar1-url","BackGroundImage":"backgroundImage-url1","Signature":"signature1"}`,
 		},
 		{
 			name: "batch get user by id",
@@ -94,7 +100,7 @@ func TestUserLifecycle(t *testing.T) {
 				return string(result), nil
 			},
 			wantErr:    false,
-			wantResult: `[{"ID":1024,"Username":"account1","Password":"12345"},{"ID":2048,"Username":"account2","Password":"666666"}]`,
+			wantResult: `[{"ID":1024,"Username":"account1","Password":"12345","Avatar":"avatar1-url","BackGroundImage":"backgroundImage-url1","Signature":"signature1"},{"ID":2048,"Username":"account2","Password":"666666","Avatar":"","BackGroundImage":"","Signature":""}]`,
 		},
 		{
 			name: "delete user by id",
