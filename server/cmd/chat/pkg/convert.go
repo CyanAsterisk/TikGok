@@ -16,7 +16,7 @@ func Message(m *model.Message) *base.Message {
 		ToUserId:   m.ToUserId,
 		FromUserId: m.FromUserId,
 		Content:    m.Content,
-		CreateTime: m.CreateDate.UnixNano(),
+		CreateTime: m.CreateTime,
 	}
 }
 

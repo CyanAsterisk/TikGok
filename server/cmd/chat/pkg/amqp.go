@@ -141,7 +141,7 @@ func SubscribeRoutine(subscriber *Subscriber, dao *dao.Message) {
 			ToUserId:   m.ToUserId,
 			FromUserId: m.UserId,
 			Content:    m.Content,
-			CreateDate: time.Now(),
+			CreateTime: time.Now().UnixNano(),
 		})
 		if err != nil {
 			klog.Error("cannot chat action", err)

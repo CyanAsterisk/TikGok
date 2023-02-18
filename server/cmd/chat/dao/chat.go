@@ -26,9 +26,9 @@ func NewMessage(db *gorm.DB) *Message {
 func (m *Message) GetMessages(toId, fromId, time int64) ([]*model.Message, error) {
 	var messages []*model.Message
 	err := m.db.Model(model.Message{}).
-		Where("to_user_id = ? AND from_user_id = ? AND create_date < ?", toId, fromId, time).
-		Or("to_user_id = ? AND from_user_id = ? AND create_date < ?", fromId, toId, time).
-		Order("create_date desc").Find(&messages).Error
+		Where("to_user_id = ? AND from_user_id = ? AND create_time < ?", toId, fromId, time).
+		Or("to_user_id = ? AND from_user_id = ? AND create_time < ?", fromId, toId, time).
+		Order("create_time desc").Find(&messages).Error
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (m *Message) GetLatestMessage(uId, toUId int64) (*model.Message, error) {
 	var message *model.Message
 	err := m.db.Model(model.Message{}).
 		Where(&model.Message{ToUserId: uId, FromUserId: toUId}).Or(&model.Message{ToUserId: toUId, FromUserId: uId}).
-		Order("create_date desc").First(&message).Error
+		Order("create_time desc").First(&message).Error
 	if err != nil {
 		return nil, err
 	}
