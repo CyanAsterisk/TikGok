@@ -23,10 +23,11 @@ func NewMessage(db *gorm.DB) *Message {
 	}
 }
 
-func (m *Message) GetMessages(toId, fromId int64) ([]*model.Message, error) {
+func (m *Message) GetMessages(toId, fromId, time int64) ([]*model.Message, error) {
 	var messages []*model.Message
 	err := m.db.Model(model.Message{}).
-		Where(&model.Message{ToUserId: toId, FromUserId: fromId}).Or(&model.Message{ToUserId: fromId, FromUserId: toId}).
+		Where("to_user_id = ? AND from_user_id = ? AND create_date < ?", toId, fromId, time).
+		Or("to_user_id = ? AND from_user_id = ? AND create_date < ?", fromId, toId, time).
 		Order("create_date desc").Find(&messages).Error
 	if err != nil {
 		return nil, err
