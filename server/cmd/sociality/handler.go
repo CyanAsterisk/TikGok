@@ -17,7 +17,6 @@ type SocialityServiceImpl struct {
 	UserManager
 	RedisManager
 	Publisher
-	Subscriber
 	Dao *dao.Follow
 }
 
@@ -39,11 +38,6 @@ type RedisManager interface {
 // Publisher defines the publisher interface.
 type Publisher interface {
 	Publish(context.Context, *sociality.DouyinRelationActionRequest) error
-}
-
-// Subscriber defines a car update subscriber.
-type Subscriber interface {
-	Subscribe(context.Context) (ch chan *sociality.DouyinRelationActionRequest, cleanUp func(), err error)
 }
 
 // Action implements the SocialityServiceImpl interface.
