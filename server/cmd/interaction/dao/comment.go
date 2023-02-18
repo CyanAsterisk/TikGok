@@ -57,8 +57,11 @@ func (c *Comment) GetCommentIdListByVideoId(videoId int64) ([]string, error) {
 func (c *Comment) CreateComment(comment *model.Comment) error {
 	err := c.db.Model(&model.Comment{}).
 		Where(&model.Comment{ID: comment.ID}).First(&model.Comment{}).Error
-	if err != nil {
+	if err == nil {
 		return ErrRecordAlreadyExist
+	}
+	if err != gorm.ErrRecordNotFound {
+		return err
 	}
 	return c.db.Model(model.Comment{}).Create(&comment).Error
 }
