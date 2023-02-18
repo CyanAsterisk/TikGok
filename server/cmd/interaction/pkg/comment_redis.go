@@ -2,12 +2,17 @@ package pkg
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
-	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/bytedance/sonic"
 	"github.com/go-redis/redis/v8"
+)
+
+var (
+	ErrNoSuchRecord       = errors.New("no such record")
+	ErrRecordAlreadyExist = errors.New("record already exist")
 )
 
 type CommentRedisManager struct {
@@ -30,58 +35,72 @@ func (r *CommentRedisManager) CommentCountByVideoId(ctx context.Context, videoId
 }
 
 func (r *CommentRedisManager) CreateComment(ctx context.Context, comment *model.Comment) error {
-	pl := r.RedisClient.TxPipeline()
-	videoIdStr := fmt.Sprintf("%d", comment.VideoId)
 	commentIdStr := fmt.Sprintf("%d", comment.ID)
+	err := r.RedisClient.Get(ctx, commentIdStr).Err()
+	if err == nil {
+		return ErrRecordAlreadyExist
+	}
+	if err != redis.Nil {
+		return err
+	}
+	videoIdStr := fmt.Sprintf("%d", comment.VideoId)
 	commentJson, err := sonic.Marshal(comment)
 	if err != nil {
 		return err
 	}
-	batchData := make(map[string]string)
-	batchData[consts.VideoIdFiled] = videoIdStr
-	batchData[consts.CommentJsonFiled] = string(commentJson)
-	if err = pl.ZAdd(ctx, videoIdStr, &redis.Z{
+	pl := r.RedisClient.TxPipeline()
+	if err := pl.ZAdd(ctx, videoIdStr, &redis.Z{
 		Score:  float64(comment.CreateDate.UnixNano()),
-		Member: commentJson,
+		Member: commentIdStr,
 	}).Err(); err != nil {
 		return err
 	}
-	if err = pl.HMSet(ctx, commentIdStr, batchData).Err(); err != nil {
+	if err := pl.Set(ctx, commentIdStr, commentJson, 0).Err(); err != nil {
 		return err
 	}
-	if _, err = pl.Exec(ctx); err != nil {
-		return err
-	}
-	return nil
+	_, err = pl.Exec(ctx)
+	return err
 }
 
 func (r *CommentRedisManager) DeleteComment(ctx context.Context, commentId int64) error {
 	commentIdStr := fmt.Sprintf("%d", commentId)
-	values, err := r.RedisClient.HMGet(ctx, commentIdStr, consts.VideoIdFiled, consts.CommentJsonFiled).Result()
+	commentJson, err := r.RedisClient.Get(ctx, commentIdStr).Result()
 	if err != nil {
+		if err == redis.Nil {
+			return ErrNoSuchRecord
+		}
 		return err
 	}
-	videoIdStr := values[0].(string)
-	commentJson := values[1].(string)
-	if err = r.RedisClient.ZRem(ctx, videoIdStr, commentJson).Err(); err != nil {
+	var comment model.Comment
+	if err = sonic.Unmarshal([]byte(commentJson), &comment); err != nil {
 		return err
 	}
-	return nil
+	videoIdStr := fmt.Sprintf("%d", comment.VideoId)
+	pl := r.RedisClient.TxPipeline()
+	if err = pl.ZRem(ctx, videoIdStr, commentIdStr).Err(); err != nil {
+		return err
+	}
+	if err = pl.Del(ctx, commentIdStr).Err(); err != nil {
+		return err
+	}
+	_, err = pl.Exec(ctx)
+	return err
 }
 
 func (r *CommentRedisManager) GetCommentListByVideoId(ctx context.Context, videoId int64) ([]*model.Comment, error) {
 	videoIdStr := fmt.Sprintf("%d", videoId)
-	values, err := r.RedisClient.ZRange(ctx, videoIdStr, 0, -1).Result()
+	commentIdList, err := r.RedisClient.ZRevRange(ctx, videoIdStr, 0, -1).Result()
 	if err != nil {
 		return nil, err
 	}
 	var cl []*model.Comment
-	for _, val := range values {
+	for _, commentIdStr := range commentIdList {
 		var c model.Comment
-		err = sonic.Unmarshal([]byte(val), &c)
+		commentJson, err := r.RedisClient.Get(ctx, commentIdStr).Result()
 		if err != nil {
 			return nil, err
 		}
+		err = sonic.Unmarshal([]byte(commentJson), &c)
 		cl = append(cl, &c)
 	}
 	return cl, nil
