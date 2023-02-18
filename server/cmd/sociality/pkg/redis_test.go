@@ -1,22 +1,25 @@
-package dao
+package pkg
 
 import (
-	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/model"
-	"github.com/CyanAsterisk/TikGok/server/shared/consts"
-	"github.com/CyanAsterisk/TikGok/server/shared/test"
+	"context"
 	"github.com/bytedance/sonic"
 	"testing"
+	"time"
+
+	"github.com/CyanAsterisk/TikGok/server/shared/consts"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
+	"github.com/CyanAsterisk/TikGok/server/shared/test"
 )
 
 func TestFollowLifeCycle(t *testing.T) {
-	cleanUpFunc, db, err := test.RunWithMySQLInDocker(t)
+	ctx := context.Background()
+	cleanUpFunc, client, err := test.RunWithRedisInDocker(consts.RedisSocialClientDB, t)
 	defer cleanUpFunc()
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	dao := NewFollow(db)
+	manager := NewRedisManager(client)
 
 	aid1 := int64(100001)
 	aid2 := int64(100002)
@@ -29,27 +32,28 @@ func TestFollowLifeCycle(t *testing.T) {
 		wantResult string
 	}{
 		{
-			name: "create follow",
+			name: "action",
 			op: func() (string, error) {
-				err = dao.CreateFollow(&model.Follow{
-					UserId:     aid1,
-					FollowerId: aid2,
-					ActionType: 1,
-				})
-				err = dao.CreateFollow(&model.Follow{
-					UserId:     aid1,
-					FollowerId: aid3,
-					ActionType: 1,
-				})
-				err = dao.CreateFollow(&model.Follow{
-					UserId:     aid2,
-					FollowerId: aid3,
-					ActionType: 1,
-				})
-				err = dao.CreateFollow(&model.Follow{
+				time.Sleep(1 * time.Second)
+				err = manager.Action(ctx, &sociality.DouyinRelationActionRequest{
 					UserId:     aid3,
-					FollowerId: aid2,
-					ActionType: 1,
+					ToUserId:   aid1,
+					ActionType: consts.IsFollow,
+				})
+				err = manager.Action(ctx, &sociality.DouyinRelationActionRequest{
+					UserId:     aid2,
+					ToUserId:   aid1,
+					ActionType: consts.IsFollow,
+				})
+				err = manager.Action(ctx, &sociality.DouyinRelationActionRequest{
+					UserId:     aid3,
+					ToUserId:   aid2,
+					ActionType: consts.IsFollow,
+				})
+				err = manager.Action(ctx, &sociality.DouyinRelationActionRequest{
+					UserId:     aid2,
+					ToUserId:   aid3,
+					ActionType: consts.IsFollow,
 				})
 				if err != nil {
 					return "", err
@@ -62,7 +66,7 @@ func TestFollowLifeCycle(t *testing.T) {
 		{
 			name: "get follow id list",
 			op: func() (string, error) {
-				list, err := dao.GetFollowIdList(aid2)
+				list, err := manager.List(ctx, aid2, consts.FollowList)
 				if err != nil {
 					return "", err
 				}
@@ -75,7 +79,7 @@ func TestFollowLifeCycle(t *testing.T) {
 		{
 			name: "get follower id list",
 			op: func() (string, error) {
-				list, err := dao.GetFollowerIdList(aid2)
+				list, err := manager.List(ctx, aid2, consts.FollowerList)
 				if err != nil {
 					return "", err
 				}
@@ -88,7 +92,7 @@ func TestFollowLifeCycle(t *testing.T) {
 		{
 			name: "get friend id list",
 			op: func() (string, error) {
-				list, err := dao.GetFriendsList(aid2)
+				list, err := manager.List(ctx, aid2, consts.FriendsList)
 				if err != nil {
 					return "", err
 				}
@@ -101,7 +105,7 @@ func TestFollowLifeCycle(t *testing.T) {
 		{
 			name: "get follow num",
 			op: func() (string, error) {
-				count, err := dao.GetFollowNumsByUserId(aid2)
+				count, err := manager.Count(ctx, aid2, consts.FollowCount)
 				if err != nil {
 					return "", err
 				}
@@ -114,7 +118,7 @@ func TestFollowLifeCycle(t *testing.T) {
 		{
 			name: "get follower num",
 			op: func() (string, error) {
-				count, err := dao.GetFollowerNumsByUserId(aid2)
+				count, err := manager.Count(ctx, aid2, consts.FollowerCount)
 				if err != nil {
 					return "", err
 				}
@@ -125,22 +129,26 @@ func TestFollowLifeCycle(t *testing.T) {
 			wantResult: "1",
 		},
 		{
-			name: "get record before unfollow",
+			name: "check before unfollow",
 			op: func() (string, error) {
-				record, err := dao.FindRecord(aid1, aid2)
+				check, err := manager.Check(ctx, aid2, aid1)
 				if err != nil {
 					return "", err
 				}
-				result, err := sonic.Marshal(record)
+				result, err := sonic.Marshal(check)
 				return string(result), nil
 			},
 			wantErr:    false,
-			wantResult: `{"UserId":100001,"FollowerId":100002,"ActionType":1}`,
+			wantResult: `true`,
 		},
 		{
 			name: "unfollow",
 			op: func() (string, error) {
-				err := dao.UpdateFollow(aid1, aid2, consts.IsNotFollow)
+				err = manager.Action(ctx, &sociality.DouyinRelationActionRequest{
+					UserId:     aid2,
+					ToUserId:   aid1,
+					ActionType: consts.IsNotFollow,
+				})
 				if err != nil {
 					return "", err
 				}
@@ -150,17 +158,17 @@ func TestFollowLifeCycle(t *testing.T) {
 			wantResult: "",
 		},
 		{
-			name: "get record after unfollow",
+			name: "check after unfollow",
 			op: func() (string, error) {
-				record, err := dao.FindRecord(aid1, aid2)
+				check, err := manager.Check(ctx, aid2, aid1)
 				if err != nil {
 					return "", err
 				}
-				result, err := sonic.Marshal(record)
+				result, err := sonic.Marshal(check)
 				return string(result), nil
 			},
 			wantErr:    false,
-			wantResult: `{"UserId":100001,"FollowerId":100002,"ActionType":2}`,
+			wantResult: `false`,
 		},
 	}
 	for _, cc := range cases {

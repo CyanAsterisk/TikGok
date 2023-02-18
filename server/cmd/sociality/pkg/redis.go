@@ -8,7 +8,6 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
-	"github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/go-redis/redis/v8"
 )
 
@@ -21,21 +20,21 @@ func NewRedisManager(client *redis.Client) *RedisManager {
 }
 
 func (r *RedisManager) Action(ctx context.Context, req *sociality.DouyinRelationActionRequest) error {
-	toUserIdStr := fmt.Sprintf("%d", req.UserId)
+	toUserIdStr := fmt.Sprintf("%d", req.ToUserId)
 	userIdStr := fmt.Sprintf("%d", req.UserId)
 	pl := r.RedisClient.TxPipeline()
 	if req.ActionType == consts.IsFollow {
-		if err := r.RedisClient.SAdd(ctx, userIdStr+consts.RedisFollowSuffix, req.ToUserId).Err(); err != nil {
+		if err := pl.SAdd(ctx, userIdStr+consts.RedisFollowSuffix, req.ToUserId).Err(); err != nil {
 			return err
 		}
-		if err := r.RedisClient.SAdd(ctx, toUserIdStr+consts.RedisFollowerSuffix, req.UserId).Err(); err != nil {
+		if err := pl.SAdd(ctx, toUserIdStr+consts.RedisFollowerSuffix, req.UserId).Err(); err != nil {
 			return err
 		}
 	} else if req.ActionType == consts.IsNotFollow {
-		if err := r.RedisClient.SRem(ctx, userIdStr+consts.RedisFollowSuffix, req.ToUserId).Err(); err != nil {
+		if err := pl.SRem(ctx, userIdStr+consts.RedisFollowSuffix, req.ToUserId).Err(); err != nil {
 			return err
 		}
-		if err := r.RedisClient.SRem(ctx, toUserIdStr+consts.RedisFollowerSuffix, req.UserId).Err(); err != nil {
+		if err := pl.SRem(ctx, toUserIdStr+consts.RedisFollowerSuffix, req.UserId).Err(); err != nil {
 			return err
 		}
 	} else {
@@ -82,37 +81,21 @@ func (r *RedisManager) Count(ctx context.Context, uid int64, option int8) (int64
 	}
 }
 
-func (r *RedisManager) List(ctx context.Context, uid int64, option int8) ([]int64, error) {
+func (r *RedisManager) List(ctx context.Context, uid int64, option int8) (list []int64, err error) {
 	userIdStr := fmt.Sprintf("%d", uid)
+	list = make([]int64, 0)
 	switch option {
 	case consts.FollowerList:
-		args := r.RedisClient.SMembers(ctx, userIdStr+consts.RedisFollowerSuffix).Args()
-		list, err := redis.NewIntSliceCmd(ctx, args).Result()
-		if err != nil {
-			return nil, err
-		}
-		return list, nil
+		err = r.RedisClient.SMembers(ctx, userIdStr+consts.RedisFollowerSuffix).ScanSlice(&list)
 	case consts.FollowList:
-		args := r.RedisClient.SMembers(ctx, userIdStr+consts.RedisFollowSuffix).Args()
-		list, err := redis.NewIntSliceCmd(ctx, args).Result()
-		if err != nil {
-			return nil, err
-		}
-		return list, nil
+		err = r.RedisClient.SMembers(ctx, userIdStr+consts.RedisFollowSuffix).ScanSlice(&list)
 	case consts.FriendsList:
-		args1 := r.RedisClient.SMembers(ctx, userIdStr+consts.RedisFollowSuffix).Args()
-		list1, err := redis.NewIntSliceCmd(ctx, args1).Result()
-		if err != nil {
-			return nil, err
-		}
-		args2 := r.RedisClient.SMembers(ctx, userIdStr+consts.RedisFollowerSuffix).Args()
-		list2, err := redis.NewIntSliceCmd(ctx, args2).Result()
-		if err != nil {
-			return nil, err
-		}
-		list := tools.SimpleGeneric(list1, list2)
-		return list, nil
+		err = r.RedisClient.SInter(ctx, userIdStr+consts.RedisFollowSuffix, userIdStr+consts.RedisFollowerSuffix).ScanSlice(&list)
 	default:
 		return nil, errors.New("invalid option")
 	}
+	if err != nil {
+		return nil, err
+	}
+	return list, nil
 }

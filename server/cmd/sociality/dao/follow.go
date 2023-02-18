@@ -35,8 +35,8 @@ func (f *Follow) GetFollowerNumsByUserId(userId int64) (int64, error) {
 	return num, nil
 }
 
-// GetFollowingNumsByUserId gets following nums by userId.
-func (f *Follow) GetFollowingNumsByUserId(userId int64) (int64, error) {
+// GetFollowNumsByUserId gets following nums by userId.
+func (f *Follow) GetFollowNumsByUserId(userId int64) (int64, error) {
 	var num int64
 	err := f.db.Model(&model.Follow{}).
 		Where(&model.Follow{FollowerId: userId, ActionType: consts.IsFollow}).Count(&num).Error
@@ -67,10 +67,10 @@ func (f *Follow) UpdateFollow(userId, followId int64, actionType int8) error {
 }
 
 // FindRecord to find if there's a record between user and another user.
-func (f *Follow) FindRecord(userId, followId int64) (*model.Follow, error) {
+func (f *Follow) FindRecord(userId, followerId int64) (*model.Follow, error) {
 	var follow *model.Follow
 	err := f.db.Model(model.Follow{}).
-		Where(&model.Follow{UserId: userId, FollowerId: followId}).First(&follow).Error
+		Where(&model.Follow{UserId: userId, FollowerId: followerId}).First(&follow).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, nil
 	}

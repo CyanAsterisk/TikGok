@@ -117,7 +117,7 @@ func (s *SocialityServiceImpl) getSocialInfo(ctx context.Context, viewerId, owne
 	info = new(base.SocialInfo)
 	if info.FollowCount, err = s.RedisManager.Count(ctx, ownerId, consts.FollowCount); err != nil {
 		klog.Error("get follow count by redis err", err)
-		info.FollowCount, err = s.Dao.GetFollowingNumsByUserId(ownerId)
+		info.FollowCount, err = s.Dao.GetFollowNumsByUserId(ownerId)
 		if err != nil {
 			return nil, err
 		}
