@@ -1,12 +1,13 @@
 package dao
 
 import (
+	"testing"
+	"time"
+
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/test"
 	"github.com/bytedance/sonic"
-	"testing"
-	"time"
 )
 
 func TestFavorite(t *testing.T) {
@@ -85,6 +86,19 @@ func TestFavorite(t *testing.T) {
 			},
 			wantErr:    false,
 			wantResult: `[200004,200001,200003,200000]`,
+		},
+		{
+			name: "get favorite video count by userid",
+			op: func() (string, error) {
+				count, err := dao.GetFavoriteVideoCountByUserId(favList[0].UserId)
+				if err != nil {
+					return "", err
+				}
+				result, err := sonic.Marshal(count)
+				return string(result), nil
+			},
+			wantErr:    false,
+			wantResult: `4`,
 		},
 		{
 			name: "get favorite user id list by video id",
