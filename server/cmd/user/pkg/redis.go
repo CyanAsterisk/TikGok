@@ -2,12 +2,17 @@ package pkg
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/model"
-	"github.com/CyanAsterisk/TikGok/server/shared/consts"
-	"github.com/CyanAsterisk/TikGok/server/shared/errno"
+	"github.com/bytedance/sonic"
 	"github.com/go-redis/redis/v8"
+)
+
+var (
+	ErrNoSuchUser = errors.New("no such user")
+	ErrUserExist  = errors.New("user already exist")
 )
 
 type RedisManager struct {
@@ -21,18 +26,16 @@ func NewRedisManager(client *redis.Client) *RedisManager {
 // GetUserById get user by userid.
 func (r *RedisManager) GetUserById(ctx context.Context, uid int64) (*model.User, error) {
 	uidStr := fmt.Sprintf("%d", uid)
-	values, err := r.redisClient.HMGet(ctx, uidStr, consts.UsernameFiled, consts.CryptPwdFiled).Result()
+	userJson, err := r.redisClient.Get(ctx, uidStr).Result()
 	if err != nil {
 		return nil, err
 	}
-	if values[0] == nil || values[1] == nil {
-		return nil, errno.UserServerErr.WithMessage("no such user")
+	var user model.User
+	err = sonic.Unmarshal([]byte(userJson), &user)
+	if err != nil {
+		return nil, err
 	}
-	return &model.User{
-		ID:       uid,
-		Username: values[0].(string),
-		Password: values[1].(string),
-	}, err
+	return &user, nil
 }
 
 // BatchGetUserById get users by userid.
@@ -54,21 +57,30 @@ func (r *RedisManager) BatchGetUserById(ctx context.Context, uidList []int64) ([
 // CreateUser creates a user.
 func (r *RedisManager) CreateUser(ctx context.Context, user *model.User) error {
 	uidStr := fmt.Sprintf("%d", user.ID)
-	exists, err := r.redisClient.HExists(ctx, uidStr, consts.UsernameFiled).Result()
+	err := r.redisClient.Get(ctx, uidStr).Err()
+	if err == nil {
+		return ErrUserExist
+	}
+	if err != redis.Nil {
+		return err
+	}
+	userJson, err := sonic.Marshal(user)
 	if err != nil {
 		return err
 	}
-	if exists {
-		return errno.UserServerErr.WithMessage("user already exists")
-	}
-	batchData := make(map[string]string)
-	batchData[consts.UsernameFiled] = user.Username
-	batchData[consts.CryptPwdFiled] = user.Password
-	return r.redisClient.HMSet(ctx, uidStr, batchData).Err()
+
+	return r.redisClient.Set(ctx, uidStr, userJson, 0).Err()
 }
 
 // DeleteUser delete a user by userId.
 func (r *RedisManager) DeleteUser(ctx context.Context, userId int64) error {
 	uidStr := fmt.Sprintf("%d", userId)
-	return r.redisClient.HDel(ctx, uidStr, consts.UsernameFiled, consts.CryptPwdFiled).Err()
+	err := r.redisClient.Get(ctx, uidStr).Err()
+	if err == redis.Nil {
+		return ErrNoSuchUser
+	}
+	if err != nil {
+		return err
+	}
+	return r.redisClient.Del(ctx, uidStr).Err()
 }
