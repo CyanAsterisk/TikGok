@@ -118,7 +118,7 @@ func (s *Service) RunVideoUpload() error {
 		if _, err = s.minioClient.FPutObject(context.Background(), buckName, task.VideoUploadPath, task.VideoTmpPath, minio.PutObjectOptions{
 			ContentType: fmt.Sprintf("video/%s", suffix),
 		}); err != nil {
-			klog.Error("upload cover image err", err)
+			klog.Error("upload video err", err)
 			continue
 		}
 		_ = os.Remove(task.VideoTmpPath)
