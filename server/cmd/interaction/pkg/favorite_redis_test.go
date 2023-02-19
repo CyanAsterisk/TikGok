@@ -27,7 +27,7 @@ func TestFavorite(t *testing.T) {
 			UserId:     100000 + i%3,
 			VideoId:    200000 + i%5,
 			ActionType: consts.IsLike,
-			CreateDate: time.Unix(timeStamp+i, 0),
+			CreateDate: timeStamp + i,
 		}
 		favList = append(favList, f)
 
@@ -43,7 +43,7 @@ func TestFavorite(t *testing.T) {
 			op: func() (string, error) {
 				time.Sleep(1 * time.Second) // wait redis docker completely start
 				for _, f := range favList {
-					if err = manager.Like(c, f.UserId, f.VideoId, f.CreateDate.Unix()); err != nil {
+					if err = manager.Like(c, f.UserId, f.VideoId, f.CreateDate); err != nil {
 						if err != nil {
 							return "", err
 						}
@@ -95,6 +95,9 @@ func TestFavorite(t *testing.T) {
 					return "", err
 				}
 				result, err := sonic.Marshal(count)
+				if err != nil {
+					return "", err
+				}
 				return string(result), nil
 			},
 			wantErr:    false,

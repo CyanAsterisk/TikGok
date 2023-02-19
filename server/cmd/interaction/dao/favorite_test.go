@@ -2,7 +2,6 @@ package dao
 
 import (
 	"testing"
-	"time"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
@@ -24,7 +23,7 @@ func TestFavoriteLifeCycle(t *testing.T) {
 			UserId:     100000 + i%3,
 			VideoId:    200000 + i%5,
 			ActionType: consts.IsLike,
-			CreateDate: time.Unix(timeStamp+i, 0),
+			CreateDate: timeStamp + i,
 		}
 		favList = append(favList, f)
 
@@ -69,7 +68,7 @@ func TestFavoriteLifeCycle(t *testing.T) {
 				return string(result), err
 			},
 			wantErr:    false,
-			wantResult: `{"UserId":100000,"VideoId":200001,"ActionType":1,"CreateDate":"2023-02-14T05:20:20+08:00"}`,
+			wantResult: `{"UserId":100000,"VideoId":200001,"ActionType":1,"CreateDate":1676323220}`,
 		},
 		{
 			name: "get favorite video id list by userid",
@@ -95,6 +94,9 @@ func TestFavoriteLifeCycle(t *testing.T) {
 					return "", err
 				}
 				result, err := sonic.Marshal(count)
+				if err != nil {
+					return "", err
+				}
 				return string(result), nil
 			},
 			wantErr:    false,

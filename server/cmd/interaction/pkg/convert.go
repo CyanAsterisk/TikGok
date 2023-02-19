@@ -1,6 +1,8 @@
 package pkg
 
 import (
+	"strconv"
+
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/base"
 )
@@ -16,7 +18,7 @@ func Comment(c *model.Comment) *base.Comment {
 			Id: c.ID,
 		},
 		Content:    c.CommentText,
-		CreateDate: c.CreateDate.Format("mm-dd"),
+		CreateDate: strconv.FormatInt(c.CreateDate, 10),
 	}
 }
 

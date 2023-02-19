@@ -50,7 +50,7 @@ func (r *CommentRedisManager) CreateComment(ctx context.Context, comment *model.
 	}
 	pl := r.RedisClient.TxPipeline()
 	if err := pl.ZAdd(ctx, videoIdStr, &redis.Z{
-		Score:  float64(comment.CreateDate.UnixNano()),
+		Score:  float64(comment.CreateDate),
 		Member: commentIdStr,
 	}).Err(); err != nil {
 		return err

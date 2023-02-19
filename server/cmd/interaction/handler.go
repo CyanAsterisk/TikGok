@@ -69,7 +69,7 @@ func (s *InteractionServerImpl) Favorite(ctx context.Context, req *interaction.D
 		UserId:     req.UserId,
 		VideoId:    req.VideoId,
 		ActionType: req.ActionType,
-		CreateDate: time.Now(),
+		CreateDate: time.Now().UnixNano(),
 	}
 	err = s.FavoritePublisher.Publish(ctx, fav)
 	if err != nil {
@@ -85,7 +85,7 @@ func (s *InteractionServerImpl) Favorite(ctx context.Context, req *interaction.D
 	}
 	if req.ActionType == consts.Like {
 		if !liked {
-			if err = s.FavoriteRedisManager.Like(ctx, fav.UserId, fav.VideoId, fav.CreateDate.UnixNano()); err != nil {
+			if err = s.FavoriteRedisManager.Like(ctx, fav.UserId, fav.VideoId, fav.CreateDate); err != nil {
 				klog.Error("like by redis error", err)
 				resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("like by redis error"))
 				return resp, nil
@@ -171,7 +171,7 @@ func (s *InteractionServerImpl) Comment(ctx context.Context, req *interaction.Do
 		VideoId:     req.VideoId,
 		ActionType:  req.ActionType,
 		CommentText: req.CommentText,
-		CreateDate:  time.Now(),
+		CreateDate:  time.Now().UnixNano(),
 	}
 	if req.ActionType == consts.ValidComment {
 		sf, err := snowflake.NewNode(consts.CommentSnowflakeNode)

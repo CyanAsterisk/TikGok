@@ -2,13 +2,11 @@ package dao
 
 import (
 	"fmt"
-	"github.com/bytedance/sonic"
-	"testing"
-	"time"
-
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/test"
+	"github.com/bytedance/sonic"
+	"testing"
 )
 
 func TestCommentLifecycle(t *testing.T) {
@@ -22,7 +20,6 @@ func TestCommentLifecycle(t *testing.T) {
 	commentList := make([]*model.Comment, 0)
 	timeStamp := int64(1676323214)
 	for i := int64(0); i < 8; i++ {
-		date := time.Unix(timeStamp+i, 0)
 		commentId := i + 1*100000
 		uid := i%4 + 2*100000
 		videoId := i%2 + 300000
@@ -31,8 +28,8 @@ func TestCommentLifecycle(t *testing.T) {
 			UserId:      uid,
 			VideoId:     videoId,
 			ActionType:  consts.ValidComment,
-			CommentText: fmt.Sprintf("user%d comment on video%d on %s", uid, videoId, date.Format("2006-01-02 15:04:05")),
-			CreateDate:  date,
+			CommentText: fmt.Sprintf("user%d comment on video%d on %d", uid, videoId, timeStamp+i),
+			CreateDate:  timeStamp + i,
 		}
 		commentList = append(commentList, c)
 	}
@@ -78,7 +75,7 @@ func TestCommentLifecycle(t *testing.T) {
 				return string(result), nil
 			},
 			wantErr:    false,
-			wantResult: `[{"ID":100006,"UserId":200002,"VideoId":300000,"ActionType":1,"CommentText":"user200002 comment on video300000 on 2023-02-14 05:20:20","CreateDate":"2023-02-14T05:20:20+08:00"},{"ID":100004,"UserId":200000,"VideoId":300000,"ActionType":1,"CommentText":"user200000 comment on video300000 on 2023-02-14 05:20:18","CreateDate":"2023-02-14T05:20:18+08:00"},{"ID":100002,"UserId":200002,"VideoId":300000,"ActionType":1,"CommentText":"user200002 comment on video300000 on 2023-02-14 05:20:16","CreateDate":"2023-02-14T05:20:16+08:00"},{"ID":100000,"UserId":200000,"VideoId":300000,"ActionType":1,"CommentText":"user200000 comment on video300000 on 2023-02-14 05:20:14","CreateDate":"2023-02-14T05:20:14+08:00"}]`,
+			wantResult: `[{"ID":100006,"UserId":200002,"VideoId":300000,"ActionType":1,"CommentText":"user200002 comment on video300000 on 1676323220","CreateDate":1676323220},{"ID":100004,"UserId":200000,"VideoId":300000,"ActionType":1,"CommentText":"user200000 comment on video300000 on 1676323218","CreateDate":1676323218},{"ID":100002,"UserId":200002,"VideoId":300000,"ActionType":1,"CommentText":"user200002 comment on video300000 on 1676323216","CreateDate":1676323216},{"ID":100000,"UserId":200000,"VideoId":300000,"ActionType":1,"CommentText":"user200000 comment on video300000 on 1676323214","CreateDate":1676323214}]`,
 		},
 		{
 			name: "get comment id list by video id",
