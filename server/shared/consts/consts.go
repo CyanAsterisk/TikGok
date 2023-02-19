@@ -1,9 +1,8 @@
 package consts
 
 const (
-	TikGok         = "TikGok"
-	MySqlDSN       = "%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local"
-	UserMigrateDSN = "root:123456@tcp(localhost:3306)/TikGok?charset=utf8mb4&parseTime=True&loc=Local"
+	TikGok   = "TikGok"
+	MySqlDSN = "%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local"
 
 	JWTIssuer        = "TikGok"
 	ThirtyDays       = 60 * 60 * 24 * 30
@@ -18,14 +17,12 @@ const (
 	VideoConfigPath       = "./server/cmd/video/config.yaml"
 	ChatConfigPath        = "./server/cmd/chat/config.yaml"
 
-	NacosSnowflakeNode    = 1
-	UserSnowflakeNode     = 2
-	VideoSnowflakeNode    = 3
-	CommentSnowflakeNode  = 4
-	FavoriteSnowflakeNode = 5
-	FollowSnowflakeNode   = 6
-	MinioSnowflakeNode    = 7
-	ChatSnowflakeNode     = 8
+	NacosSnowflakeNode   = 1
+	UserSnowflakeNode    = 2
+	VideoSnowflakeNode   = 3
+	CommentSnowflakeNode = 4
+	MinioSnowflakeNode   = 7
+	ChatSnowflakeNode    = 8
 
 	ApiGroup         = "API_GROUP"
 	UserGroup        = "USER_GROUP"
@@ -91,11 +88,6 @@ const (
 	RedisFollowerSuffix = "follower"
 	RedisFollowSuffix   = "follow"
 	AllVideoSortSetKey  = "all-video-list-key"
-	VideoIdFiled        = "videoId"
-	CommentJsonFiled    = "commentJson"
-
-	UsernameFiled = "username"
-	CryptPwdFiled = "password"
 
 	FollowList   = 0
 	FollowerList = 1
