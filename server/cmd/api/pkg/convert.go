@@ -10,11 +10,17 @@ func User(u *kbase.User) *hbase.User {
 		return nil
 	}
 	return &hbase.User{
-		ID:            u.Id,
-		Name:          u.Name,
-		FollowCount:   u.FollowCount,
-		FollowerCount: u.FollowerCount,
-		IsFollow:      u.IsFollow,
+		ID:              u.Id,
+		Name:            u.Name,
+		FollowCount:     u.FollowCount,
+		FollowerCount:   u.FollowerCount,
+		IsFollow:        u.IsFollow,
+		Avatar:          u.Avatar,
+		BackgroundImage: u.BackgroundImage,
+		Signature:       u.Signature,
+		TotalFavorited:  u.TotalFavorited,
+		WorkCount:       u.WorkCount,
+		FavoriteCount:   u.FavoriteCount,
 	}
 }
 

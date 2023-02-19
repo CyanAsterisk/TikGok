@@ -12,6 +12,6 @@ func InitRedis() {
 	global.RedisClient = redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%d", global.ServerConfig.RedisInfo.Host, global.ServerConfig.RedisInfo.Port),
 		Password: global.ServerConfig.RedisInfo.Password,
-		DB:       consts.RedisSocialClientDB,
+		DB:       consts.RedisUserClientDB,
 	})
 }
