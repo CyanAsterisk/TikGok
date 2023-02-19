@@ -70,6 +70,10 @@ func (s *UserServiceImpl) Register(ctx context.Context, req *user.DouyinUserRegi
 		ID:       sf.Generate().Int64(),
 		Username: req.Username,
 		Password: pkg.Md5Crypt(req.Password, global.ServerConfig.MysqlInfo.Salt), // Encrypt password with md5.
+		// TODO: Add logic to set avatar backgroundImage and signature
+		Avatar:          "https://w.wallhaven.cc/full/y8/wallhaven-y8lqo7.jpg",
+		BackGroundImage: "https://w.wallhaven.cc/full/zy/wallhaven-zyxvqy.jpg",
+		Signature:       "default signature",
 	}
 	if err = s.Dao.CreateUser(usr); err != nil {
 		if err == dao.ErrUserExist {
