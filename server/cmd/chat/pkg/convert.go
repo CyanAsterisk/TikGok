@@ -53,7 +53,7 @@ func LatestMsgs(ml []*model.Message, uid int64) []*base.LatestMsg {
 	if ml == nil {
 		return nil
 	}
-	msgl := make([]*base.LatestMsg, len(ml))
+	msgl := make([]*base.LatestMsg, 0)
 	for _, m := range ml {
 		msgl = append(msgl, LatestMsg(m, uid))
 	}

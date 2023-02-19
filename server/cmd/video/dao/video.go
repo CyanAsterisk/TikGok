@@ -45,7 +45,7 @@ func (v *Video) CreateVideo(video *model.Video) error {
 
 // GetVideoListByLatestTime gets videos for feed.
 func (v *Video) GetVideoListByLatestTime(latestTime int64) ([]*model.Video, error) {
-	videos := make([]*model.Video, consts.VideosLimit)
+	videos := make([]*model.Video, 0)
 	if err := v.db.Where("create_time <= ?", latestTime).
 		Order("create_time desc").
 		Limit(consts.VideosLimit).Find(&videos).Error; err != nil {

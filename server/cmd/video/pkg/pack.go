@@ -25,7 +25,7 @@ func PackVideos(videoList []*model.Video, authorList []*base.User, infoList []*b
 	if videoList == nil {
 		return nil
 	}
-	res := make([]*base.Video, len(videoList))
+	res := make([]*base.Video, 0)
 	for i, v := range videoList {
 		res = append(res, PackVideo(v, authorList[i], infoList[i]))
 	}

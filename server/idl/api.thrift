@@ -163,6 +163,7 @@ struct douyin_relation_friend_list_response {
 struct douyin_message_chat_request {
     1: string token(api.query="token") // User authentication token
     2: i64 to_user_id(api.query="to_user_id") // The other party's user id
+    3: i64 pre_msg_time(api.query="pre_msg_time")// The time of time of last latest message
 }
 
 struct douyin_message_chat_response {
@@ -175,7 +176,7 @@ struct douyin_message_action_request {
     1: string token(api.query="token") // User authentication token
     2: i64 to_user_id(api.query="to_user_id") // The other party's user id
     3: i8 action_type(api.query="action_type", api.vd="$==1 || $==2") // 1- Send a message
-    4: string content(api.query="comment", api.vd="len($)>0 && len($)<255") // Message content
+    4: string content(api.query="content", api.vd="len($)>0 && len($)<255") // Message content
 }
 
 struct douyin_message_action_response {

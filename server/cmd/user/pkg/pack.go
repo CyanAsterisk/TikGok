@@ -29,7 +29,7 @@ func PackUsers(userList []*model.User, socialInfoList []*base.SocialInfo, intera
 	if userList == nil {
 		return nil
 	}
-	res := make([]*base.User, len(userList))
+	res := make([]*base.User, 0)
 	for i, u := range userList {
 		res = append(res, PackUser(u, socialInfoList[i], interactInfoList[i]))
 	}
@@ -61,7 +61,7 @@ func PackFriendUsers(userList []*model.User, socialInfoList []*base.SocialInfo, 
 	if userList == nil {
 		return nil
 	}
-	res := make([]*base.FriendUser, len(userList))
+	res := make([]*base.FriendUser, 0)
 	for i, u := range userList {
 		res = append(res, PackFriendUser(u, socialInfoList[i], interactInfoList[i], msgList[i]))
 	}

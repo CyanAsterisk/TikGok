@@ -54,7 +54,7 @@ func (m *UserManager) GetFriendUsers(ctx context.Context, list []int64, viewerId
 		return nil, errno.ChatServerErr.WithMessage(resp.BaseResp.StatusMsg)
 	}
 
-	fUser := make([]*base.FriendUser, len(resp.UserList))
+	fUser := make([]*base.FriendUser, 0)
 	for i, u := range resp.UserList {
 		fu := &base.FriendUser{
 			Id:            u.Id,

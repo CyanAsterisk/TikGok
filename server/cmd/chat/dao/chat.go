@@ -1,6 +1,8 @@
 package dao
 
 import (
+	"errors"
+
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/model"
 	"gorm.io/gorm"
 )
@@ -8,6 +10,10 @@ import (
 type Message struct {
 	db *gorm.DB
 }
+
+var (
+	ErrNoSuchRecord = errors.New("no such video record")
+)
 
 // NewMessage create a message dao.
 func NewMessage(db *gorm.DB) *Message {
@@ -50,6 +56,9 @@ func (m *Message) GetLatestMessage(uId, toUId int64) (*model.Message, error) {
 		Where(&model.Message{ToUserId: uId, FromUserId: toUId}).Or(&model.Message{ToUserId: toUId, FromUserId: uId}).
 		Order("create_time desc").First(&message).Error
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, ErrNoSuchRecord
+		}
 		return nil, err
 	}
 	return message, nil
@@ -59,7 +68,7 @@ func (m *Message) BatchGetLatestMessage(uId int64, toUIdList []int64) ([]*model.
 	msgList := make([]*model.Message, 0)
 	for _, toUid := range toUIdList {
 		msg, err := m.GetLatestMessage(uId, toUid)
-		if err != nil {
+		if err != nil && err != ErrNoSuchRecord {
 			return nil, err
 		}
 		msgList = append(msgList, msg)

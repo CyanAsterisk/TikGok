@@ -229,8 +229,8 @@ func VideoList(ctx context.Context, c *app.RequestContext) {
 
 	aid, flag := c.Get(consts.AccountID)
 	if !flag {
-		resp.StatusCode = int32(errno.RPCVideoErr.ErrCode)
-		resp.StatusMsg = errno.RPCVideoErr.ErrMsg
+		resp.StatusCode = int32(errno.ServiceErr.ErrCode)
+		resp.StatusMsg = errno.ServiceErr.ErrMsg
 		errno.SendResponse(c, resp)
 		return
 	}
@@ -559,10 +559,10 @@ func ChatHistory(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-
 	res, err := global.ChatClient.GetChatHistory(ctx, &chat.DouyinMessageGetChatHistoryRequest{
-		UserId:   aid.(int64),
-		ToUserId: req.ToUserID,
+		UserId:     aid.(int64),
+		ToUserId:   req.ToUserID,
+		PreMsgTime: req.PreMsgTime,
 	})
 	if err != nil {
 		resp.StatusCode = int32(errno.RPCChatErr.ErrCode)

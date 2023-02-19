@@ -208,7 +208,7 @@ func (s *UserServiceImpl) BatchGetUserInfo(ctx context.Context, req *user.Douyin
 // GetFollowList implements the UserServiceImpl interface.
 func (s *UserServiceImpl) GetFollowList(ctx context.Context, req *user.DouyinGetRelationFollowListRequest) (resp *user.DouyinGetRelationFollowListResponse, err error) {
 	resp = new(user.DouyinGetRelationFollowListResponse)
-	userIdList, err := s.SocialManager.GetRelationList(ctx, req.ViewerId, req.ViewerId, consts.FollowList)
+	userIdList, err := s.SocialManager.GetRelationList(ctx, req.ViewerId, req.OwnerId, consts.FollowList)
 	if err != nil {
 		klog.Error("get follow list err", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get follow list err"))
@@ -243,7 +243,7 @@ func (s *UserServiceImpl) GetFollowList(ctx context.Context, req *user.DouyinGet
 // GetFollowerList implements the UserServiceImpl interface.
 func (s *UserServiceImpl) GetFollowerList(ctx context.Context, req *user.DouyinGetRelationFollowerListRequest) (resp *user.DouyinGetRelationFollowerListResponse, err error) {
 	resp = new(user.DouyinGetRelationFollowerListResponse)
-	userIdList, err := s.SocialManager.GetRelationList(ctx, req.ViewerId, req.ViewerId, consts.FollowerList)
+	userIdList, err := s.SocialManager.GetRelationList(ctx, req.ViewerId, req.OwnerId, consts.FollowerList)
 	if err != nil {
 		klog.Error("get follower list err", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get follower list err"))
@@ -278,7 +278,7 @@ func (s *UserServiceImpl) GetFollowerList(ctx context.Context, req *user.DouyinG
 // GetFriendList implements the UserServiceImpl interface.
 func (s *UserServiceImpl) GetFriendList(ctx context.Context, req *user.DouyinGetRelationFriendListRequest) (resp *user.DouyinGetRelationFriendListResponse, err error) {
 	resp = new(user.DouyinGetRelationFriendListResponse)
-	userIdList, err := s.SocialManager.GetRelationList(ctx, req.ViewerId, req.ViewerId, consts.FriendsList)
+	userIdList, err := s.SocialManager.GetRelationList(ctx, req.ViewerId, req.OwnerId, consts.FriendsList)
 	if err != nil {
 		klog.Error("get friend list err", err)
 		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get friend list err"))

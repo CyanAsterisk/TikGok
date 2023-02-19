@@ -191,8 +191,8 @@ func (s *VideoServiceImpl) fillVideoList(ctx context.Context, videoList []*model
 	if videoList == nil {
 		return nil, nil
 	}
-	videoIdList := make([]int64, len(videoList))
-	authorIdList := make([]int64, len(videoList))
+	videoIdList := make([]int64, 0)
+	authorIdList := make([]int64, 0)
 	for _, v := range videoList {
 		videoIdList = append(videoIdList, v.ID)
 		authorIdList = append(authorIdList, v.AuthorId)
