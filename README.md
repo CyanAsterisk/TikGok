@@ -890,7 +890,7 @@ We have conducted unit tests on the data operations of the project, such as CRUD
 
 ![img](./img/pressure_test1.jpg)
 
-### Interface Test
+### API Test
 
 We have saved the interface test and test results in Postman, please visit the address to view the detailed test content.
 
