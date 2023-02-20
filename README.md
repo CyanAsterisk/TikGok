@@ -4,6 +4,10 @@ English | [中文](README_zh.md)
 
 TikGok is a simplified version of Douyin based on Hertz and Kitex, which implements all interfaces as required and optimizes the business. In addition, the governance capabilities of the project have been improved, such as the introduction of technology stacks such as configuration centers, service centers, and OTEL.
 
+## Quick Start
+
+TODO
+
 ## Project Implementation
 
 ### Technology Selection
@@ -26,7 +30,11 @@ TikGok is a simplified version of Douyin based on Hertz and Kitex, which impleme
 
 #### Technology Architecture
 
+TODO
+
 #### Service Relation
+
+TODO
 
 #### MySQL Design
 
