@@ -30,11 +30,11 @@ TODO
 
 #### Technology Architecture
 
-TODO
+![img](./img/tech_arch.png)
 
 #### Service Relation
 
-TODO
+![img](./img/service_relations.png)
 
 #### MySQL Design
 

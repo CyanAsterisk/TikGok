@@ -30,11 +30,11 @@ TODO
 
 #### 技术架构
 
-TODO
+![img](./img/tech_arch.png)
 
 #### 服务关系
 
-TODO
+![img](./img/service_relations.png)
 
 #### MySQL 数据库设计
 
