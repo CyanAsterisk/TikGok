@@ -4,10 +4,6 @@ English | [中文](README_zh.md)
 
 TikGok is a simplified version of Douyin based on Hertz and Kitex, which implements all interfaces as required and optimizes the business. In addition, the governance capabilities of the project have been improved, such as the introduction of technology stacks such as configuration centers, service centers, and OTEL.
 
-## Quick Start
-
-TODO
-
 ## Project Implementation
 
 ### Technology Selection
@@ -94,9 +90,9 @@ The `user id` is used as the key of the ordered collection, the `video id` of it
 
 ##### Sociality
 
-`User id`` ``+`` ``consts.RedisFollowSuffix` is the key of the collection, the artificial collection element that the user follows
+`User id` + `consts.RedisFollowSuffix` is the key of the collection, the artificial collection element that the user follows
 
-`User id`` ``+`` ``consts.RedisFollowerSuffix` is the key of the collection, and the user’s score is the collection element
+`User id` + `consts.RedisFollowerSuffix` is the key of the collection, and the user’s score is the collection element
 
 #### Message Queue Design
 
@@ -523,6 +519,10 @@ It can be seen that the optimized flame graph has better performance and shorter
 
 ##### Nacos
 
+![img.png](img/nacos.png)
+
+![img.png](img/nacos2.png)
+
 Nacos will take on the functions of service center and configuration center at the same time to save online resources.
 
 ###### Initialization
@@ -569,6 +569,9 @@ Due to the length of the code, only the key code is provided here. We first conf
 Kitex and Hertz do automatic service deregistration on graceful deferral. For service discovery, please pay attention to the RPC section below.
 
 ##### Opentelemetry
+
+![img](img/p.png)
+![img](img/jaeger.png)
 
 What OpenTelemetry needs to solve is the unification of observability. In our project, Trace uses Jaeger, Metrics uses Prometheus, and Logs uses Logrus (the same log library configured in GORM logs).
 

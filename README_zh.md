@@ -4,10 +4,6 @@
 
 TikGok 是一个基于 Hertz 与 Kitex 的极简版抖音，按要求实现了全部的接口，并对业务进行了优化。除此之外还提升了项目的治理能力，例如引入了配置中心、服务中心、OTEL 等技术栈。
 
-## 快速开始
-
-TODO
-
 ## 项目实现
 
 ### 技术选型
@@ -523,6 +519,10 @@ go tool pprof -http=:8001 http://127.0.0.1:8080/debug/pprof/profile
 
 ##### Nacos
 
+![img.png](img/nacos.png)
+
+![img.png](img/nacos2.png)
+
 Nacos 会同时承担服务中心与配置中心两种功能，以节约线上资源。
 
 ###### 初始化
@@ -569,6 +569,9 @@ func InitNacos(Port int) (registry.Registry, *registry.Info) {
 Kitex 与 Hertz 在优雅推迟时会自动进行服务取消注册。服务发现请关注下文 RPC 部分。
 
 ##### Opentelemetry
+
+![img](img/p.png)
+![img](img/jaeger.png)
 
 OpenTelemetry 要解决的是对可观测性的大一统，在我们的项目中，Trace 使用到的是 Jaeger，Metrics 使用到了 Prometheus，Logs 使用的是 Logrus（在 GORM 日志中配置的相同日志库）。
 
