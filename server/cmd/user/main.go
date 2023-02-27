@@ -5,8 +5,8 @@ import (
 	"net"
 	"strconv"
 
+	"github.com/CyanAsterisk/TikGok/server/cmd/user/config"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/dao"
-	"github.com/CyanAsterisk/TikGok/server/cmd/user/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/initialize"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
@@ -26,25 +26,25 @@ func main() {
 	initialize.InitLogger()
 	IP, Port := initialize.InitFlag()
 	r, info := initialize.InitNacos(Port)
-	initialize.InitDB()
+	db := initialize.InitDB()
 	p := provider.NewOpenTelemetryProvider(
-		provider.WithServiceName(global.ServerConfig.Name),
-		provider.WithExportEndpoint(global.ServerConfig.OtelInfo.EndPoint),
+		provider.WithServiceName(config.GlobalServerConfig.Name),
+		provider.WithExportEndpoint(config.GlobalServerConfig.OtelInfo.EndPoint),
 		provider.WithInsecure(),
 	)
 	defer p.Shutdown(context.Background())
-	initialize.InitRedis()
-	initialize.InitSocial()
-	initialize.InitChat()
-	initialize.InitInteract()
+	rc := initialize.InitRedis()
+	socialClient := initialize.InitSocial()
+	chatClient := initialize.InitChat()
+	interactClient := initialize.InitInteraction()
 
 	impl := &UserServiceImpl{
-		Jwt:                middleware.NewJWT(global.ServerConfig.JWTInfo.SigningKey),
-		SocialManager:      pkg.NewSocialManager(global.SocialClient),
-		InteractionManager: pkg.NewInteractionManager(global.InteractClient),
-		ChatManager:        pkg.NewChatManager(global.ChatClient),
-		RedisManager:       pkg.NewRedisManager(global.RedisClient),
-		Dao:                dao.NewUser(global.DB),
+		Jwt:                middleware.NewJWT(config.GlobalServerConfig.JWTInfo.SigningKey),
+		SocialManager:      pkg.NewSocialManager(socialClient),
+		InteractionManager: pkg.NewInteractionManager(interactClient),
+		ChatManager:        pkg.NewChatManager(chatClient),
+		RedisManager:       pkg.NewRedisManager(rc),
+		Dao:                dao.NewUser(db),
 	}
 	// Create new server.
 	srv := user.NewServer(impl,
@@ -53,7 +53,7 @@ func main() {
 		server.WithRegistryInfo(info),
 		server.WithLimit(&limit.Option{MaxConnections: 2000, MaxQPS: 500}),
 		server.WithSuite(tracing.NewServerSuite()),
-		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: global.ServerConfig.Name}),
+		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: config.GlobalServerConfig.Name}),
 	)
 
 	err := srv.Run()

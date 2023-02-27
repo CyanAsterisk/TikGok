@@ -4,10 +4,9 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/CyanAsterisk/TikGok/server/shared/tools"
-
-	"github.com/CyanAsterisk/TikGok/server/cmd/user/global"
+	"github.com/CyanAsterisk/TikGok/server/cmd/user/config"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
+	"github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/bwmarrin/snowflake"
 	"github.com/bytedance/sonic"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -27,21 +26,22 @@ func InitNacos(Port int) (registry.Registry, *registry.Info) {
 	if err := v.ReadInConfig(); err != nil {
 		klog.Fatalf("read viper config failed: %s", err)
 	}
-	if err := v.Unmarshal(&global.NacosConfig); err != nil {
+	var nacosConfig config.NacosConfig
+	if err := v.Unmarshal(&nacosConfig); err != nil {
 		klog.Fatalf("unmarshal err failed: %s", err)
 	}
-	klog.Infof("Config Info: %v", global.NacosConfig)
+	klog.Infof("Config Info: %v", nacosConfig)
 
 	// Read configuration information from nacos
 	sc := []constant.ServerConfig{
 		{
-			IpAddr: global.NacosConfig.Host,
-			Port:   global.NacosConfig.Port,
+			IpAddr: nacosConfig.Host,
+			Port:   nacosConfig.Port,
 		},
 	}
 
 	cc := constant.ClientConfig{
-		NamespaceId:         global.NacosConfig.Namespace,
+		NamespaceId:         nacosConfig.Namespace,
 		TimeoutMs:           5000,
 		NotLoadCacheAtStart: true,
 		LogDir:              consts.NacosLogDir,
@@ -58,20 +58,21 @@ func InitNacos(Port int) (registry.Registry, *registry.Info) {
 	}
 
 	content, err := configClient.GetConfig(vo.ConfigParam{
-		DataId: global.NacosConfig.DataId,
-		Group:  global.NacosConfig.Group,
+		DataId: nacosConfig.DataId,
+		Group:  nacosConfig.Group,
 	})
 	if err != nil {
 		klog.Fatalf("get config failed: %s", err.Error())
 	}
 
-	err = sonic.Unmarshal([]byte(content), &global.ServerConfig)
+	var serverConfig config.ServerConfig
+	err = sonic.Unmarshal([]byte(content), &serverConfig)
 	if err != nil {
 		klog.Fatalf("nacos config failed: %s", err)
 	}
 
-	if global.ServerConfig.Host == "" {
-		global.ServerConfig.Host, err = tools.GetLocalIPv4Address()
+	if serverConfig.Host == "" {
+		serverConfig.Host, err = tools.GetLocalIPv4Address()
 		if err != nil {
 			klog.Fatalf("get localIpv4Addr failed:%s", err.Error())
 		}
@@ -94,8 +95,8 @@ func InitNacos(Port int) (registry.Registry, *registry.Info) {
 		klog.Fatalf("generate service name failed: %s", err)
 	}
 	info := &registry.Info{
-		ServiceName: global.ServerConfig.Name,
-		Addr:        utils.NewNetAddr(consts.TCP, net.JoinHostPort(global.ServerConfig.Host, strconv.Itoa(Port))),
+		ServiceName: serverConfig.Name,
+		Addr:        utils.NewNetAddr(consts.TCP, net.JoinHostPort(serverConfig.Host, strconv.Itoa(Port))),
 		Tags: map[string]string{
 			"ID": sf.Generate().Base36(),
 		},

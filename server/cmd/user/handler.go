@@ -5,8 +5,8 @@ import (
 	"time"
 
 	models "github.com/CyanAsterisk/TikGok/server/cmd/api/model"
+	"github.com/CyanAsterisk/TikGok/server/cmd/user/config"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/dao"
-	"github.com/CyanAsterisk/TikGok/server/cmd/user/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/model"
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
@@ -69,7 +69,7 @@ func (s *UserServiceImpl) Register(ctx context.Context, req *user.DouyinUserRegi
 	usr := &model.User{
 		ID:       sf.Generate().Int64(),
 		Username: req.Username,
-		Password: pkg.Md5Crypt(req.Password, global.ServerConfig.MysqlInfo.Salt), // Encrypt password with md5.
+		Password: pkg.Md5Crypt(req.Password, config.GlobalServerConfig.MysqlInfo.Salt), // Encrypt password with md5.
 		// TODO: Add logic to set avatar backgroundImage and signature
 		Avatar:          "https://w.wallhaven.cc/full/y8/wallhaven-y8lqo7.jpg",
 		BackGroundImage: "https://w.wallhaven.cc/full/zy/wallhaven-zyxvqy.jpg",
@@ -122,7 +122,7 @@ func (s *UserServiceImpl) Login(_ context.Context, req *user.DouyinUserLoginRequ
 		return resp, nil
 	}
 
-	if usr.Password != pkg.Md5Crypt(req.Password, global.ServerConfig.MysqlInfo.Salt) {
+	if usr.Password != pkg.Md5Crypt(req.Password, config.GlobalServerConfig.MysqlInfo.Salt) {
 		resp.BaseResp = tools.BuildBaseResp(errno.UserServerErr.WithMessage("wrong password"))
 		return resp, nil
 	}

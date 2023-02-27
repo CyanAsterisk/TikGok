@@ -1,9 +1,9 @@
 package initialize
 
 import (
-	"github.com/CyanAsterisk/TikGok/server/cmd/user/global"
+	"github.com/CyanAsterisk/TikGok/server/cmd/user/config"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
-	interaction "github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction/interactionserver"
+	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction/interactionserver"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/loadbalance"
@@ -16,19 +16,19 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/vo"
 )
 
-// InitInteract init interaction service.
-func InitInteract() {
+// InitInteraction init interaction service.
+func InitInteraction() interactionserver.Client {
 	// init resolver
 	// Read configuration information from nacos
 	sc := []constant.ServerConfig{
 		{
-			IpAddr: global.NacosConfig.Host,
-			Port:   global.NacosConfig.Port,
+			IpAddr: config.GlobalNacosConfig.Host,
+			Port:   config.GlobalNacosConfig.Port,
 		},
 	}
 
 	cc := constant.ClientConfig{
-		NamespaceId:         global.NacosConfig.Namespace,
+		NamespaceId:         config.GlobalNacosConfig.Namespace,
 		TimeoutMs:           5000,
 		NotLoadCacheAtStart: true,
 		LogDir:              consts.NacosLogDir,
@@ -46,22 +46,22 @@ func InitInteract() {
 		klog.Fatalf("new nacos client failed: %s", err.Error())
 	}
 	provider.NewOpenTelemetryProvider(
-		provider.WithServiceName(global.ServerConfig.Name),
-		provider.WithExportEndpoint(global.ServerConfig.OtelInfo.EndPoint),
+		provider.WithServiceName(config.GlobalServerConfig.Name),
+		provider.WithExportEndpoint(config.GlobalServerConfig.OtelInfo.EndPoint),
 		provider.WithInsecure(),
 	)
 
 	// create a new client
-	c, err := interaction.NewClient(
-		global.ServerConfig.InteractionSrvInfo.Name,
+	c, err := interactionserver.NewClient(
+		config.GlobalServerConfig.InteractionSrvInfo.Name,
 		client.WithResolver(r),                                     // service discovery
 		client.WithLoadBalancer(loadbalance.NewWeightedBalancer()), // load balance
 		client.WithMuxConnection(1),                                // multiplexing
 		client.WithSuite(tracing.NewClientSuite()),
-		client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: global.ServerConfig.InteractionSrvInfo.Name}),
+		client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: config.GlobalServerConfig.InteractionSrvInfo.Name}),
 	)
 	if err != nil {
 		klog.Fatalf("ERROR: cannot init client: %v\n", err)
 	}
-	global.InteractClient = c
+	return c
 }
