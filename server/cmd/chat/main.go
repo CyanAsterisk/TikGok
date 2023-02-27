@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
+	"github.com/CyanAsterisk/TikGok/server/cmd/chat/config"
 	"net"
 	"strconv"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/dao"
-	"github.com/CyanAsterisk/TikGok/server/cmd/chat/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/initialize"
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
@@ -25,30 +25,30 @@ func main() {
 	initialize.InitLogger()
 	IP, Port := initialize.InitFlag()
 	r, info := initialize.InitNacos(Port)
-	initialize.InitDB()
-	initialize.InitMq()
+	db := initialize.InitDB()
+	amqpC := initialize.InitMq()
 	p := provider.NewOpenTelemetryProvider(
-		provider.WithServiceName(global.ServerConfig.Name),
-		provider.WithExportEndpoint(global.ServerConfig.OtelInfo.EndPoint),
+		provider.WithServiceName(config.GlobalServerConfig.Name),
+		provider.WithExportEndpoint(config.GlobalServerConfig.OtelInfo.EndPoint),
 		provider.WithInsecure(),
 	)
 	defer p.Shutdown(context.Background())
 
-	publisher, err := pkg.NewPublisher(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
+	publisher, err := pkg.NewPublisher(amqpC, config.GlobalServerConfig.RabbitMqInfo.Exchange)
 	if err != nil {
 		klog.Fatal("cannot create publisher", err)
 	}
-	subscriber, err := pkg.NewSubscriber(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
+	subscriber, err := pkg.NewSubscriber(amqpC, config.GlobalServerConfig.RabbitMqInfo.Exchange)
 	if err != nil {
 		klog.Fatal("cannot create subscriber", err.Error())
 	}
-	dao := dao.NewMessage(global.DB)
-	go pkg.SubscribeRoutine(subscriber, dao)
+	msg := dao.NewMessage(db)
+	go pkg.SubscribeRoutine(subscriber, msg)
 
 	impl := &ChatServiceImpl{
 		Publisher:  publisher,
 		Subscriber: subscriber,
-		Dao:        dao,
+		Dao:        msg,
 	}
 	// Create new server.
 	srv := chat.NewServer(impl,
@@ -57,7 +57,7 @@ func main() {
 		server.WithRegistryInfo(info),
 		server.WithLimit(&limit.Option{MaxConnections: 2000, MaxQPS: 500}),
 		server.WithSuite(tracing.NewServerSuite()),
-		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: global.ServerConfig.Name}),
+		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: config.GlobalServerConfig.Name}),
 	)
 
 	err = srv.Run()

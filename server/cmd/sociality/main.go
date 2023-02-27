@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
+	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/config"
 	"net"
 	"strconv"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/dao"
-	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/initialize"
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
@@ -25,37 +25,37 @@ func main() {
 	initialize.InitLogger()
 	IP, Port := initialize.InitFlag()
 	r, info := initialize.InitNacos(Port)
-	initialize.InitDB()
-	initialize.InitRedis()
-	initialize.InitMq()
+	db := initialize.InitDB()
+	rC := initialize.InitRedis()
+	amqpC := initialize.InitMq()
 	p := provider.NewOpenTelemetryProvider(
-		provider.WithServiceName(global.ServerConfig.Name),
-		provider.WithExportEndpoint(global.ServerConfig.OtelInfo.EndPoint),
+		provider.WithServiceName(config.GlobalServerConfig.Name),
+		provider.WithExportEndpoint(config.GlobalServerConfig.OtelInfo.EndPoint),
 		provider.WithInsecure(),
 	)
 	defer p.Shutdown(context.Background())
-	initialize.InitUser()
-	initialize.InitChat()
+	userC := initialize.InitUser()
+	chatC := initialize.InitChat()
 
-	publisher, err := pkg.NewPublisher(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
+	publisher, err := pkg.NewPublisher(amqpC, config.GlobalServerConfig.RabbitMqInfo.Exchange)
 	if err != nil {
 		klog.Fatal("cannot create publisher", err)
 	}
-	subscriber, err := pkg.NewSubscriber(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
+	subscriber, err := pkg.NewSubscriber(amqpC, config.GlobalServerConfig.RabbitMqInfo.Exchange)
 	if err != nil {
 		klog.Fatal("cannot create subscriber", err.Error())
 	}
 
-	followDao := dao.NewFollow(global.DB)
+	followDao := dao.NewFollow(db)
 	go pkg.SubscribeRoutine(subscriber, followDao)
 
 	impl := &SocialityServiceImpl{
 		UserManager: &pkg.UserManager{
-			UserService: global.UserClient,
-			ChatService: global.ChatClient,
+			UserService: userC,
+			ChatService: chatC,
 		},
 		Publisher:    publisher,
-		RedisManager: pkg.NewRedisManager(global.RedisClient),
+		RedisManager: pkg.NewRedisManager(rC),
 		Dao:          followDao,
 	}
 	// Create new server.
@@ -65,7 +65,7 @@ func main() {
 		server.WithRegistryInfo(info),
 		server.WithLimit(&limit.Option{MaxConnections: 2000, MaxQPS: 500}),
 		server.WithSuite(tracing.NewServerSuite()),
-		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: global.ServerConfig.Name}),
+		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: config.GlobalServerConfig.Name}),
 	)
 
 	err = srv.Run()
