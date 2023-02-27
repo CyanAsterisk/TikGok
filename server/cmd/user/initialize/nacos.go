@@ -26,22 +26,21 @@ func InitNacos(Port int) (registry.Registry, *registry.Info) {
 	if err := v.ReadInConfig(); err != nil {
 		klog.Fatalf("read viper config failed: %s", err)
 	}
-	var nacosConfig config.NacosConfig
-	if err := v.Unmarshal(&nacosConfig); err != nil {
+	if err := v.Unmarshal(&config.GlobalNacosConfig); err != nil {
 		klog.Fatalf("unmarshal err failed: %s", err)
 	}
-	klog.Infof("Config Info: %v", nacosConfig)
+	klog.Infof("Config Info: %v", config.GlobalNacosConfig)
 
 	// Read configuration information from nacos
 	sc := []constant.ServerConfig{
 		{
-			IpAddr: nacosConfig.Host,
-			Port:   nacosConfig.Port,
+			IpAddr: config.GlobalNacosConfig.Host,
+			Port:   config.GlobalNacosConfig.Port,
 		},
 	}
 
 	cc := constant.ClientConfig{
-		NamespaceId:         nacosConfig.Namespace,
+		NamespaceId:         config.GlobalNacosConfig.Namespace,
 		TimeoutMs:           5000,
 		NotLoadCacheAtStart: true,
 		LogDir:              consts.NacosLogDir,
@@ -58,21 +57,20 @@ func InitNacos(Port int) (registry.Registry, *registry.Info) {
 	}
 
 	content, err := configClient.GetConfig(vo.ConfigParam{
-		DataId: nacosConfig.DataId,
-		Group:  nacosConfig.Group,
+		DataId: config.GlobalNacosConfig.DataId,
+		Group:  config.GlobalNacosConfig.Group,
 	})
 	if err != nil {
 		klog.Fatalf("get config failed: %s", err.Error())
 	}
 
-	var serverConfig config.ServerConfig
-	err = sonic.Unmarshal([]byte(content), &serverConfig)
+	err = sonic.Unmarshal([]byte(content), &config.GlobalServerConfig)
 	if err != nil {
 		klog.Fatalf("nacos config failed: %s", err)
 	}
 
-	if serverConfig.Host == "" {
-		serverConfig.Host, err = tools.GetLocalIPv4Address()
+	if config.GlobalServerConfig.Host == "" {
+		config.GlobalServerConfig.Host, err = tools.GetLocalIPv4Address()
 		if err != nil {
 			klog.Fatalf("get localIpv4Addr failed:%s", err.Error())
 		}
@@ -95,8 +93,8 @@ func InitNacos(Port int) (registry.Registry, *registry.Info) {
 		klog.Fatalf("generate service name failed: %s", err)
 	}
 	info := &registry.Info{
-		ServiceName: serverConfig.Name,
-		Addr:        utils.NewNetAddr(consts.TCP, net.JoinHostPort(serverConfig.Host, strconv.Itoa(Port))),
+		ServiceName: config.GlobalServerConfig.Name,
+		Addr:        utils.NewNetAddr(consts.TCP, net.JoinHostPort(config.GlobalServerConfig.Host, strconv.Itoa(Port))),
 		Tags: map[string]string{
 			"ID": sf.Generate().Base36(),
 		},
