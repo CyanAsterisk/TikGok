@@ -2,21 +2,22 @@ package initialize
 
 import (
 	"fmt"
+	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/config"
 
-	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/global"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/go-redis/redis/v8"
 )
 
-func InitRedis() {
-	global.RedisCommentClient = redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%d", global.ServerConfig.RedisInfo.Host, global.ServerConfig.RedisInfo.Port),
-		Password: global.ServerConfig.RedisInfo.Password,
+func InitRedis() (*redis.Client, *redis.Client) {
+	commentClient := redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf("%s:%d", config.GlobalServerConfig.RedisInfo.Host, config.GlobalServerConfig.RedisInfo.Port),
+		Password: config.GlobalServerConfig.RedisInfo.Password,
 		DB:       consts.RedisCommentClientDB,
 	})
-	global.RedisFavoriteClient = redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%d", global.ServerConfig.RedisInfo.Host, global.ServerConfig.RedisInfo.Port),
-		Password: global.ServerConfig.RedisInfo.Password,
+	favoriteClient := redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf("%s:%d", config.GlobalServerConfig.RedisInfo.Host, config.GlobalServerConfig.RedisInfo.Port),
+		Password: config.GlobalServerConfig.RedisInfo.Password,
 		DB:       consts.RedisFavoriteClientDB,
 	})
+	return commentClient, favoriteClient
 }

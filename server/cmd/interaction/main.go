@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
+	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/config"
 	"net"
 	"strconv"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/dao"
-	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/initialize"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
@@ -25,33 +25,33 @@ func main() {
 	initialize.InitLogger()
 	IP, Port := initialize.InitFlag()
 	r, info := initialize.InitNacos(Port)
-	initialize.InitDB()
+	db := initialize.InitDB()
 	p := provider.NewOpenTelemetryProvider(
-		provider.WithServiceName(global.ServerConfig.Name),
-		provider.WithExportEndpoint(global.ServerConfig.OtelInfo.EndPoint),
+		provider.WithServiceName(config.GlobalServerConfig.Name),
+		provider.WithExportEndpoint(config.GlobalServerConfig.OtelInfo.EndPoint),
 		provider.WithInsecure(),
 	)
 	defer p.Shutdown(context.Background())
-	initialize.InitRedis()
-	initialize.InitMq()
-	initialize.InitVideo()
+	cC, fC := initialize.InitRedis()
+	amqpC := initialize.InitMq()
+	videoC := initialize.InitVideo()
 
-	mqInfo := global.ServerConfig.RabbitMqInfo
-	commentPublisher, err := pkg.NewCommentPublisher(global.AmqpConn, mqInfo.CommentExchange)
+	mqInfo := config.GlobalServerConfig.RabbitMqInfo
+	commentPublisher, err := pkg.NewCommentPublisher(amqpC, mqInfo.CommentExchange)
 	if err != nil {
 		klog.Fatal("cannot create comment publisher")
 	}
-	favoritePublisher, err := pkg.NewFavoritePublisher(global.AmqpConn, mqInfo.FavoriteExchange)
+	favoritePublisher, err := pkg.NewFavoritePublisher(amqpC, mqInfo.FavoriteExchange)
 	if err != nil {
 		klog.Fatal("cannot create favorite publisher")
 	}
-	commentSubscriber, err := pkg.NewCommentSubscriber(global.AmqpConn, mqInfo.CommentExchange)
+	commentSubscriber, err := pkg.NewCommentSubscriber(amqpC, mqInfo.CommentExchange)
 	if err != nil {
 		klog.Fatal("cannot create comment subscriber")
 	}
 
-	commentDao := dao.NewComment(global.DB)
-	favoriteDao := dao.NewFavorite(global.DB)
+	commentDao := dao.NewComment(db)
+	favoriteDao := dao.NewFavorite(db)
 
 	go func() {
 		if err = pkg.CommentSubscribeRoutine(commentSubscriber, commentDao); err != nil {
@@ -59,7 +59,7 @@ func main() {
 		}
 	}()
 
-	favoriteSubscriber, err := pkg.NewFavoriteSubscriber(global.AmqpConn, mqInfo.FavoriteExchange)
+	favoriteSubscriber, err := pkg.NewFavoriteSubscriber(amqpC, mqInfo.FavoriteExchange)
 	if err != nil {
 		klog.Fatal("cannot create favorite subscriber")
 	}
@@ -70,11 +70,11 @@ func main() {
 	}()
 
 	impl := &InteractionServerImpl{
-		VideoManager:         pkg.NewVideoManager(global.VideoClient),
+		VideoManager:         pkg.NewVideoManager(videoC),
 		CommentPublisher:     commentPublisher,
 		FavoritePublisher:    favoritePublisher,
-		CommentRedisManager:  pkg.NewCommentRedisManager(global.RedisCommentClient),
-		FavoriteRedisManager: pkg.NewFavoriteRedisManager(global.RedisFavoriteClient),
+		CommentRedisManager:  pkg.NewCommentRedisManager(cC),
+		FavoriteRedisManager: pkg.NewFavoriteRedisManager(fC),
 		CommentDao:           commentDao,
 		FavoriteDao:          favoriteDao,
 	}
@@ -85,7 +85,7 @@ func main() {
 		server.WithRegistryInfo(info),
 		server.WithLimit(&limit.Option{MaxConnections: 2000, MaxQPS: 500}),
 		server.WithSuite(tracing.NewServerSuite()),
-		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: global.ServerConfig.Name}),
+		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: config.GlobalServerConfig.Name}),
 	)
 
 	err = srv.Run()
