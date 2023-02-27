@@ -702,9 +702,9 @@ limiter.AdaptiveLimit(limiter.WithCPUThreshold(900)),
 - When the CPU load is less than 90%: the current time is less than 1 second from the last triggering of the current limit, then judge whether the current maximum number of requests is greater than the maximum load in the past, and if it is greater than the load, then limit the flow.
 - When the CPU load is greater than 90%: Determine whether the current number of requests is greater than the maximum load in the past, and if it is greater than the maximum load in the past, limit the current.
 
-#### other
+#### Other
 
-#####RPC
+##### RPC
 
 When a microservice needs to call other microservices, it needs to make RPC calls. In `pkg`, we initialize the required services. Here, the user service needs to call the chat service as an example.
 
