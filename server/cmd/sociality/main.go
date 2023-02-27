@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/config"
 	"net"
 	"strconv"
 
+	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/config"
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/initialize"
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/pkg"

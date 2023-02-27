@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	"github.com/CyanAsterisk/TikGok/server/cmd/chat/config"
 	"net"
 	"strconv"
 
+	"github.com/CyanAsterisk/TikGok/server/cmd/chat/config"
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/initialize"
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/pkg"

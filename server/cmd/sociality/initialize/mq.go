@@ -2,8 +2,8 @@ package initialize
 
 import (
 	"fmt"
-	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/config"
 
+	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/config"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/streadway/amqp"

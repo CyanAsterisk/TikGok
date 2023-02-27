@@ -2,13 +2,13 @@ package pkg
 
 import (
 	"context"
-	"github.com/bytedance/sonic"
 	"testing"
 	"time"
 
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/sociality"
 	"github.com/CyanAsterisk/TikGok/server/shared/test"
+	"github.com/bytedance/sonic"
 )
 
 func TestFollowLifeCycle(t *testing.T) {

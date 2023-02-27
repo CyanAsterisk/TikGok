@@ -11,9 +11,7 @@ type Message struct {
 	db *gorm.DB
 }
 
-var (
-	ErrNoSuchRecord = errors.New("no such video record")
-)
+var ErrNoSuchRecord = errors.New("no such video record")
 
 // NewMessage create a message dao.
 func NewMessage(db *gorm.DB) *Message {
