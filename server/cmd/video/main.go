@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
+	"github.com/CyanAsterisk/TikGok/server/cmd/video/config"
 	"net"
 	"strconv"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/dao"
-	"github.com/CyanAsterisk/TikGok/server/cmd/video/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/initialize"
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
@@ -25,27 +25,27 @@ func main() {
 	initialize.InitLogger()
 	IP, Port := initialize.InitFlag()
 	r, info := initialize.InitNacos(Port)
-	initialize.InitDB()
+	db := initialize.InitDB()
 	p := provider.NewOpenTelemetryProvider(
-		provider.WithServiceName(global.ServerConfig.Name),
-		provider.WithExportEndpoint(global.ServerConfig.OtelInfo.EndPoint),
+		provider.WithServiceName(config.GlobalServerConfig.Name),
+		provider.WithExportEndpoint(config.GlobalServerConfig.OtelInfo.EndPoint),
 		provider.WithInsecure(),
 	)
 	defer p.Shutdown(context.Background())
-	initialize.InitRedis()
-	initialize.InitMq()
-	initialize.InitInteraction()
-	initialize.InitUser()
+	rC := initialize.InitRedis()
+	amqpC := initialize.InitMq()
+	interactionC := initialize.InitInteraction()
+	userC := initialize.InitUser()
 
-	publisher, err := pkg.NewPublisher(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
+	publisher, err := pkg.NewPublisher(amqpC, config.GlobalServerConfig.RabbitMqInfo.Exchange)
 	if err != nil {
 		klog.Fatal("cannot create publisher", err)
 	}
-	subscriber, err := pkg.NewSubscriber(global.AmqpConn, global.ServerConfig.RabbitMqInfo.Exchange)
+	subscriber, err := pkg.NewSubscriber(amqpC, config.GlobalServerConfig.RabbitMqInfo.Exchange)
 	if err != nil {
 		klog.Fatal("cannot create subscriber", err)
 	}
-	videoDao := dao.NewVideo(global.DB)
+	videoDao := dao.NewVideo(db)
 	go func() {
 		err = pkg.SubscribeRoutine(subscriber, videoDao)
 		if err != nil {
@@ -55,9 +55,9 @@ func main() {
 
 	impl := &VideoServiceImpl{
 		Publisher:          publisher,
-		UserManager:        &pkg.UserManager{UserService: global.UserClient},
-		InteractionManager: &pkg.InteractionManager{InteractionService: global.InteractClient},
-		RedisManager:       pkg.NewRedisManager(global.RedisClient),
+		UserManager:        &pkg.UserManager{UserService: userC},
+		InteractionManager: &pkg.InteractionManager{InteractionService: interactionC},
+		RedisManager:       pkg.NewRedisManager(rC),
 		Dao:                videoDao,
 	}
 	// Create new server.
@@ -67,7 +67,7 @@ func main() {
 		server.WithRegistryInfo(info),
 		server.WithLimit(&limit.Option{MaxConnections: 2000, MaxQPS: 500}),
 		server.WithSuite(tracing.NewServerSuite()),
-		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: global.ServerConfig.Name}),
+		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: config.GlobalServerConfig.Name}),
 	)
 
 	err = srv.Run()
