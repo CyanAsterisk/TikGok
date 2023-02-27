@@ -1,16 +1,16 @@
-package upload_service
+package initialize
 
 import (
 	"context"
-	"github.com/CyanAsterisk/TikGok/server/cmd/api/config"
 
+	"github.com/CyanAsterisk/TikGok/server/cmd/api/pkg/uploadService/config"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
-func initMinio() {
-	mi := config.GlobalServerConfig.UploadServiceInfo.MinioInfo
+func initMinio() *minio.Client {
+	mi := config.GlobalServiceConfig.MinioInfo
 	// Initialize minio client object.
 	mc, err := minio.New(mi.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(mi.AccessKeyID, mi.SecretAccessKey, ""),
@@ -34,5 +34,5 @@ func initMinio() {
 	if err != nil {
 		klog.Fatal("set bucket policy err:%s", err)
 	}
-	minioClient = mc
+	return mc
 }

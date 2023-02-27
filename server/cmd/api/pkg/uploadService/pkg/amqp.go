@@ -1,4 +1,4 @@
-package uploadService
+package pkg
 
 import (
 	"context"

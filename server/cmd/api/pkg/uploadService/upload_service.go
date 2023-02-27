@@ -10,7 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/CyanAsterisk/TikGok/server/cmd/api/config"
+	"github.com/CyanAsterisk/TikGok/server/cmd/api/pkg/uploadService/config"
+	"github.com/CyanAsterisk/TikGok/server/cmd/api/pkg/uploadService/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
 	"github.com/bwmarrin/snowflake"
@@ -23,11 +24,11 @@ import (
 type Service struct {
 	config      *config.UploadServiceConfig
 	minioClient *minio.Client
-	subscriber  *Subscriber
-	publisher   *Publisher
+	subscriber  *pkg.Subscriber
+	publisher   *pkg.Publisher
 }
 
-func NewUploadService(minioClient *minio.Client, subscriber *Subscriber, publisher *Publisher, config *config.UploadServiceConfig) *Service {
+func NewUploadService(minioClient *minio.Client, subscriber *pkg.Subscriber, publisher *pkg.Publisher, config *config.UploadServiceConfig) *Service {
 	return &Service{
 		config:      config,
 		minioClient: minioClient,
@@ -60,7 +61,7 @@ func (s *Service) UpLoadFile(videoFH *multipart.FileHeader) (playerUrl, coverUrl
 	}
 	taskId := sf.Generate().String()
 	uploadPathBase := time.Now().Format("2006/01/02/") + taskId
-	task := &VideoUploadTask{
+	task := &pkg.VideoUploadTask{
 		VideoTmpPath:    "./tmp" + taskId + "." + suffix,
 		CoverTmpPath:    "./tmp" + taskId + ".png",
 		VideoUploadPath: uploadPathBase + "." + suffix,

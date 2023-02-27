@@ -8,7 +8,7 @@ import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/config"
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/initialize"
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/initialize/rpc"
-	"github.com/CyanAsterisk/TikGok/server/cmd/api/initialize/upload_service"
+	initialize2 "github.com/CyanAsterisk/TikGok/server/cmd/api/pkg/uploadService/initialize"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	hertztracing "github.com/hertz-contrib/obs-opentelemetry/tracing"
@@ -21,7 +21,7 @@ func main() {
 	r, info := initialize.InitNacos()
 	tracer, cfg := hertztracing.NewServerTracer()
 	rpc.Init()
-	upload_service.Init()
+	config.GlobalUploadService = initialize2.Init()
 
 	go func() {
 		err := config.GlobalUploadService.RunVideoUpload()
