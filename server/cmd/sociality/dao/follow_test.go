@@ -1,11 +1,12 @@
 package dao
 
 import (
+	"testing"
+
 	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/test"
 	"github.com/bytedance/sonic"
-	"testing"
 )
 
 func TestFollowLifeCycle(t *testing.T) {

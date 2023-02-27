@@ -2,9 +2,9 @@ package initialize
 
 import (
 	"fmt"
-	"github.com/CyanAsterisk/TikGok/server/cmd/chat/config"
 	"time"
 
+	"github.com/CyanAsterisk/TikGok/server/cmd/chat/config"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"gorm.io/driver/mysql"

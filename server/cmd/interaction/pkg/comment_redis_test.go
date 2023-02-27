@@ -3,9 +3,8 @@ package pkg
 import (
 	"context"
 	"fmt"
-	"time"
-
 	"testing"
+	"time"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"

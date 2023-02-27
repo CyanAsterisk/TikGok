@@ -2,11 +2,12 @@ package dao
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/test"
 	"github.com/bytedance/sonic"
-	"testing"
 )
 
 func TestCommentLifecycle(t *testing.T) {

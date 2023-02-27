@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/config"
 	"net"
 	"strconv"
 
+	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/config"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/initialize"
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/pkg"

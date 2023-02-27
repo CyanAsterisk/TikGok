@@ -2,8 +2,8 @@ package initialize
 
 import (
 	"fmt"
-	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/config"
 
+	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/config"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/go-redis/redis/v8"
 )

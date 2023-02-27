@@ -1,10 +1,10 @@
 package initialize
 
 import (
-	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/config"
 	"net"
 	"strconv"
 
+	"github.com/CyanAsterisk/TikGok/server/cmd/sociality/config"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/tools"
 	"github.com/bwmarrin/snowflake"

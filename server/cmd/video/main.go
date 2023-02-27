@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	"github.com/CyanAsterisk/TikGok/server/cmd/video/config"
 	"net"
 	"strconv"
 
+	"github.com/CyanAsterisk/TikGok/server/cmd/video/config"
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/dao"
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/initialize"
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/pkg"

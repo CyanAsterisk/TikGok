@@ -10,7 +10,6 @@ import (
 )
 
 func TestVideoLifecycle(t *testing.T) {
-
 	cleanUpFunc, db, err := test.RunWithMySQLInDocker(t)
 	defer cleanUpFunc()
 	if err != nil {
