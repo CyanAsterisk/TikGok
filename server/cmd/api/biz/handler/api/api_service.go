@@ -4,9 +4,9 @@ package api
 
 import (
 	"context"
+	"github.com/CyanAsterisk/TikGok/server/cmd/api/config"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/biz/model/api"
-	"github.com/CyanAsterisk/TikGok/server/cmd/api/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/pkg"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/CyanAsterisk/TikGok/server/shared/errno"
@@ -32,7 +32,7 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.UserClient.Register(ctx, &user.DouyinUserRegisterRequest{
+	res, err := config.GlobalUserClient.Register(ctx, &user.DouyinUserRegisterRequest{
 		Username: req.Username,
 		Password: req.Password,
 	})
@@ -63,7 +63,7 @@ func Login(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	res, err := global.UserClient.Login(ctx, &user.DouyinUserLoginRequest{
+	res, err := config.GlobalUserClient.Login(ctx, &user.DouyinUserLoginRequest{
 		Username: req.Username,
 		Password: req.Password,
 	})
@@ -99,7 +99,7 @@ func GetUserInfo(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.UserClient.GetUserInfo(ctx, &user.DouyinGetUserRequest{
+	res, err := config.GlobalUserClient.GetUserInfo(ctx, &user.DouyinGetUserRequest{
 		ViewerId: aid.(int64),
 		OwnerId:  req.UserID,
 	})
@@ -130,7 +130,7 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 	}
 	aid := int64(0)
 	if req.Token != "" {
-		j := middleware.NewJWT(global.ServerConfig.JWTInfo.SigningKey)
+		j := middleware.NewJWT(config.GlobalServerConfig.JWTInfo.SigningKey)
 		claims, err := j.ParseToken(req.Token)
 		if err != nil {
 			resp.StatusCode = int32(errno.ParamsEr.ErrCode)
@@ -140,7 +140,7 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 		}
 		aid = claims.ID
 	}
-	res, err := global.VideoClient.Feed(ctx, &video.DouyinFeedRequest{
+	res, err := config.GlobalVideoClient.Feed(ctx, &video.DouyinFeedRequest{
 		LatestTime: req.LatestTime,
 		ViewerId:   aid,
 	})
@@ -187,7 +187,7 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	playUrl, coverUrl, err := global.UploadService.UpLoadFile(fileHeader)
+	playUrl, coverUrl, err := config.GlobalUploadService.UpLoadFile(fileHeader)
 	if err != nil {
 		hlog.Error("upload service err", err)
 		resp.StatusCode = int32(errno.ServiceErr.ErrCode)
@@ -196,7 +196,7 @@ func PublishVideo(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	res, err := global.VideoClient.PublishVideo(ctx, &video.DouyinPublishActionRequest{
+	res, err := config.GlobalVideoClient.PublishVideo(ctx, &video.DouyinPublishActionRequest{
 		UserId:   aid.(int64),
 		PlayUrl:  playUrl,
 		CoverUrl: coverUrl,
@@ -234,7 +234,7 @@ func VideoList(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.VideoClient.GetPublishedVideoList(ctx, &video.DouyinGetPublishedListRequest{
+	res, err := config.GlobalVideoClient.GetPublishedVideoList(ctx, &video.DouyinGetPublishedListRequest{
 		ViewerId: aid.(int64),
 		OwnerId:  req.UserID,
 	})
@@ -271,7 +271,7 @@ func Favorite(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.InteractionClient.Favorite(ctx, &interaction.DouyinFavoriteActionRequest{
+	res, err := config.GlobalInteractionClient.Favorite(ctx, &interaction.DouyinFavoriteActionRequest{
 		UserId:     aid.(int64),
 		VideoId:    req.VideoID,
 		ActionType: req.ActionType,
@@ -308,7 +308,7 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.VideoClient.GetFavoriteVideoList(ctx, &video.DouyinGetFavoriteListRequest{
+	res, err := config.GlobalVideoClient.GetFavoriteVideoList(ctx, &video.DouyinGetFavoriteListRequest{
 		ViewerId: aid.(int64),
 		OwnerId:  req.UserID,
 	})
@@ -345,7 +345,7 @@ func Comment(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.InteractionClient.Comment(ctx, &interaction.DouyinCommentActionRequest{
+	res, err := config.GlobalInteractionClient.Comment(ctx, &interaction.DouyinCommentActionRequest{
 		UserId:      aid.(int64),
 		VideoId:     req.VideoID,
 		ActionType:  req.ActionType,
@@ -379,7 +379,7 @@ func CommentList(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.InteractionClient.GetCommentList(ctx, &interaction.DouyinGetCommentListRequest{
+	res, err := config.GlobalInteractionClient.GetCommentList(ctx, &interaction.DouyinGetCommentListRequest{
 		VideoId: req.VideoID,
 	})
 	if err != nil {
@@ -415,7 +415,7 @@ func Action(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.SocialClient.Action(ctx, &sociality.DouyinRelationActionRequest{
+	res, err := config.GlobalSocialClient.Action(ctx, &sociality.DouyinRelationActionRequest{
 		UserId:     aid.(int64),
 		ToUserId:   req.ToUserID,
 		ActionType: req.ActionType,
@@ -451,7 +451,7 @@ func FollowingList(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.UserClient.GetFollowList(ctx, &user.DouyinGetRelationFollowListRequest{
+	res, err := config.GlobalUserClient.GetFollowList(ctx, &user.DouyinGetRelationFollowListRequest{
 		OwnerId:  req.UserID,
 		ViewerId: aid.(int64),
 	})
@@ -487,7 +487,7 @@ func FollowerList(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.UserClient.GetFollowerList(ctx, &user.DouyinGetRelationFollowerListRequest{
+	res, err := config.GlobalUserClient.GetFollowerList(ctx, &user.DouyinGetRelationFollowerListRequest{
 		OwnerId:  req.UserID,
 		ViewerId: aid.(int64),
 	})
@@ -523,7 +523,7 @@ func FriendList(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.UserClient.GetFriendList(ctx, &user.DouyinGetRelationFriendListRequest{
+	res, err := config.GlobalUserClient.GetFriendList(ctx, &user.DouyinGetRelationFriendListRequest{
 		OwnerId:  req.UserID,
 		ViewerId: aid.(int64),
 	})
@@ -559,7 +559,7 @@ func ChatHistory(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.ChatClient.GetChatHistory(ctx, &chat.DouyinMessageGetChatHistoryRequest{
+	res, err := config.GlobalChatClient.GetChatHistory(ctx, &chat.DouyinMessageGetChatHistoryRequest{
 		UserId:     aid.(int64),
 		ToUserId:   req.ToUserID,
 		PreMsgTime: req.PreMsgTime,
@@ -596,7 +596,7 @@ func SentMessage(ctx context.Context, c *app.RequestContext) {
 		errno.SendResponse(c, resp)
 		return
 	}
-	res, err := global.ChatClient.SentMessage(ctx, &chat.DouyinMessageActionRequest{
+	res, err := config.GlobalChatClient.SentMessage(ctx, &chat.DouyinMessageActionRequest{
 		UserId:     aid.(int64),
 		ToUserId:   req.ToUserID,
 		ActionType: req.ActionType,

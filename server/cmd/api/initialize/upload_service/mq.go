@@ -2,8 +2,8 @@ package upload_service
 
 import (
 	"fmt"
+	"github.com/CyanAsterisk/TikGok/server/cmd/api/config"
 
-	"github.com/CyanAsterisk/TikGok/server/cmd/api/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/pkg/uploadService"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -12,7 +12,7 @@ import (
 
 // InitMq to init rabbitMQ
 func initMq() {
-	info := global.ServerConfig.UploadServiceInfo.RabbitMqInfo
+	info := config.GlobalServerConfig.UploadServiceInfo.RabbitMqInfo
 	amqpConn, err := amqp.Dial(fmt.Sprintf(consts.RabbitMqURI, info.User, info.Password, info.Host, info.Port))
 	if err != nil {
 		klog.Fatal("cannot dial amqp", err)

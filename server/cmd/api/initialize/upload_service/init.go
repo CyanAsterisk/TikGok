@@ -2,7 +2,6 @@ package upload_service
 
 import (
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/config"
-	"github.com/CyanAsterisk/TikGok/server/cmd/api/global"
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/pkg/uploadService"
 	"github.com/minio/minio-go/v7"
 )
@@ -19,5 +18,5 @@ func Init() {
 	initConfig()
 	initMinio()
 	initMq()
-	global.UploadService = uploadService.NewUploadService(minioClient, subscriber, publisher, conf)
+	config.GlobalUploadService = uploadService.NewUploadService(minioClient, subscriber, publisher, conf)
 }

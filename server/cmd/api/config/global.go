@@ -1,7 +1,6 @@
-package global
+package config
 
 import (
-	"github.com/CyanAsterisk/TikGok/server/cmd/api/config"
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/pkg/uploadService"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/chat/chatservice"
 	"github.com/CyanAsterisk/TikGok/server/shared/kitex_gen/interaction/interactionserver"
@@ -11,13 +10,13 @@ import (
 )
 
 var (
-	ServerConfig  = &config.ServerConfig{}
-	NacosConfig   = &config.NacosConfig{}
-	UploadService *uploadService.Service
+	GlobalServerConfig  = &ServerConfig{}
+	GlobalNacosConfig   = &NacosConfig{}
+	GlobalUploadService *uploadService.Service
 
-	ChatClient        chatservice.Client
-	UserClient        userservice.Client
-	VideoClient       videoservice.Client
-	SocialClient      socialityservice.Client
-	InteractionClient interactionserver.Client
+	GlobalChatClient        chatservice.Client
+	GlobalUserClient        userservice.Client
+	GlobalVideoClient       videoservice.Client
+	GlobalSocialClient      socialityservice.Client
+	GlobalInteractionClient interactionserver.Client
 )

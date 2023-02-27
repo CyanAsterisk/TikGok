@@ -1,7 +1,7 @@
 package upload_service
 
-import "github.com/CyanAsterisk/TikGok/server/cmd/api/global"
+import "github.com/CyanAsterisk/TikGok/server/cmd/api/config"
 
 func initConfig() {
-	conf = &global.ServerConfig.UploadServiceInfo
+	conf = &config.GlobalServerConfig.UploadServiceInfo
 }

@@ -5,7 +5,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/CyanAsterisk/TikGok/server/cmd/api/global"
+	"github.com/CyanAsterisk/TikGok/server/cmd/api/config"
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/initialize"
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/initialize/rpc"
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/initialize/upload_service"
@@ -24,7 +24,7 @@ func main() {
 	upload_service.Init()
 
 	go func() {
-		err := global.UploadService.RunVideoUpload()
+		err := config.GlobalUploadService.RunVideoUpload()
 		if err != nil {
 			hlog.Fatal("upload service err", err)
 		}
@@ -32,7 +32,7 @@ func main() {
 	// create a new server
 	h := server.New(
 		tracer,
-		server.WithHostPorts(fmt.Sprintf(":%d", global.ServerConfig.Port)),
+		server.WithHostPorts(fmt.Sprintf(":%d", config.GlobalServerConfig.Port)),
 		server.WithRegistry(r, info),
 		server.WithHandleMethodNotAllowed(true),
 	)
