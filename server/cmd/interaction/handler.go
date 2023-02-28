@@ -105,35 +105,6 @@ func (s *InteractionServerImpl) Favorite(ctx context.Context, req *interaction.D
 	}
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
-	//
-	//faInfo, err := dao.GetFavoriteInfo(req.UserId, req.VideoId)
-	//if err == nil && faInfo == nil {
-	//	err = dao.CreateFavorite(&model.Favorite{
-	//		UserId:     req.UserId,
-	//		VideoId:    req.VideoId,
-	//		ActionType: consts.IsLike,
-	//	})
-	//	if err != nil {
-	//		klog.Error("favorite error", err)
-	//		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
-	//		return resp, nil
-	//	}
-	//	resp.BaseResp = tools.BuildBaseResp(nil)
-	//	return resp, nil
-	//}
-	//if err != nil {
-	//	klog.Error("favorite error", err)
-	//	resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
-	//	return resp, nil
-	//}
-	//err = dao.UpdateFavorite(req.UserId, req.VideoId, req.ActionType)
-	//if err != nil {
-	//	klog.Error("favorite error", err)
-	//	resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
-	//	return resp, nil
-	//}
-	//resp.BaseResp = tools.BuildBaseResp(nil)
-	//return resp, nil
 }
 
 // GetFavoriteVideoIdList implements the InteractionServerImpl interface.
@@ -151,15 +122,6 @@ func (s *InteractionServerImpl) GetFavoriteVideoIdList(ctx context.Context, req 
 	}
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
-
-	//resp.VideoIdList, err = dao.GetFavoriteVideoIdListByUserId(req.UserId)
-	//if err != nil {
-	//	klog.Error("get user favorite video list error", err)
-	//	resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get user favorite video id list error"))
-	//	return resp, nil
-	//}
-	//resp.BaseResp = tools.BuildBaseResp(nil)
-	//return resp, nil
 }
 
 // Comment implements the InteractionServerImpl interface.
@@ -207,16 +169,6 @@ func (s *InteractionServerImpl) Comment(ctx context.Context, req *interaction.Do
 	resp.Comment = pkg.Comment(comment)
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
-
-	//cmt, err := s.GetResp(req)
-	//if err != nil {
-	//	klog.Error("comment uses get response error", err)
-	//	resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("comment error"))
-	//	return resp, nil
-	//}
-	//resp.Comment = pkg.Comment(cmt)
-	//resp.BaseResp = tools.BuildBaseResp(nil)
-	//return resp, nil
 }
 
 // GetCommentList implements the InteractionServerImpl interface.
@@ -235,16 +187,6 @@ func (s *InteractionServerImpl) GetCommentList(ctx context.Context, req *interac
 	resp.CommentList = pkg.Comments(list)
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
-
-	//list, err := dao.GetCommentListByVideoId(req.VideoId)
-	//if err != nil {
-	//	klog.Error("get comment list by video id error", err)
-	//	resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get comment list error"))
-	//	return resp, nil
-	//}
-	//resp.CommentList = pkg.Comments(list)
-	//resp.BaseResp = tools.BuildBaseResp(nil)
-	//return resp, nil
 }
 
 // GetVideoInteractInfo implements the InteractionServerImpl interface.
@@ -307,22 +249,6 @@ func (s *InteractionServerImpl) getVideoInteractInfo(ctx context.Context, videoI
 		}
 	}
 	return info, nil
-	//if info.CommentCount, err = dao.CommentCountByVideoId(videoId); err != nil {
-	//	return nil, err
-	//}
-	//if info.FavoriteCount, err = dao.FavoriteCountByVideoId(videoId); err != nil {
-	//	return nil, err
-	//}
-	//fav, err := dao.GetFavoriteInfo(viewerId, videoId)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//if fav != nil && fav.ActionType == consts.IsLike {
-	//	info.IsFavorite = true
-	//} else {
-	//	info.IsFavorite = false
-	//}
-	//return info, nil
 }
 
 // GetUserInteractInfo implements the InteractionServerImpl interface.
