@@ -8,6 +8,7 @@ import (
 	"mime/multipart"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/api/pkg/uploadService/config"
@@ -102,27 +103,39 @@ func (s *Service) RunVideoUpload() error {
 			klog.Errorf("get video cover err: videoTmpPath = %s", task.VideoTmpPath)
 			continue
 		}
-		suffix, err := getFileSuffix(task.VideoTmpPath)
-		if err != nil {
-			klog.Errorf("get video suffix err:videoTmpPath = %s", task.VideoTmpPath)
-			continue
-		}
 		buckName := s.config.MinioInfo.Bucket
 
-		if _, err = s.minioClient.FPutObject(context.Background(), buckName, task.CoverUploadPath, task.CoverTmpPath, minio.PutObjectOptions{
-			ContentType: "image/png",
-		}); err != nil {
-			klog.Error("upload cover image err", err)
-			continue
-		}
-		_ = os.Remove(task.CoverTmpPath)
-		if _, err = s.minioClient.FPutObject(context.Background(), buckName, task.VideoUploadPath, task.VideoTmpPath, minio.PutObjectOptions{
-			ContentType: fmt.Sprintf("video/%s", suffix),
-		}); err != nil {
-			klog.Error("upload video err", err)
-			continue
-		}
-		_ = os.Remove(task.VideoTmpPath)
+		var wg sync.WaitGroup
+		wg.Add(2)
+		go func() {
+			defer func() {
+				wg.Done()
+				_ = os.Remove(task.CoverTmpPath)
+			}()
+			if _, err = s.minioClient.FPutObject(context.Background(), buckName, task.CoverUploadPath, task.CoverTmpPath, minio.PutObjectOptions{
+				ContentType: "image/png",
+			}); err != nil {
+				klog.Error("upload cover image err", err)
+			}
+		}()
+
+		go func() {
+			defer func() {
+				wg.Done()
+				_ = os.Remove(task.VideoTmpPath)
+			}()
+			suffix, err := getFileSuffix(task.VideoTmpPath)
+			if err != nil {
+				klog.Errorf("get video suffix err:videoTmpPath = %s", task.VideoTmpPath)
+				return
+			}
+			if _, err = s.minioClient.FPutObject(context.Background(), buckName, task.VideoUploadPath, task.VideoTmpPath, minio.PutObjectOptions{
+				ContentType: fmt.Sprintf("video/%s", suffix),
+			}); err != nil {
+				klog.Error("upload video err", err)
+			}
+		}()
+		wg.Wait()
 	}
 	return nil
 }

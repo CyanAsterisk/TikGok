@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"sync"
 	"time"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/dao"
@@ -197,13 +198,23 @@ func (s *VideoServiceImpl) fillVideoList(ctx context.Context, videoList []*model
 		videoIdList = append(videoIdList, v.ID)
 		authorIdList = append(authorIdList, v.AuthorId)
 	}
-	authorList, err := s.UserManager.BatchGetUser(ctx, authorIdList, viewerId)
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	var err error
+	var authorList []*base.User
+	go func() {
+		wg.Done()
+		authorList, err = s.UserManager.BatchGetUser(ctx, authorIdList, viewerId)
+	}()
+
+	var infoList []*base.VideoInteractInfo
+	go func() {
+		wg.Done()
+		infoList, err = s.InteractionManager.BatchGetVideoInteractInfo(ctx, videoIdList, viewerId)
+	}()
 	if err != nil {
 		return nil, err
 	}
-	InfoList, err := s.InteractionManager.BatchGetVideoInteractInfo(ctx, videoIdList, viewerId)
-	if err != nil {
-		return nil, err
-	}
-	return pkg.PackVideos(videoList, authorList, InfoList), nil
+	return pkg.PackVideos(videoList, authorList, infoList), nil
 }

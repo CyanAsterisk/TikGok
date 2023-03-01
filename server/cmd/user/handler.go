@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"sync"
 	"time"
 
 	models "github.com/CyanAsterisk/TikGok/server/cmd/api/model"
@@ -163,16 +164,29 @@ func (s *UserServiceImpl) GetUserInfo(ctx context.Context, req *user.DouyinGetUs
 			return resp, nil
 		}
 	}
-	socialInfo, err := s.SocialManager.GetSocialInfo(ctx, req.ViewerId, req.OwnerId)
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	var socialInfo *base.SocialInfo
+	go func() {
+		defer wg.Done()
+		socialInfo, err = s.SocialManager.GetSocialInfo(ctx, req.ViewerId, req.OwnerId)
+		if err != nil {
+			klog.Error("get user social info err", err)
+		}
+	}()
+	var interactInfo *base.UserInteractInfo
+	go func() {
+		defer wg.Done()
+		interactInfo, err = s.InteractionManager.GetInteractInfo(ctx, req.OwnerId)
+		if err != nil {
+			klog.Error("get user interact info err", err)
+		}
+	}()
+	wg.Wait()
 	if err != nil {
-		klog.Error("get user social info err", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("get user social info err"))
-		return resp, nil
-	}
-	interactInfo, err := s.InteractionManager.GetInteractInfo(ctx, req.OwnerId)
-	if err != nil {
-		klog.Error("get user interact info err", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get user interact info err"))
+		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr)
 		return resp, nil
 	}
 	resp.User = pkg.PackUser(usr, socialInfo, interactInfo)
@@ -192,16 +206,29 @@ func (s *UserServiceImpl) BatchGetUserInfo(ctx context.Context, req *user.Douyin
 			return resp, nil
 		}
 	}
-	socialInfoList, err := s.SocialManager.BatchGetSocialInfo(ctx, req.ViewerId, req.OwnerIdList)
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	var socialInfoList []*base.SocialInfo
+	go func() {
+		defer wg.Done()
+		socialInfoList, err = s.SocialManager.BatchGetSocialInfo(ctx, req.ViewerId, req.OwnerIdList)
+		if err != nil {
+			klog.Error("batch get social info error", err)
+		}
+	}()
+
+	var interactInfoList []*base.UserInteractInfo
+	go func() {
+		defer wg.Done()
+		interactInfoList, err = s.InteractionManager.BatchGetInteractInfo(ctx, req.OwnerIdList)
+		if err != nil {
+			klog.Error("batch get interact info error", err)
+		}
+	}()
+	wg.Wait()
 	if err != nil {
-		klog.Error("batch get social info error", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("batch get social info err"))
-		return resp, nil
-	}
-	interactInfoList, err := s.InteractionManager.BatchGetInteractInfo(ctx, req.OwnerIdList)
-	if err != nil {
-		klog.Error("batch get interact info error", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("batch get interact info err"))
+		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr)
 		return resp, nil
 	}
 	resp.UserList = pkg.PackUsers(userList, socialInfoList, interactInfoList)
@@ -227,18 +254,32 @@ func (s *UserServiceImpl) GetFollowList(ctx context.Context, req *user.DouyinGet
 			return resp, nil
 		}
 	}
-	socialInfoList, err := s.SocialManager.BatchGetSocialInfo(ctx, req.ViewerId, userIdList)
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	var socialInfoList []*base.SocialInfo
+	go func() {
+		defer wg.Done()
+		socialInfoList, err = s.SocialManager.BatchGetSocialInfo(ctx, req.ViewerId, userIdList)
+		if err != nil {
+			klog.Error("batch get social info error", err)
+		}
+	}()
+
+	var interactInfoList []*base.UserInteractInfo
+	go func() {
+		defer wg.Done()
+		interactInfoList, err = s.InteractionManager.BatchGetInteractInfo(ctx, userIdList)
+		if err != nil {
+			klog.Error("batch get interact info error", err)
+		}
+	}()
+	wg.Wait()
 	if err != nil {
-		klog.Error("batch get user info list err", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("batch get user info list err"))
+		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr)
 		return resp, nil
 	}
-	interactInfoList, err := s.InteractionManager.BatchGetInteractInfo(ctx, userIdList)
-	if err != nil {
-		klog.Error("batch get interact info error", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("batch get interact info err"))
-		return resp, nil
-	}
+
 	resp.UserList = pkg.PackUsers(userList, socialInfoList, interactInfoList)
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
@@ -262,16 +303,29 @@ func (s *UserServiceImpl) GetFollowerList(ctx context.Context, req *user.DouyinG
 			return resp, nil
 		}
 	}
-	socialInfoList, err := s.SocialManager.BatchGetSocialInfo(ctx, req.ViewerId, userIdList)
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	var socialInfoList []*base.SocialInfo
+	go func() {
+		defer wg.Done()
+		socialInfoList, err = s.SocialManager.BatchGetSocialInfo(ctx, req.ViewerId, userIdList)
+		if err != nil {
+			klog.Error("batch get social info error", err)
+		}
+	}()
+
+	var interactInfoList []*base.UserInteractInfo
+	go func() {
+		defer wg.Done()
+		interactInfoList, err = s.InteractionManager.BatchGetInteractInfo(ctx, userIdList)
+		if err != nil {
+			klog.Error("batch get interact info error", err)
+		}
+	}()
+	wg.Wait()
 	if err != nil {
-		klog.Error("batch get user info list err", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("batch get user info list err"))
-		return resp, nil
-	}
-	interactInfoList, err := s.InteractionManager.BatchGetInteractInfo(ctx, userIdList)
-	if err != nil {
-		klog.Error("batch get interact info error", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("batch get interact info err"))
+		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr)
 		return resp, nil
 	}
 	resp.UserList = pkg.PackUsers(userList, socialInfoList, interactInfoList)
@@ -297,22 +351,37 @@ func (s *UserServiceImpl) GetFriendList(ctx context.Context, req *user.DouyinGet
 			return resp, nil
 		}
 	}
-	socialInfoList, err := s.SocialManager.BatchGetSocialInfo(ctx, req.ViewerId, userIdList)
+	var wg sync.WaitGroup
+	wg.Add(3)
+
+	var socialInfoList []*base.SocialInfo
+	go func() {
+		defer wg.Done()
+		socialInfoList, err = s.SocialManager.BatchGetSocialInfo(ctx, req.ViewerId, userIdList)
+		if err != nil {
+			klog.Error("batch get social info error", err)
+		}
+	}()
+
+	var interactInfoList []*base.UserInteractInfo
+	go func() {
+		defer wg.Done()
+		interactInfoList, err = s.InteractionManager.BatchGetInteractInfo(ctx, userIdList)
+		if err != nil {
+			klog.Error("batch get interact info error", err)
+		}
+	}()
+	var msgList []*base.LatestMsg
+	go func() {
+		defer wg.Done()
+		msgList, err = s.ChatManager.BatchGetLatestMessage(ctx, req.ViewerId, userIdList)
+		if err != nil {
+			klog.Error("batch get user latest message list err", err)
+		}
+	}()
+	wg.Wait()
 	if err != nil {
-		klog.Error("batch get user info list err", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("batch get user info list err"))
-		return resp, nil
-	}
-	interactInfoList, err := s.InteractionManager.BatchGetInteractInfo(ctx, userIdList)
-	if err != nil {
-		klog.Error("batch get interact info error", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.SocialityServerErr.WithMessage("batch get interact info err"))
-		return resp, nil
-	}
-	msgList, err := s.ChatManager.BatchGetLatestMessage(ctx, req.ViewerId, userIdList)
-	if err != nil {
-		klog.Error("batch get user latest message list err", err)
-		resp.BaseResp = tools.BuildBaseResp(errno.ChatServerErr.WithMessage("batch get user latest message list err"))
+		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr)
 		return resp, nil
 	}
 	resp.UserList = pkg.PackFriendUsers(userList, socialInfoList, interactInfoList, msgList)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sync"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/model"
 	"github.com/bytedance/sonic"
@@ -43,14 +44,17 @@ func (r *RedisManager) BatchGetUserById(ctx context.Context, uidList []int64) ([
 	if uidList == nil {
 		return nil, nil
 	}
-	var userList []*model.User
-	for _, uid := range uidList {
-		user, err := r.GetUserById(ctx, uid)
-		if err != nil {
-			return nil, err
-		}
-		userList = append(userList, user)
+	length := len(uidList)
+	userList := make([]*model.User, length)
+	var wg sync.WaitGroup
+	wg.Add(length)
+	for i := 0; i < length; i++ {
+		go func(idx int) {
+			defer wg.Done()
+			userList[idx], _ = r.GetUserById(ctx, uidList[idx])
+		}(i)
 	}
+	wg.Wait()
 	return userList, nil
 }
 

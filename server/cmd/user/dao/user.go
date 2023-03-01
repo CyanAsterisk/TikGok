@@ -2,6 +2,7 @@ package dao
 
 import (
 	"errors"
+	"sync"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/user/model"
 	"gorm.io/gorm"
@@ -57,16 +58,21 @@ func (u *User) BatchGetUserById(uids []int64) ([]*model.User, error) {
 	if uids == nil {
 		return nil, nil
 	}
-	users := make([]*model.User, 0)
-	for _, id := range uids {
-		var user model.User
-		err := u.db.Model(&model.User{}).
-			Where(&model.User{ID: id}).First(&user).Error
-		if err != nil {
-			return nil, err
-		}
-		users = append(users, &user)
+
+	length := len(uids)
+	users := make([]*model.User, length)
+	var wg sync.WaitGroup
+	wg.Add(length)
+	for i := range uids {
+		go func(idx int) {
+			defer wg.Done()
+			var user model.User
+			u.db.Model(&model.User{}).
+				Where(&model.User{ID: uids[idx]}).First(&user)
+			users[idx] = &user
+		}(i)
 	}
+	wg.Wait()
 	return users, nil
 }
 

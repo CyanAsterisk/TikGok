@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"sync"
 	"time"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/dao"
@@ -105,35 +106,6 @@ func (s *InteractionServerImpl) Favorite(ctx context.Context, req *interaction.D
 	}
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
-	//
-	//faInfo, err := dao.GetFavoriteInfo(req.UserId, req.VideoId)
-	//if err == nil && faInfo == nil {
-	//	err = dao.CreateFavorite(&model.Favorite{
-	//		UserId:     req.UserId,
-	//		VideoId:    req.VideoId,
-	//		ActionType: consts.IsLike,
-	//	})
-	//	if err != nil {
-	//		klog.Error("favorite error", err)
-	//		resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
-	//		return resp, nil
-	//	}
-	//	resp.BaseResp = tools.BuildBaseResp(nil)
-	//	return resp, nil
-	//}
-	//if err != nil {
-	//	klog.Error("favorite error", err)
-	//	resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
-	//	return resp, nil
-	//}
-	//err = dao.UpdateFavorite(req.UserId, req.VideoId, req.ActionType)
-	//if err != nil {
-	//	klog.Error("favorite error", err)
-	//	resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("favorite error"))
-	//	return resp, nil
-	//}
-	//resp.BaseResp = tools.BuildBaseResp(nil)
-	//return resp, nil
 }
 
 // GetFavoriteVideoIdList implements the InteractionServerImpl interface.
@@ -152,14 +124,6 @@ func (s *InteractionServerImpl) GetFavoriteVideoIdList(ctx context.Context, req 
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
 
-	//resp.VideoIdList, err = dao.GetFavoriteVideoIdListByUserId(req.UserId)
-	//if err != nil {
-	//	klog.Error("get user favorite video list error", err)
-	//	resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get user favorite video id list error"))
-	//	return resp, nil
-	//}
-	//resp.BaseResp = tools.BuildBaseResp(nil)
-	//return resp, nil
 }
 
 // Comment implements the InteractionServerImpl interface.
@@ -207,16 +171,6 @@ func (s *InteractionServerImpl) Comment(ctx context.Context, req *interaction.Do
 	resp.Comment = pkg.Comment(comment)
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
-
-	//cmt, err := s.GetResp(req)
-	//if err != nil {
-	//	klog.Error("comment uses get response error", err)
-	//	resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("comment error"))
-	//	return resp, nil
-	//}
-	//resp.Comment = pkg.Comment(cmt)
-	//resp.BaseResp = tools.BuildBaseResp(nil)
-	//return resp, nil
 }
 
 // GetCommentList implements the InteractionServerImpl interface.
@@ -235,16 +189,6 @@ func (s *InteractionServerImpl) GetCommentList(ctx context.Context, req *interac
 	resp.CommentList = pkg.Comments(list)
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
-
-	//list, err := dao.GetCommentListByVideoId(req.VideoId)
-	//if err != nil {
-	//	klog.Error("get comment list by video id error", err)
-	//	resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr.WithMessage("get comment list error"))
-	//	return resp, nil
-	//}
-	//resp.CommentList = pkg.Comments(list)
-	//resp.BaseResp = tools.BuildBaseResp(nil)
-	//return resp, nil
 }
 
 // GetVideoInteractInfo implements the InteractionServerImpl interface.
@@ -262,67 +206,75 @@ func (s *InteractionServerImpl) GetVideoInteractInfo(ctx context.Context, req *i
 // BatchGetVideoInteractInfo implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) BatchGetVideoInteractInfo(ctx context.Context, req *interaction.DouyinBatchGetVideoInteractInfoRequest) (resp *interaction.DouyinBatchGetVideoInteractInfoResponse, err error) {
 	resp = new(interaction.DouyinBatchGetVideoInteractInfoResponse)
-	for _, vid := range req.VideoIdList {
-		info, err := s.getVideoInteractInfo(ctx, vid, req.ViewerId)
-		if err != nil {
-			klog.Error("get video interact info err", err)
-			resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr)
-			return resp, nil
-		}
-		resp.InteractInfoList = append(resp.InteractInfoList, info)
+
+	length := len(req.VideoIdList)
+	var wg sync.WaitGroup
+	wg.Add(length)
+
+	resp.InteractInfoList = make([]*base.VideoInteractInfo, length)
+	for i := 0; i < length; i++ {
+		go func(idx int) {
+			defer wg.Done()
+			resp.InteractInfoList[idx], err = s.getVideoInteractInfo(ctx, req.VideoIdList[idx], req.ViewerId)
+		}(i)
+	}
+	wg.Wait()
+	if err != nil {
+		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr)
+		return resp, nil
 	}
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil
+
 }
 
 func (s *InteractionServerImpl) getVideoInteractInfo(ctx context.Context, videoId, viewerId int64) (info *base.VideoInteractInfo, err error) {
 	info = new(base.VideoInteractInfo)
-	if info.CommentCount, err = s.CommentRedisManager.CommentCountByVideoId(ctx, videoId); err != nil {
-		klog.Error("get comment count by redis err", err)
-		if info.CommentCount, err = s.CommentDao.CommentCountByVideoId(videoId); err != nil {
-			return nil, err
-		}
-	}
-	if info.FavoriteCount, err = s.FavoriteRedisManager.GetFavoriteCountByVideoId(ctx, videoId); err != nil {
-		klog.Error("get favorite count by redis err", err)
-		if info.FavoriteCount, err = s.FavoriteDao.GetFavoriteCountByVideoId(videoId); err != nil {
-			return nil, err
-		}
-	}
-	if info.IsFavorite, err = s.FavoriteRedisManager.Check(ctx, viewerId, videoId); err != nil {
-		klog.Error("check like by redis err", err)
-		fav, err := s.FavoriteDao.GetFavoriteInfo(viewerId, videoId)
-		if err != nil {
-			klog.Error("get favorite info err", err)
-			return nil, err
-		}
-		if fav == nil {
-			info.IsFavorite = false
-		} else {
-			if fav.ActionType == consts.IsLike {
-				info.IsFavorite = true
-			} else {
-				info.IsFavorite = false
+
+	var wg sync.WaitGroup
+	wg.Add(3)
+
+	go func() {
+		defer wg.Done()
+		if info.CommentCount, err = s.CommentRedisManager.CommentCountByVideoId(ctx, videoId); err != nil {
+			klog.Error("get comment count by redis err", err)
+			if info.CommentCount, err = s.CommentDao.CommentCountByVideoId(videoId); err != nil {
+				klog.Error("get comment count by mysql err", err)
 			}
 		}
-	}
+	}()
+
+	go func() {
+		defer wg.Done()
+		if info.FavoriteCount, err = s.FavoriteRedisManager.GetFavoriteCountByVideoId(ctx, videoId); err != nil {
+			klog.Error("get favorite count by redis err", err)
+			if info.FavoriteCount, err = s.FavoriteDao.GetFavoriteCountByVideoId(videoId); err != nil {
+				klog.Error("get favorite count by mysql err", err)
+			}
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		if info.IsFavorite, err = s.FavoriteRedisManager.Check(ctx, viewerId, videoId); err != nil {
+			klog.Error("check like by redis err", err)
+			fav, err := s.FavoriteDao.GetFavoriteInfo(viewerId, videoId)
+			if err != nil {
+				klog.Error("get favorite info by mysql err", err)
+			}
+			if fav == nil {
+				info.IsFavorite = false
+			} else {
+				if fav.ActionType == consts.IsLike {
+					info.IsFavorite = true
+				} else {
+					info.IsFavorite = false
+				}
+			}
+		}
+	}()
+	wg.Wait()
 	return info, nil
-	//if info.CommentCount, err = dao.CommentCountByVideoId(videoId); err != nil {
-	//	return nil, err
-	//}
-	//if info.FavoriteCount, err = dao.FavoriteCountByVideoId(videoId); err != nil {
-	//	return nil, err
-	//}
-	//fav, err := dao.GetFavoriteInfo(viewerId, videoId)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//if fav != nil && fav.ActionType == consts.IsLike {
-	//	info.IsFavorite = true
-	//} else {
-	//	info.IsFavorite = false
-	//}
-	//return info, nil
 }
 
 // GetUserInteractInfo implements the InteractionServerImpl interface.
@@ -341,14 +293,21 @@ func (s *InteractionServerImpl) GetUserInteractInfo(ctx context.Context, req *in
 // BatchGetUserInteractInfo implements the InteractionServerImpl interface.
 func (s *InteractionServerImpl) BatchGetUserInteractInfo(ctx context.Context, req *interaction.DouyinBatchGetUserInteractInfoRequest) (resp *interaction.DouyinBatchGetUserInteractInfoResponse, err error) {
 	resp = new(interaction.DouyinBatchGetUserInteractInfoResponse)
-	for _, uid := range req.UserIdList {
-		info, err := s.getUserInteractInfo(ctx, uid)
-		if err != nil {
-			klog.Error("get user interact info err", err)
-			resp.BaseResp = tools.BuildBaseResp(errno.InteractionServerErr)
-			return resp, nil
-		}
-		resp.InteractInfoList = append(resp.InteractInfoList, info)
+
+	length := len(req.UserIdList)
+	resp.InteractInfoList = make([]*base.UserInteractInfo, length)
+	var wg sync.WaitGroup
+	wg.Add(length)
+	for i := 0; i < length; i++ {
+		go func(idx int) {
+			defer wg.Done()
+			resp.InteractInfoList[idx], err = s.getUserInteractInfo(ctx, req.UserIdList[idx])
+		}(i)
+	}
+	wg.Wait()
+	if err != nil {
+		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr)
+		return resp, nil
 	}
 	resp.BaseResp = tools.BuildBaseResp(nil)
 	return resp, nil

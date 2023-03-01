@@ -2,6 +2,7 @@ package dao
 
 import (
 	"errors"
+	"sync"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/chat/model"
 	"gorm.io/gorm"
@@ -63,13 +64,16 @@ func (m *Message) GetLatestMessage(uId, toUId int64) (*model.Message, error) {
 }
 
 func (m *Message) BatchGetLatestMessage(uId int64, toUIdList []int64) ([]*model.Message, error) {
-	msgList := make([]*model.Message, 0)
-	for _, toUid := range toUIdList {
-		msg, err := m.GetLatestMessage(uId, toUid)
-		if err != nil && err != ErrNoSuchRecord {
-			return nil, err
-		}
-		msgList = append(msgList, msg)
+	length := len(toUIdList)
+	msgList := make([]*model.Message, length)
+	var wg sync.WaitGroup
+	wg.Add(length)
+	for i := 0; i < length; i++ {
+		go func(idx int) {
+			defer wg.Done()
+			msgList[idx], _ = m.GetLatestMessage(uId, toUIdList[idx])
+		}(i)
 	}
+	wg.Wait()
 	return msgList, nil
 }

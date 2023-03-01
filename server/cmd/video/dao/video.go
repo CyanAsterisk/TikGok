@@ -2,6 +2,7 @@ package dao
 
 import (
 	"errors"
+	"sync"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
@@ -92,14 +93,18 @@ func (v *Video) BatchGetVideoByVideoId(vidList []int64) ([]*model.Video, error) 
 	if vidList == nil {
 		return nil, nil
 	}
-	var vl []*model.Video
-	for _, vid := range vidList {
-		v, err := v.GetVideoByVideoId(vid)
-		if err != nil {
-			return nil, err
-		}
-		vl = append(vl, v)
+
+	length := len(vidList)
+	vl := make([]*model.Video, length)
+	var wg sync.WaitGroup
+	wg.Add(length)
+	for i := 0; i < length; i++ {
+		go func(idx int) {
+			defer wg.Done()
+			vl[idx], _ = v.GetVideoByVideoId(vidList[idx])
+		}(i)
 	}
+	wg.Wait()
 	return vl, nil
 }
 

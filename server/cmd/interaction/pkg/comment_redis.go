@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sync"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/interaction/model"
 	"github.com/bytedance/sonic"
@@ -93,15 +94,19 @@ func (r *CommentRedisManager) GetCommentListByVideoId(ctx context.Context, video
 	if err != nil {
 		return nil, err
 	}
-	var cl []*model.Comment
-	for _, commentIdStr := range commentIdList {
-		var c model.Comment
-		commentJson, err := r.RedisClient.Get(ctx, commentIdStr).Result()
-		if err != nil {
-			return nil, err
-		}
-		err = sonic.Unmarshal([]byte(commentJson), &c)
-		cl = append(cl, &c)
+	length := len(commentIdList)
+	cl := make([]*model.Comment, length)
+	var wg sync.WaitGroup
+	wg.Add(length)
+	for i := 0; i < length; i++ {
+		go func(idx int) {
+			defer wg.Done()
+			var c model.Comment
+			commentJson, _ := r.RedisClient.Get(ctx, commentIdList[idx]).Result()
+			err = sonic.Unmarshal([]byte(commentJson), &c)
+			cl[idx] = &c
+		}(i)
 	}
-	return cl, nil
+	wg.Wait()
+	return cl, err
 }

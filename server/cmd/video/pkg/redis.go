@@ -3,6 +3,7 @@ package pkg
 import (
 	"context"
 	"fmt"
+	"sync"
 
 	"github.com/CyanAsterisk/TikGok/server/cmd/video/model"
 	"github.com/CyanAsterisk/TikGok/server/shared/consts"
@@ -132,13 +133,18 @@ func (r *RedisManager) BatchGetVideoByVideoId(ctx context.Context, videoIdList [
 	if videoIdList == nil {
 		return nil, nil
 	}
-	vl := make([]*model.Video, 0)
-	for _, vid := range videoIdList {
-		video, err := r.GetVideoByVideoId(ctx, vid)
-		if err != nil {
-			return nil, err
-		}
-		vl = append(vl, video)
+
+	length := len(videoIdList)
+	vl := make([]*model.Video, length)
+	var wg sync.WaitGroup
+	wg.Add(length)
+	for i := 0; i < length; i++ {
+		go func(idx int) {
+			defer wg.Done()
+			vl[idx], _ = r.GetVideoByVideoId(ctx, videoIdList[idx])
+		}(i)
 	}
+	wg.Wait()
+
 	return vl, nil
 }
