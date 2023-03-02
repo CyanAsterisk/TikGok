@@ -44,6 +44,10 @@ type Publisher interface {
 // Action implements the SocialityServiceImpl interface.
 func (s *SocialityServiceImpl) Action(ctx context.Context, req *sociality.DouyinRelationActionRequest) (resp *sociality.DouyinRelationActionResponse, err error) {
 	resp = new(sociality.DouyinRelationActionResponse)
+	if req.UserId == req.ToUserId {
+		resp.BaseResp = tools.BuildBaseResp(errno.ServiceErr.WithMessage("cannot follow or unfollow yourself."))
+		return resp, nil
+	}
 	err = s.Publisher.Publish(ctx, req)
 	if err != nil {
 		klog.Error("action publish error", err)
