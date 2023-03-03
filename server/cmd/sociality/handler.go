@@ -113,7 +113,7 @@ func (s *SocialityServiceImpl) BatchGetSocialInfo(ctx context.Context, req *soci
 	for i := 0; i < length; i++ {
 		go func(idx int) {
 			defer wg.Done()
-			resp.SocialInfoList[idx], err = s.getSocialInfo(ctx, req.OwnerIdList[idx], req.ViewerId)
+			resp.SocialInfoList[idx], err = s.getSocialInfo(ctx, req.ViewerId, req.OwnerIdList[idx])
 		}(i)
 	}
 	wg.Wait()
