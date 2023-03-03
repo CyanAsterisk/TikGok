@@ -204,15 +204,16 @@ func (s *VideoServiceImpl) fillVideoList(ctx context.Context, videoList []*model
 	var err error
 	var authorList []*base.User
 	go func() {
-		wg.Done()
+		defer wg.Done()
 		authorList, err = s.UserManager.BatchGetUser(ctx, authorIdList, viewerId)
 	}()
 
 	var infoList []*base.VideoInteractInfo
 	go func() {
-		wg.Done()
+		defer wg.Done()
 		infoList, err = s.InteractionManager.BatchGetVideoInteractInfo(ctx, videoIdList, viewerId)
 	}()
+	wg.Wait()
 	if err != nil {
 		return nil, err
 	}

@@ -109,7 +109,7 @@ func (s *Service) RunVideoUpload() error {
 		wg.Add(2)
 		go func() {
 			defer func() {
-				wg.Done()
+				defer wg.Done()
 				_ = os.Remove(task.CoverTmpPath)
 			}()
 			if _, err = s.minioClient.FPutObject(context.Background(), buckName, task.CoverUploadPath, task.CoverTmpPath, minio.PutObjectOptions{
@@ -121,7 +121,7 @@ func (s *Service) RunVideoUpload() error {
 
 		go func() {
 			defer func() {
-				wg.Done()
+				defer wg.Done()
 				_ = os.Remove(task.VideoTmpPath)
 			}()
 			suffix, err := getFileSuffix(task.VideoTmpPath)
