@@ -5,8 +5,8 @@ go 1.18
 require (
 	github.com/apache/thrift v0.13.0
 	github.com/bwmarrin/snowflake v0.3.0
-	github.com/bytedance/sonic v1.7.0
-	github.com/cloudwego/hertz v0.5.2
+	github.com/bytedance/sonic v1.8.1
+	github.com/cloudwego/hertz v0.6.4
 	github.com/cloudwego/kitex v0.4.4
 	github.com/disintegration/imaging v1.6.2
 	github.com/docker/docker v23.0.1+incompatible
@@ -48,7 +48,7 @@ require (
 	github.com/choleraehyq/pid v0.0.15 // indirect
 	github.com/cloudwego/fastpb v0.0.3 // indirect
 	github.com/cloudwego/frugal v0.1.3 // indirect
-	github.com/cloudwego/netpoll v0.3.1 // indirect
+	github.com/cloudwego/netpoll v0.3.2 // indirect
 	github.com/cloudwego/thriftgo v0.2.4 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
